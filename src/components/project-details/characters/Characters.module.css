@@ -1,0 +1,108 @@
+/* ─── Mobile-first base ─────────────────────────────────────────── */
+
+.section {
+    background-color: var(--color-white);
+    overflow: hidden;
+}
+
+/* ── Red heading banner ─────────────────────────────────────────── */
+.banner {
+    background-color: var(--color-red);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bannerTitle {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(28px, 5vw, 48px);
+    color: var(--color-white);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0;
+    line-height: 1;
+}
+
+/* ── Characters container ────────────────────────────────────────── */
+.characters {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Each character row ──────────────────────────────────────────── */
+.characterRow {
+    border-bottom: 2px solid var(--color-red);
+    padding: 24px 0 0;
+}
+
+.characterRow:last-child {
+    border-bottom: none;
+}
+
+/* ── Full-width outer wrap — label anchors here ──────────────────── */
+.imageWrap {
+    position: relative;
+    width: 100%;
+    padding-top: 20px;
+}
+
+/* ── 80%-wide inner wrap — only the image shrinks ────────────────── */
+.imageInner {
+    position: relative;
+    width: 80%;
+    margin: 0 auto;
+    aspect-ratio: 16 / 7;
+    overflow: hidden;
+}
+
+/* ── Character name — absolutely positioned top-left ─────────────── */
+.charName {
+    position: absolute;
+    top: 0;
+    left: 20px;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(18px, 4vw, 26px);
+    color: var(--color-red);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    z-index: 2;
+    line-height: 1;
+}
+
+/* ─── Tablet (768px+) ────────────────────────────────────────────── */
+@media (min-width: 768px) {
+    .banner {
+        padding: 22px 40px;
+    }
+
+    .characterRow {
+        padding-top: 28px;
+    }
+
+    .charName {
+        left: 40px;
+    }
+}
+
+/* ─── Desktop (1024px+) ──────────────────────────────────────────── */
+@media (min-width: 1024px) {
+    .banner {
+        padding: 24px 60px;
+    }
+
+    .characterRow {
+        padding-top: 36px;
+    }
+
+    .charName {
+        left: 60px;
+        font-size: clamp(20px, 2vw, 28px);
+    }
+
+    .imageInner {
+        aspect-ratio: 16 / 6;
+    }
+}

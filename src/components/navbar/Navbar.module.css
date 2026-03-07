@@ -1,0 +1,170 @@
+/* ─── Mobile-first base ─────────────────────────────────────────── */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: transparent;
+    transition: background 0.4s ease;
+}
+
+.navbar.scrolled {
+    background: rgba(10, 10, 10, 0.92);
+    backdrop-filter: blur(8px);
+}
+
+.logo {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: 18px;
+    letter-spacing: 0.12em;
+    color: #fff;
+    line-height: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Hamburger button – visible on mobile */
+.menuBtn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    z-index: 110;
+}
+
+.menuBtn span {
+    display: block;
+    height: 2px;
+    background: #fff;
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.menuBtn.open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.menuBtn.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.menuBtn.open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Mobile menu wrapper – visible on mobile only */
+.mobileMenu {
+    display: flex;
+    align-items: center;
+}
+
+/* Dropdown item active/hover overrides */
+.menuItem {
+    position: relative;
+}
+
+.menuItem:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #fff !important;
+}
+
+.menuItemActive {
+    color: #fff !important;
+}
+
+.menuItemActive::after {
+    content: '';
+    position: absolute;
+    bottom: 6px;
+    left: 20px;
+    right: 20px;
+    height: 1px;
+    background: #e8192c;
+}
+
+/* Desktop nav links – hidden on mobile */
+.navLinks {
+    display: none;
+    list-style: none;
+}
+
+.navLink {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    position: relative;
+    padding-bottom: 4px;
+    transition: color 0.2s;
+    text-decoration: none;
+}
+
+.navLink::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: #e8192c;
+    transition: width 0.3s ease;
+}
+
+.navLink:hover {
+    color: #fff;
+}
+
+.navLink:hover::after,
+.navLink.active::after {
+    width: 100%;
+}
+
+.navLink.active {
+    color: #fff;
+}
+
+/* Drawer link overrides */
+.drawerLink {
+    font-size: 24px;
+}
+
+/* ─── Tablet and up ────────────────────────────────────────────── */
+@media (min-width: 768px) {
+    .navbar {
+        padding: 18px 40px;
+    }
+
+    .menuBtn {
+        display: none;
+    }
+
+    .mobileMenu {
+        display: none;
+    }
+
+    .navLinks {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 36px;
+    }
+
+    .navLink {
+        font-size: 13px;
+        font-weight: 500;
+    }
+}

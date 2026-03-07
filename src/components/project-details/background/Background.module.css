@@ -1,0 +1,77 @@
+/* ─── Mobile-first base ─────────────────────────────────────────── */
+
+.section {
+    background-color: var(--color-black);
+    overflow: hidden;
+}
+
+/* ── Dark heading banner ─────────────────────────────────────────── */
+.banner {
+    background-color: var(--color-black);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bannerTitle {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(28px, 5vw, 48px);
+    color: var(--color-white);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0;
+    line-height: 1;
+}
+
+/* ── Grid wrapper ────────────────────────────────────────────────── */
+.gridWrap {
+    padding: 10px 10px;
+}
+
+/* ── Each image cell ─────────────────────────────────────────────── */
+.cell {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+/* Subtle hover zoom */
+.cell img,
+.cell video {
+    transition: transform 0.45s ease;
+}
+
+.cell:hover img,
+.cell:hover video {
+    transform: scale(1.04);
+}
+
+/* ── Video fill (mirrors next/image fill behaviour) ──────────────── */
+.cellVideo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ─── Tablet (768px+) ────────────────────────────────────────────── */
+@media (min-width: 768px) {
+    .banner {
+        padding: 22px 40px;
+    }
+}
+
+/* ─── Desktop (1024px+) ──────────────────────────────────────────── */
+@media (min-width: 1024px) {
+    .banner {
+        padding: 24px 60px;
+    }
+}
+

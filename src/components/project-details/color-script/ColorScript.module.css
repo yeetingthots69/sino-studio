@@ -1,0 +1,79 @@
+/* ─── Mobile-first base ─────────────────────────────────────────── */
+
+.section {
+    background-color: var(--color-black);
+    overflow: hidden;
+}
+
+/* ── Red heading banner ─────────────────────────────────────────── */
+.banner {
+    background-color: var(--color-red);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bannerTitle {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(28px, 5vw, 48px);
+    color: var(--color-white);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0;
+    line-height: 1;
+}
+
+/* ── Carousel (mobile / tablet) ─────────────────────────────────── */
+.carousel {
+    padding: 20px 0;
+    width: 100%;
+}
+
+.slide {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+/* ── Desktop flush grid ─────────────────────────────────────────── */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-cols, 4), 1fr);
+    gap: 10px;
+    padding: 10px;
+}
+
+.cell {
+    border-radius: 10px;
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+}
+
+/* Subtle hover zoom on desktop */
+.cell img {
+    transition: transform 0.4s ease;
+}
+
+.cell:hover img {
+    transform: scale(1.05);
+}
+
+/* ─── Tablet (768px+) ────────────────────────────────────────────── */
+@media (min-width: 768px) {
+    .banner {
+        padding: 22px 40px;
+    }
+}
+
+/* ─── Desktop (1024px+) ──────────────────────────────────────────── */
+@media (min-width: 1024px) {
+    .banner {
+        padding: 24px 60px;
+    }
+}
+

@@ -1,0 +1,280 @@
+/* ─── Mobile-first base ─────────────────────────────────────────── */
+
+.wrapper {
+    position: relative;
+    width: 100%;
+    background-color: var(--color-black);
+    overflow: hidden;
+}
+
+/* Full-bleed background image / video */
+.bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.bgVideo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+}
+
+/* Dark gradient overlay — heavier on the left/centre so text is always readable */
+.bgOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.80) 0%,
+        rgba(0, 0, 0, 0.65) 50%,
+        rgba(0, 0, 0, 0.40) 100%
+    );
+}
+
+/* ── Hero content row ────────────────────────────────────────────── */
+.content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 32px;
+    padding: 120px 24px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Portrait card */
+.portrait {
+    position: relative;
+    width: 100%;
+    max-width: 340px;
+    aspect-ratio: 1 / 1;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    flex-shrink: 0;
+    align-self: center;
+}
+
+/* Text / info side */
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.title {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: clamp(40px, 10vw, 80px);
+    line-height: 1;
+    color: var(--color-white);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin: 0;
+    text-align: center;
+}
+
+.body {
+    font-size: clamp(16px, 1.5vw, 18px);
+    line-height: 1.75;
+    color: rgba(255, 255, 255, 0.80);
+    margin: 0;
+}
+
+/* Stats */
+.statsGrid {
+    margin-top: 8px;
+    max-width: 700px;
+}
+
+/* Outer shell — holds the gradient border only */
+.statBox {
+    position: relative;
+    border-radius: 10px;
+    padding: 1px; /* space for the border */
+    background: linear-gradient(135deg, #000000, #ffffff);
+    opacity: .75;
+}
+
+/* Inner shell — holds the background at its own opacity */
+.statBox::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: 9px;
+    background: linear-gradient(90deg, #373737, #6c6c6c);
+    opacity: 0.75;
+    z-index: 0;
+}
+
+/* Push children above the ::before pseudo */
+.statBox > * {
+    position: relative;
+    z-index: 1;
+}
+
+.statBoxInner {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 20px;
+}
+
+.statLabel {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 1);
+}
+
+.statValue {
+    font-family: var(--font-heading);
+    font-size: clamp(14px, 5vw, 18px);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--color-white);
+    text-transform: uppercase;
+}
+
+/* ── Section nav strip ───────────────────────────────────────────── */
+.sectionNav {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    background-color: var(--color-black);
+}
+
+.sectionNavLink {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 12px;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(13px, 2vw, 20px);
+    letter-spacing: 0.04em;
+    color: var(--color-white);
+    text-transform: uppercase;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
+    text-align: center;
+    transition: color 0.2s, text-decoration-color 0.2s;
+    /* Dividers between cells */
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.sectionNavLink:last-child,
+.sectionNavLink:nth-child(2) {
+    border-right: none;
+}
+
+.sectionNavLink:nth-child(3),
+.sectionNavLink:nth-child(4) {
+    border-bottom: none;
+}
+
+.sectionNavLink:hover {
+    color: var(--color-red);
+    text-decoration-color: var(--color-red);
+}
+
+/* ─── Tablet (768px+) ────────────────────────────────────────────── */
+@media (min-width: 768px) {
+    .content {
+        padding: 140px 60px 72px;
+        flex-direction: row;
+        align-items: center;
+        gap: 48px;
+    }
+
+    .title {
+        text-align: left;
+        font-size: clamp(40px, 10vw, 50px);
+    }
+
+    .portrait {
+        width: 38%;
+        max-width: 400px;
+        align-self: auto;
+    }
+
+    .info {
+        flex: 1;
+    }
+
+    .statLabel {
+        letter-spacing: 0.20em;
+    }
+
+    .statValue {
+        font-size: clamp(14px, 2vw, 16px);
+        font-weight: 700;
+        letter-spacing: 0.06em;
+    }
+
+    .sectionNav {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .sectionNavLink {
+        border-bottom: none;
+    }
+
+    /* Only last item has no right border */
+    .sectionNavLink:last-child {
+        border-right: none;
+    }
+
+    .sectionNavLink:nth-child(2) {
+        border-right: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .sectionNavLink:nth-child(3) {
+        border-bottom: none;
+    }
+}
+
+/* ─── Desktop (1024px+) ──────────────────────────────────────────── */
+@media (min-width: 1024px) {
+    .content {
+        padding: 150px 20px 80px;
+        gap: 64px;
+        max-width: 1500px;
+    }
+
+    .title {
+        text-align: left;
+        font-size: clamp(40px, 10vw, 70px);
+    }
+
+    .portrait {
+        width: 36%;
+        max-width: 440px;
+    }
+
+    .body {
+        max-width: 700px;
+    }
+
+    .statLabel {
+        font-size: 12px;
+    }
+
+    .statValue {
+        font-size: clamp(18px, 5vw, 20px);
+    }
+}
+

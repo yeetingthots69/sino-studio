@@ -1,0 +1,189 @@
+/* ─── Liquid-glass player — fixed bottom-left ───────────────────── */
+
+.player {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 1000;
+
+    width: 300px;
+    padding: 14px 16px 12px;
+    border-radius: 16px;
+
+    /* Liquid-glass background */
+    background: rgba(15, 15, 15, 0.55);
+    backdrop-filter: blur(6px) saturate(160%);
+
+    /* Soft gradient border */
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    transition: width 0.25s ease, padding 0.25s ease;
+}
+
+/* ── Collapsed state ─────────────────────────────────────────────── */
+.collapsed {
+    width: 44px;
+    padding: 10px;
+    gap: 0;
+    align-items: center;
+}
+
+/* ── Collapse toggle button ──────────────────────────────────────── */
+.collapseBtn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.45);
+    cursor: pointer;
+    padding: 2px;
+    line-height: 0;
+    transition: color 0.2s ease;
+}
+
+.collapseBtn:hover {
+    color: var(--color-white);
+}
+
+.collapsed .collapseBtn {
+    position: static;
+    color: rgba(255, 255, 255, 0.60);
+}
+
+/* ── Track row ───────────────────────────────────────────────────── */
+.trackRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* leave room for collapse button */
+    padding-right: 20px;
+}
+
+.thumb {
+    position: relative;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.trackInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0; /* allow text truncation */
+}
+
+.trackTitle {
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-white);
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.trackArtist {
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── Progress row ────────────────────────────────────────────────── */
+.progressRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.seekSlider {
+    flex: 1;
+}
+
+.time {
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+    width: 26px;
+    text-align: center;
+}
+
+/* ── Controls row ────────────────────────────────────────────────── */
+.controlsRow {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ctrl {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.65);
+    cursor: pointer;
+    padding: 6px;
+    line-height: 0;
+    border-radius: 8px;
+    transition: color 0.2s ease, background 0.2s ease;
+    flex-shrink: 0;
+}
+
+.ctrl:hover {
+    color: var(--color-white);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Play/pause gets a slightly accented look */
+.playBtn {
+    color: var(--color-white);
+    background: rgba(232, 25, 44, 0.20);
+    border: 1px solid rgba(232, 25, 44, 0.30);
+    border-radius: 50%;
+    padding: 7px;
+}
+
+.playBtn:hover {
+    background: rgba(232, 25, 44, 0.35);
+    border-color: rgba(232, 25, 44, 0.55);
+}
+
+/* Push volume controls to the right */
+.controlsRow .ctrl:nth-child(4) {
+    margin-left: auto;
+}
+
+.volSlider {
+    width: 56px;
+}
+
+/* ─── Tablet / Desktop (768px+) ──────────────────────────────────── */
+@media (min-width: 768px) {
+    .player {
+        width: 320px;
+    }
+
+    .collapsed {
+        width: 44px;
+        padding: 10px;
+        gap: 0;
+        align-items: center;
+    }
+}
+

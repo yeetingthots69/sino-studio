@@ -1,0 +1,160 @@
+/* ─── Mobile-first base ─────────────────────────────────────────── */
+
+/* Outer wrapper — positioning context for the absolutely-placed GIF */
+.wrapper {
+    position: relative;
+    background-color: #0a0a0a;
+    background-image: url('/images/who-we-are-bg.png');
+    background-size: cover;
+    background-position: right center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+
+/* Left-to-right gradient overlay — baked-in black shape handles the left,
+   this adds a soft feather so the bg image never bleeds over the text */
+.wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to right,
+        #0a0a0a 0%,
+        #0a0a0a 30%,
+        rgba(10, 10, 10, 0) 100%
+    );
+    z-index: 1;
+    pointer-events: none;
+}
+
+.section {
+    background-color: transparent;
+    padding: 60px 24px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.left-section {
+    background-color: transparent;
+    padding: 60px 24px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.content {
+    width: 100%;
+    max-width: 480px;
+    padding-bottom: 48px;
+    z-index: 2;
+}
+
+.heading {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(36px, 9vw, 52px);
+    letter-spacing: 0.04em;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.lightning {
+    color: #e8192c;
+    font-size: clamp(26px, 6vw, 36px);
+}
+
+.body {
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.75;
+    color: rgba(255, 255, 255, 0.72);
+    margin-bottom: 32px;
+}
+
+.exploreBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: transparent;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.25s, border-color 0.25s, color 0.25s;
+}
+
+.exploreBtn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: #fff;
+}
+
+/* GIF — hidden on mobile & tablet, absolutely fills the right side on desktop */
+.characterImg {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* imageWrap and bgScene kept for compatibility but unused visually */
+.imageWrap {
+    display: none;
+}
+
+.bgScene {
+    display: none;
+}
+
+/* ─── Tablet and up ────────────────────────────────────────────── */
+@media (min-width: 768px) {
+    .section {
+        padding: 140px 80px;
+        flex-direction: row;
+        align-items: flex-end;
+        min-height: 460px;
+    }
+
+    .content {
+        flex: 0 0 600px;
+        max-width: 600px;
+        padding-bottom: 60px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .section {
+        padding: 140px 80px;
+        min-height: 520px;
+    }
+
+    .content {
+        flex: 0 0 800px;
+        max-width: 800px;
+        padding-bottom: 80px;
+    }
+
+    .characterImg {
+        display: block;
+        width: 40%;
+    }
+}

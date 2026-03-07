@@ -1,0 +1,284 @@
+/* ─── Section wrapper ───────────────────────────────────────────── */
+
+.section {
+    background-color: var(--color-black);
+    width: 100%;
+}
+
+/* ─── Grid ───────────────────────────────────────────────────────── */
+
+/*
+  Mobile: single column stack.
+  Desktop (1024px+): 2-column CSS grid.
+  Each row-pair has one tall item (2 rows) and one short item (1 row)
+  to create the editorial asymmetry seen in the design.
+*/
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+}
+
+/* ─── IMAGE CARD ─────────────────────────────────────────────────── */
+
+.imageCard {
+    position: relative;
+    overflow: hidden;
+    min-height: 280px;
+    aspect-ratio: 4 / 3;
+    cursor: pointer;
+}
+
+.imageCard:hover img {
+    transform: scale(1.04);
+    transition: transform 0.6s ease;
+}
+
+.imageCard img {
+    transition: transform 0.6s ease;
+}
+
+/* Bottom-to-top dark gradient */
+.imageOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.88) 0%,
+        rgba(0, 0, 0, 0.30) 45%,
+        transparent 100%
+    );
+    z-index: 1;
+}
+
+.imageInfo {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.imageLabel {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(14px, 3vw, 18px);
+    color: var(--color-white);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+}
+
+.imageSub {
+    font-size: clamp(11px, 1.5vw, 13px);
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.70);
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+}
+
+/* ─── TEXT CARD ──────────────────────────────────────────────────── */
+
+.textCard {
+    padding: 44px 32px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    justify-content: center;
+}
+
+.textCardRed {
+    background-color: var(--color-red);
+}
+
+.textCardDark {
+    background-color: var(--color-black);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Heading — large, bold, uppercase, multiline */
+.textHeading {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: clamp(30px, 6vw, 52px);
+    line-height: 1.05;
+    color: var(--color-white);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.headingLine {
+    display: block;
+}
+
+/* Bullet list */
+.bulletList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.bulletItem {
+    font-size: clamp(13px, 1.8vw, 15px);
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.88);
+    padding-left: 16px;
+    position: relative;
+    letter-spacing: 0.01em;
+}
+
+.bulletItem::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--color-white);
+    font-size: 14px;
+    top: 0;
+    line-height: 1.55;
+}
+
+/* Extra note section below bullets */
+.noteBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    padding-top: 16px;
+    margin-top: 4px;
+}
+
+.noteLine {
+    font-size: clamp(13px, 1.8vw, 15px);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.80);
+    margin: 0;
+    letter-spacing: 0.01em;
+}
+
+/* ─── Desktop (1024px+): 2-col asymmetric layout ─────────────────── */
+
+@media (min-width: 1024px) {
+    .grid {
+        grid-template-columns: 1fr 1fr;
+        /*
+          The layout pairs follow the image:
+          Row A: image(tall) | text
+          Row B: text | image
+          Row C: image | image
+          Row D: text | text
+          Row E: image | image
+
+          We use explicit grid-row placement on .imageCard and .textCard
+          children via :nth-child selectors to achieve the asymmetry.
+        */
+    }
+
+    .imageCard {
+        min-height: 0;
+        aspect-ratio: unset;
+    }
+
+    /* ── Row 1: Short Film (tall, 2 rows) | IP Original text ── */
+    /* block[0] = Short Film image → col 1, rows 1–2 */
+    .grid > *:nth-child(1) {
+        grid-column: 1;
+        grid-row: 1 / 3;
+        min-height: 560px;
+    }
+
+    /* block[1] = IP Original text → col 2, row 1 */
+    .grid > *:nth-child(2) {
+        grid-column: 2;
+        grid-row: 1;
+        min-height: 280px;
+    }
+
+    /* ── Row 2 (col 2, row 2 slot): Animated Series image ── */
+    /* block[3] = Animated Series → col 2, row 2 */
+    .grid > *:nth-child(4) {
+        grid-column: 2;
+        grid-row: 2;
+        min-height: 280px;
+    }
+
+    /* block[2] = Thiết kế tĩnh text → col 1, row 3 */
+    .grid > *:nth-child(3) {
+        grid-column: 1;
+        grid-row: 3;
+        min-height: 280px;
+    }
+
+    /* ── Row 3: TVC image | Trailer image (both equal height) ── */
+    /* block[4] = TVC → col 1, row 4 */
+    .grid > *:nth-child(5) {
+        grid-column: 1;
+        grid-row: 4;
+        min-height: 360px;
+    }
+
+    /* block[5] = Trailer → col 2, rows 3–4 (tall) */
+    .grid > *:nth-child(6) {
+        grid-column: 2;
+        grid-row: 3 / 5;
+        min-height: 360px;
+    }
+
+    /* ── Row 5: Game text | Visual sự kiện text ── */
+    /* block[6] = Game → col 1, row 5 */
+    .grid > *:nth-child(7) {
+        grid-column: 1;
+        grid-row: 5;
+        min-height: 300px;
+    }
+
+    /* block[7] = Visual sự kiện → col 2, row 5 */
+    .grid > *:nth-child(8) {
+        grid-column: 2;
+        grid-row: 5;
+        min-height: 300px;
+    }
+
+    /* ── Row 6: MV image | TVC image ── */
+    /* block[8] = MV → col 1, row 6 */
+    .grid > *:nth-child(9) {
+        grid-column: 1;
+        grid-row: 6;
+        min-height: 320px;
+    }
+
+    /* block[9] = TVC repeat → col 2, row 6 */
+    .grid > *:nth-child(10) {
+        grid-column: 2;
+        grid-row: 6;
+        min-height: 320px;
+    }
+}
+
+/* ─── Tablet (768px) ─────────────────────────────────────────────── */
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .imageCard {
+        aspect-ratio: unset;
+        min-height: 300px;
+    }
+
+    .textCard {
+        padding: 40px 28px;
+    }
+}
+

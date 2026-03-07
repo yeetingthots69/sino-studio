@@ -1,0 +1,97 @@
+/* ─── Mobile-first base ─────────────────────────────────────────── */
+
+.section {
+    background-color: var(--color-black);
+    overflow: hidden;
+}
+
+.inner {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding: 56px 24px;
+}
+
+/* ── Title ────────────────────────────────────────────────────────── */
+.titleCol {
+    flex-shrink: 0;
+}
+
+.title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(28px, 5vw, 48px);
+    color: var(--color-white);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    margin: 0;
+}
+
+/* ── Credits wrap ─────────────────────────────────────────────────── */
+.creditsWrap {
+    flex: 1;
+}
+
+/* ── Each credit column ───────────────────────────────────────────── */
+.creditCol {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+/* ── Individual role + names block ───────────────────────────────── */
+.creditBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.role {
+    font-family: var(--font-heading);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+    line-height: 1;
+}
+
+.names {
+    font-family: var(--font-heading);
+    font-size: clamp(13px, 1.6vw, 15px);
+    font-weight: 600;
+    color: var(--color-white);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1.5;
+}
+
+/* ─── Tablet (768px+) ────────────────────────────────────────────── */
+@media (min-width: 768px) {
+    .inner {
+        padding: 64px 40px;
+        gap: 48px;
+    }
+}
+
+/* ─── Desktop (1024px+) ──────────────────────────────────────────── */
+@media (min-width: 1024px) {
+    .inner {
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 80px 60px;
+        gap: 60px;
+    }
+
+    .titleCol {
+        width: 220px;
+        flex-shrink: 0;
+        padding-top: 4px;
+    }
+
+    .role {
+        font-size: 11px;
+    }
+}
+

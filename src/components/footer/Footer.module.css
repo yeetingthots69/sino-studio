@@ -1,0 +1,127 @@
+/* ─── Mobile-first base ─────────────────────────────────────────── */
+.footer {
+    background-color: var(--color-dark);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Positioning context for the watermark */
+.inner {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hollow outlined "SINO" watermark — spans full footer width */
+.sinoWatermark {
+    position: absolute;
+    bottom: -0.1em;
+    left: 50%;
+    display: block;
+    width: 100vw;
+    text-align: center;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 33vw;
+    line-height: 1;
+    white-space: nowrap;
+    letter-spacing: .1em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.07);
+    text-stroke: 1px rgba(255, 255, 255, 0.07);
+    user-select: none;
+    pointer-events: none;
+    z-index: 0;
+    transform: translateX(-50%);
+}
+
+/* Logo */
+.grid {
+    position: relative;
+    z-index: 1;
+}
+
+.logoIcon {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logoIcon img {
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+}
+
+/* Nav links */
+.navLink {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.55) !important;
+    text-transform: uppercase;
+    transition: color 0.2s;
+}
+
+.navLink:hover {
+    color: #fff !important;
+}
+
+/* Contact */
+.contactItem {
+    font-size: 11px !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.5) !important;
+    text-transform: uppercase;
+    line-height: 1.6 !important;
+    white-space: pre-line;
+}
+
+/* Brand col */
+.brandName {
+    font-family: var(--font-heading);
+    font-weight: 800 !important;
+    font-size: 22px !important;
+    color: var(--color-white) !important;
+}
+
+/* Social icons */
+.socialIcon {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    transition: background-color 0.2s, color 0.2s, transform 0.2s !important;
+}
+
+.socialIcon:hover {
+    background-color: var(--color-red) !important;
+    color: var(--color-white) !important;
+    transform: translateY(-2px);
+}
+
+/* Bottom bar */
+.bottomBar {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 16px 24px;
+    text-align: center;
+    background: rgba(16, 16, 16, 0.91)
+}
+
+.bottomBar p {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.3);
+    text-transform: uppercase;
+}
+
+/* Align brand col to end on desktop */
+@media (min-width: 1024px) {
+    .brandCol {
+        align-items: flex-end !important;
+    }
+
+    .bottomBar {
+        padding: 16px 60px;
+    }
+}

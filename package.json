@@ -9,6 +9,16 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@mantine/carousel": "^8.3.15",
+    "@mantine/charts": "^8.3.15",
+    "@mantine/core": "^8.3.15",
+    "@mantine/dates": "^8.3.15",
+    "@mantine/hooks": "^8.3.15",
+    "@mantine/nprogress": "^8.3.15",
+    "@tabler/icons-react": "^3.38.0",
+    "embla-carousel-auto-scroll": "^8.6.0",
+    "embla-carousel-autoplay": "^8.6.0",
+    "framer-motion": "^12.34.3",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"

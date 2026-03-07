@@ -1,0 +1,83 @@
+/* ─── Section ───────────────────────────────────────────────────── */
+
+.section {
+    background-color: var(--color-black);
+    padding: 120px 24px 52px; /* top padding accounts for fixed navbar */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.inner {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ─── Title row (heading + accent bars) ─────────────────────────── */
+
+.titleRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.heading {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: clamp(48px, 12vw, 96px);
+    line-height: 1;
+    color: var(--color-white);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0;
+}
+
+/* Triple vertical bars — red accent matching the Canva header */
+.bars {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-top: 6px;
+}
+
+/* Shared bar base */
+.bar {
+    display: block;
+    width: clamp(4px, 1.4vw, 8px);
+    height: clamp(40px, 10vw, 80px);
+    background-color: var(--color-red);
+    border-radius: 1px;
+}
+
+/* Ascending staircase via Y offset: short aligns with title top, mid/tall rise upward */
+.barShort { transform: translateY(0); }
+.barMid   { transform: translateY(clamp(-16px, -3vw, -10px)); }
+.barTall  { transform: translateY(clamp(-32px, -6vw, -20px)); }
+
+/* ─── Subtitle ───────────────────────────────────────────────────── */
+
+.sub {
+    font-size: clamp(14px, 1.8vw, 17px);
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.60);
+    max-width: 660px;
+    margin: 0;
+}
+
+/* ─── Tablet ─────────────────────────────────────────────────────── */
+
+@media (min-width: 768px) {
+    .section {
+        padding: 130px 40px 56px;
+    }
+}
+
+/* ─── Desktop ────────────────────────────────────────────────────── */
+
+@media (min-width: 1024px) {
+    .section {
+        padding: 140px 60px 64px;
+    }
+}
+

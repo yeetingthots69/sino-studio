@@ -1,0 +1,71 @@
+/* ─── Section ───────────────────────────────────────────────────── */
+
+.section {
+    background: linear-gradient(135deg, #c0000f 0%, #8a0008 40%, #1a0002 100%);
+    padding: 56px 24px;
+}
+
+.inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+}
+
+/* ─── Stat item ─────────────────────────────────────────────────── */
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+}
+
+.statValue {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: clamp(52px, 14vw, 96px);
+    line-height: 1;
+    color: #FFE234;
+    letter-spacing: -0.02em;
+}
+
+.statLabel {
+    font-size: clamp(13px, 2vw, 16px);
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.90);
+    line-height: 1.5;
+    text-align: center;
+}
+
+/* ─── Tablet ─────────────────────────────────────────────────────── */
+
+@media (min-width: 640px) {
+    .inner {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .statItem {
+        border-right: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .statItem:last-child {
+        border-right: none;
+    }
+}
+
+/* ─── Desktop ────────────────────────────────────────────────────── */
+
+@media (min-width: 1024px) {
+    .section {
+        padding: 72px 60px;
+    }
+
+    .statValue {
+        font-size: clamp(72px, 8vw, 104px);
+    }
+}
+

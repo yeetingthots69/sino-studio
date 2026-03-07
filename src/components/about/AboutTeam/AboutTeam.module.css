@@ -1,0 +1,91 @@
+/* ─── Mobile-first base ─────────────────────────────────────────── */
+
+.section {
+    background-color: var(--color-black);
+    overflow: hidden;
+}
+
+.inner {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding: 56px 24px 72px;
+    max-width: 1700px;
+    margin: 0 auto;
+}
+
+/* ── Title ────────────────────────────────────────────────────────── */
+
+.titleCol {
+    flex-shrink: 0;
+}
+
+.title {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: clamp(52px, 14vw, 100px);
+    line-height: 1;
+    color: var(--color-white);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin: 0;
+}
+
+/* ── Grid ─────────────────────────────────────────────────────────── */
+
+.gridWrap {
+    flex: 1;
+}
+
+/* ── Individual member block ──────────────────────────────────────── */
+
+.memberBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.memberRole {
+    font-family: var(--font-heading);
+    font-size: clamp(11px, 1.2vw, 13px);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.40);
+    line-height: 1;
+}
+
+.memberName {
+    font-family: var(--font-heading);
+    font-size: clamp(14px, 1.8vw, 17px);
+    font-weight: 700;
+    color: var(--color-white);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1.45;
+}
+
+/* ─── Tablet (768px+) ────────────────────────────────────────────── */
+@media (min-width: 768px) {
+    .inner {
+        padding: 64px 40px 80px;
+        gap: 48px;
+    }
+}
+
+/* ─── Desktop (1024px+) ──────────────────────────────────────────── */
+@media (min-width: 1024px) {
+    .inner {
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 80px 60px 100px;
+        gap: 60px;
+    }
+
+    .titleCol {
+        width: 350px;
+        flex-shrink: 0;
+        padding-top: 6px;
+    }
+}
+

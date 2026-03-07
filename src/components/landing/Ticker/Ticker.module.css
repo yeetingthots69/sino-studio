@@ -1,0 +1,48 @@
+/* ─── Mobile-first base ─────────────────────────────────────────── */
+.ticker {
+    width: 100%;
+    background-color: #e8192c;
+    overflow: hidden;
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+}
+
+.track {
+    display: flex;
+    gap: 0;
+    white-space: nowrap;
+    will-change: transform;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 18px;
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: clamp(16px, 4vw, 24px);
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.dot {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.dot img {
+    object-fit: contain;
+}
+
+/* ─── Tablet and up ────────────────────────────────────────────── */
+@media (min-width: 768px) {
+    .item {
+        gap: 18px;
+        padding: 0 24px;
+    }
+}

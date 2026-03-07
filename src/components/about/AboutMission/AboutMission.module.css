@@ -1,0 +1,186 @@
+/* ─── WHO WE ARE section ─────────────────────────────────────────── */
+
+.whoSection {
+    background-color: var(--color-red);
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding: 52px 24px;
+}
+
+/* ── Left: identity block ─────────────────────────────────────────── */
+
+.whoLeft {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.whoHeading {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: clamp(40px, 10vw, 76px);
+    line-height: 1;
+    color: var(--color-white);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin: 0;
+}
+
+.whoTagline {
+    font-family: var(--font-heading);
+    font-size: clamp(12px, 2vw, 14px);
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    margin: 0;
+}
+
+/* ── Right: mission + vision stack ───────────────────────────────── */
+
+.whoRight {
+    display: flex;
+    flex-direction: column;
+    gap: 0; /* managed by divider */
+}
+
+/* ── Individual statement block ──────────────────────────────────── */
+
+.statementBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 24px 0;
+}
+
+.statementLabel {
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.30em;
+    text-transform: uppercase;
+    color: var(--color-white);
+    background: rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 5px 12px;
+    border-radius: 2px;
+    align-self: flex-start;
+}
+
+.statementBody {
+    font-family: var(--font-heading);
+    font-size: clamp(16px, 1.9vw, 18px);
+    font-weight: 600;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.92);
+    letter-spacing: 0.01em;
+    margin: 0;
+}
+
+/* Thin white rule between mission and vision */
+.divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.20);
+    width: 100%;
+}
+
+/* ─── STRENGTHS strip ────────────────────────────────────────────── */
+
+.strengthsSection {
+    background-color: var(--color-black);
+    padding: 0 24px;
+}
+
+/* Left accent bar + content */
+.strengthsInner {
+    border-left: 3px solid var(--color-red);
+    padding: 36px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 1200px;
+}
+
+.strengthsLabel {
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--color-red);
+}
+
+.strengthsBody {
+    font-family: var(--font-heading);
+    font-size: clamp(14px, 2vw, 20px);
+    font-weight: 700;
+    line-height: 1.65;
+    color: var(--color-white);
+    letter-spacing: 0.01em;
+    margin: 0;
+}
+
+/* ─── Tablet (768px+) ────────────────────────────────────────────── */
+@media (min-width: 768px) {
+    .whoSection {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 56px;
+        padding: 64px 40px;
+    }
+
+    .whoLeft {
+        flex: 0 0 36%;
+        max-width: 36%;
+        position: sticky;
+        top: 100px; /* stick below navbar while scrolling */
+    }
+
+    .whoRight {
+        flex: 1;
+    }
+
+    .statementBlock {
+        padding: 28px 0;
+    }
+
+    .strengthsSection {
+        padding: 0 40px;
+    }
+
+    .strengthsInner {
+        padding: 44px 36px;
+    }
+}
+
+/* ─── Desktop (1024px+) ──────────────────────────────────────────── */
+@media (min-width: 1024px) {
+    .whoSection {
+        padding: 80px 60px;
+        gap: 72px;
+    }
+
+    .whoLeft {
+        flex: 0 0 34%;
+        max-width: 34%;
+    }
+
+    .statementBlock {
+        padding: 32px 0;
+    }
+
+    .strengthsSection {
+        padding: 0 60px;
+    }
+
+    .strengthsInner {
+        padding: 52px 40px;
+        max-width: 1400px;
+    }
+
+    .strengthsBody {
+        max-width: 900px;
+    }
+}
