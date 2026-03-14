@@ -151,7 +151,7 @@
     position: relative;
     z-index: 2;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     border-top: 1px solid rgba(255, 255, 255, 0.12);
     background-color: var(--color-black);
 }
@@ -171,18 +171,12 @@
     text-decoration-thickness: 2px;
     text-align: center;
     transition: color 0.2s, text-decoration-color 0.2s;
-    /* Dividers between cells */
-    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.sectionNavLink:last-child,
-.sectionNavLink:nth-child(2) {
-    border-right: none;
-}
-
-.sectionNavLink:nth-child(3),
-.sectionNavLink:nth-child(4) {
+/* Mobile 1-col: remove bottom border on the last item */
+.sectionNavLink:last-child {
     border-bottom: none;
 }
 
@@ -226,23 +220,24 @@
     }
 
     .sectionNav {
-        grid-template-columns: repeat(4, 1fr);
+        /* All items on one row regardless of count */
+        grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
     }
 
     .sectionNavLink {
         border-bottom: none;
-    }
-
-    /* Only last item has no right border */
-    .sectionNavLink:last-child {
-        border-right: none;
-    }
-
-    .sectionNavLink:nth-child(2) {
         border-right: 1px solid rgba(255, 255, 255, 0.12);
     }
 
-    .sectionNavLink:nth-child(3) {
+    /* Reset mobile last-child rule */
+    .sectionNavLink:last-child {
+        border-bottom: none;
+        border-right: none;
+    }
+
+    /* Reset the mobile last-two-items rule */
+    .sectionNavLink:nth-last-child(1),
+    .sectionNavLink:nth-last-child(2) {
         border-bottom: none;
     }
 }

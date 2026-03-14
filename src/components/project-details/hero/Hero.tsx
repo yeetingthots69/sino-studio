@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {motion, type Variants} from 'framer-motion';
 import {SimpleGrid} from '@mantine/core';
-import {type ProjectMetaData} from '@/data/project-data';
+import {type ProjectMetaData, type ProjectSection} from '@/data/project-data';
 import styles from './Hero.module.css';
 
 const fadeUp: Variants = {
@@ -17,27 +17,15 @@ const fadeUp: Variants = {
     }),
 };
 
-const animationSectionLinks = [
-    {label: 'COLOR SCRIPT', href: '#color-script'},
-    {label: 'CHARACTERS', href: '#characters'},
-    {label: 'BACKGROUND', href: '#background'},
-    {label: 'CREDITS', href: '#credits'},
-];
-
-const mvSectionLinks = [
-    {label: 'SNIPPETS', href: '#snippets'},
-    {label: 'LYRICS', href: '#lyrics'},
-    {label: 'VIDEO', href: '#background'},
-    {label: 'BACKGROUND', href: '#background'},
-    {label: 'CREDITS', href: '#credits'},
-];
-
-const seriesSectionLinks = [
-    {label: 'SNIPPETS', href: '#snippets'},
-    {label: 'VIDEO', href: '#background'},
-    {label: 'BACKGROUND', href: '#background'},
-    {label: 'CREDITS', href: '#credits'},
-];
+const sectionNavMap: Record<ProjectSection, {label: string; href: string}> = {
+    'color-script': {label: 'COLOR SCRIPT', href: '#color-script'},
+    'characters': {label: 'CHARACTERS', href: '#characters'},
+    'background': {label: 'BACKGROUND', href: '#background'},
+    'snippets': {label: 'SNIPPETS', href: '#snippets'},
+    'credits': {label: 'CREDITS', href: '#credits'},
+    'fanart': {label: 'FANART', href: '#fanart'},
+    'video': {label: 'VIDEO', href: '#video'},
+};
 
 interface Props {
     project: ProjectMetaData;
@@ -50,7 +38,7 @@ export default function Hero({project}: Props) {
 
     const stats = [
         {label: 'NGÀY CÔNG CHIẾU', value: project.firstAired},
-        ...(project.customTag ?? []),
+        ...(project.customTags ?? []),
     ];
 
     return (
@@ -133,16 +121,19 @@ export default function Hero({project}: Props) {
 
             {/* Section nav strip */}
             <nav className={styles.sectionNav}>
-                {animationSectionLinks.map((link, i) => (
-                    <Link
-                        key={link.label}
-                        href={link.href}
-                        className={styles.sectionNavLink}
-                        style={{'--i': i} as React.CSSProperties}
-                    >
-                        {link.label}
-                    </Link>
-                ))}
+                {project.sections.map((section, i) => {
+                    const link = sectionNavMap[section];
+                    return (
+                        <Link
+                            key={section}
+                            href={link.href}
+                            className={styles.sectionNavLink}
+                            style={{'--i': i} as React.CSSProperties}
+                        >
+                            {link.label}
+                        </Link>
+                    );
+                })}
             </nav>
         </section>
     );

@@ -7,35 +7,35 @@ import { Carousel } from '@mantine/carousel';
 import AutoScroll from 'embla-carousel-auto-scroll';
 import '@mantine/carousel/styles.css';
 import { type ProjectMetaData } from '@/data/project-data';
-import styles from './ColorScript.module.css';
+import styles from './Snippets.module.css';
 
 /** Choose the most square-ish grid for N images: prefer 4 cols, fall back gracefully */
 function gridCols(count: number): number {
     if (count % 4 === 0) return 4;
     if (count % 3 === 0) return 3;
-    if (count % 2 === 0) return 4; // e.g. 10 → 4+4+2, still looks fine
-    return 4; // odd counts: last row will be shorter, acceptable
+    if (count % 2 === 0) return 4;
+    return 4;
 }
 
 interface Props {
     project: ProjectMetaData;
 }
 
-export default function ColorScript({ project }: Props) {
+export default function Snippets({ project }: Props) {
     const isDesktop = useMediaQuery('(min-width: 1024px)');
     const autoScroll = AutoScroll({ speed: 2, stopOnInteraction: false, stopOnMouseEnter: true, startDelay: 0 });
 
-    const count = project.colorScriptCount ?? 12;
+    const count = project.snippetsCount ?? 12;
     const cols  = gridCols(count);
 
     const images = Array.from({ length: count }, (_, i) => ({
         id: i + 1,
-        src: `/images/projects/${project.id}/color-script-${i + 1}.webp`,
-        alt: `${project.title} 'color script' ${i + 1}`,
+        src: `/images/projects/${project.id}/snippets-${i + 1}.webp`,
+        alt: `${project.title} snippet ${i + 1}`,
     }));
 
     return (
-        <section id="color-script" className={styles.section}>
+        <section id="snippets" className={styles.section}>
             {/* ── Red heading banner ── */}
             <motion.div
                 className={styles.banner}
@@ -44,7 +44,7 @@ export default function ColorScript({ project }: Props) {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
             >
-                <h2 className={styles.bannerTitle}>COLOR SCRIPT</h2>
+                <h2 className={styles.bannerTitle}>SNIPPETS</h2>
             </motion.div>
 
             {/* ── Desktop: flush grid ── */}
@@ -100,3 +100,4 @@ export default function ColorScript({ project }: Props) {
         </section>
     );
 }
+

@@ -22,7 +22,7 @@ export default function ServicesHero() {
                     animate="visible"
                 >
                     <motion.h1 className={styles.heading} variants={fadeUp} custom={0}>
-                        SERVICE
+                        SERVICES
                     </motion.h1>
                     <motion.div className={styles.bars} variants={fadeUp} custom={1} aria-hidden>
                         <span className={`${styles.bar} ${styles.barShort}`} />

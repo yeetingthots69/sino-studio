@@ -48,10 +48,10 @@
     padding-top: 20px;
 }
 
-/* ── 80%-wide inner wrap — only the image shrinks ────────────────── */
+/* ── 90%-wide inner wrap — only the image shrinks ────────────────── */
 .imageInner {
     position: relative;
-    width: 80%;
+    width: 90%;
     margin: 0 auto;
     aspect-ratio: 16 / 7;
     overflow: hidden;

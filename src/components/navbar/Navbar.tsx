@@ -10,11 +10,10 @@ import Link from 'next/link';
 import {usePathname} from "next/navigation";
 
 const navItems = [
+    {label: 'About', href: 'about'},
     {label: 'Projects', href: 'projects'},
     {label: 'Services', href: 'services'},
     {label: 'Brand Equity', href: 'brand-equity'},
-    {label: 'About', href: 'about'},
-    {label: 'Procedures', href: 'procedures'},
     {label: 'Contact', href: 'contact'},
 ];
 
@@ -23,7 +22,7 @@ export default function Navbar() {
     const isLandingPage = pathname === '/';
     const [scroll] = useWindowScroll();
     const [opened, {open, close}] = useDisclosure(false);
-    const [active, setActive] = useState('Projects');
+    const [active, setActive] = useState<string | null>(null);
 
     const scrolled = scroll.y > 60;
 

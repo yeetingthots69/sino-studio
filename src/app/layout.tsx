@@ -1,6 +1,7 @@
 import type {Metadata, Viewport} from "next";
 import {Montserrat} from "next/font/google";
 import {MantineProvider, createTheme, ColorSchemeScript} from "@mantine/core";
+import Script from "next/script";
 import "@mantine/core/styles.css";
 import "./globals.css";
 import MusicPlayer from "@/components/music-player/MusicPlayer";
@@ -61,6 +62,7 @@ export default function RootLayout({
             <MusicPlayer />
             <ProgressBar />
         </MantineProvider>
+        <Script src="https://www.youtube.com/iframe_api" strategy="afterInteractive" />
         </body>
         </html>
     );

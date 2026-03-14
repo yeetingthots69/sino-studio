@@ -20,7 +20,7 @@ interface Props {
 }
 
 export default function Characters({project}: Props) {
-    const characters = project.characters.map((name, i) => ({
+    const characters = project.characters?.map((name, i) => ({
         id: i + 1,
         name,
         src: `/images/projects/${project.id}/characters-${i + 1}.webp`,
@@ -42,7 +42,7 @@ export default function Characters({project}: Props) {
 
             {/* ── Character rows ── */}
             <div className={styles.characters}>
-                {characters.map((char, idx) => (
+                {characters?.map((char, idx) => (
                     <motion.div
                         key={char.id}
                         className={styles.characterRow}

@@ -3,18 +3,38 @@ export interface CreditEntry {
     names: string;
 }
 
+/**
+ * All available section components that can be rendered in ProjectShowcasePage.
+ *
+ * Animation sections:  color-script | characters | background | credits
+ * MV sections:         snippets | lyrics | video | credits
+ * (MV sections are not yet implemented — placeholders for future use)
+ */
+export type ProjectSection =
+    | 'color-script'
+    | 'characters'
+    | 'background'
+    | 'credits'
+    | 'snippets'
+    | 'fanart'
+    | 'video';
+
 export interface ProjectMetaData {
     id: string;
     type: 'animation' | 'mv' | 'series';
     title: string;
     description_1: string;
-    description_2: string;
+    description_2?: string;
     firstAired: string;
-    customTag?: {label: string; value: string}[];
+    customTags?: {label: string; value: string}[];
     /** Display names for each character, in order. Length drives the number of character rows. */
-    characters: string[];
+    characters?: string[];
     /** How many color-script images exist (color-script-1.png … color-script-N.png). Default: 12 */
     colorScriptCount?: number;
+    /** How many snippet images exist (snippets-1.webp … snippets-N.webp). Default: 12 */
+    snippetsCount?: number;
+    /** How many fanart images exist (fanart-1.webp … fanart-N.webp). Default: 12 */
+    fanartCount?: number;
     /**
      * Ordered list of background media. Each entry declares its type so the grid
      * can render images (.webp) and videos (.webm) in the same grid without guessing.
@@ -22,6 +42,22 @@ export interface ProjectMetaData {
      * Defaults to 4 static images when omitted.
      */
     backgrounds?: {type: 'image' | 'video'}[];
+    /**
+     * Ordered list of section components to render in ProjectShowcasePage.
+     * This drives both the page layout and the section nav links in Hero.
+     */
+    sections: ProjectSection[];
+    /** For MV projects: optional song lyrics to display alongside video. */
+    lyrics?: string;
+    /**
+     * Time-synced lyrics. When present, Video renders an animated karaoke view instead
+     * of the static <pre> block. Falls back to `lyrics` if absent.
+     * `t` = seconds from the start of the YouTube video.
+     */
+    syncedLyrics?: { t: number; line: string }[];
+    /** YouTube video ID (e.g. "dQw4w9WgXcQ") used by the Video section component. */
+    youtubeId?: string;
+    videoStats?: {label: string; value: string, color: string}[];
     credits: CreditEntry[];
 }
 
@@ -42,6 +78,7 @@ export const PROJECTS: Record<string, ProjectMetaData> = {
         `,
         firstAired: "19 THÁNG 1, 2026",
         characters: ['LONG', 'BOSS'],
+        sections: ['color-script', 'characters', 'background', 'credits'],
         backgrounds: [
             {type: 'video'},
             {type: 'video'},
@@ -59,12 +96,12 @@ export const PROJECTS: Record<string, ProjectMetaData> = {
             {role: 'CHARACTER DESIGN', names: 'TRAN QUYNH THU, VU SINO, LO MI'},
             {role: 'SFX ARTIST', names: 'PEE PEE'},
             {role: 'MIXING, MASTERING & SOUNDTRACK', names: 'HOANG JEMI'},
-            {role: 'ANIMATORS', names: 'ANH KHANG, VAN PHU, TRUONG HUY, HOANG DAI NGOC, CONGEE, TOKKI'},
-            {role: 'LAYOUT & BACKGROUND ARTISTS', names: 'TRAN LE ANH, TRUNG BA, NGUYEN THANG, TOAN PHAM'},
-            {role: '3D ARTISTS', names: 'NGUYEN HOANG KHANG, TRUNG BA, DAO GIA PHONG, QUYNH NGUYEN, LE NGOC DO'},
+            {role: 'ANIMATOR', names: 'ANH KHANG, VAN PHU, TRUONG HUY, HOANG DAI NGOC, CONGEE, TOKKI'},
+            {role: 'LAYOUT & BACKGROUND ARTIST', names: 'TRAN LE ANH, TRUNG BA, NGUYEN THANG, TOAN PHAM'},
+            {role: '3D ARTIST', names: 'NGUYEN HOANG KHANG, TRUNG BA, DAO GIA PHONG, QUYNH NGUYEN, LE NGOC DO'},
             {role: 'VOICE CAST', names: 'THANH KHANG'},
             {role: 'SAKKAN', names: 'HOANG DAI NGOC, TRAN QUYNH THU, TOKKI'},
-            {role: 'COMPOSITING ARTISTS', names: 'OUTLASTZEDD, DATTO, MOFU'},
+            {role: 'COMPOSITING ARTIST', names: 'OUTLASTZEDD, DATTO, MOFU'},
         ]
     },
     "linh-truy-hon-am-gioi": {
@@ -72,30 +109,33 @@ export const PROJECTS: Record<string, ProjectMetaData> = {
         type: 'animation',
         title: "LINH: TRUY HỒN ÂM GIỚI",
         description_1: `
-            Ngọc Bảo Khí là dự án hoạt hình ngắn được đội ngũ SiNo Studio thực hiện ngay sau
-            teaser LINH: Truy Hồn Âm Giới. Đây là một bước tiến quan trọng của team, đánh dấu
-            sự trưởng thành rõ rệt về mặt kỹ thuật và tư duy sản xuất.
+            Dự án phim được lấy cảm hứng từ văn hóa và yếu tố tâm linh của Việt Nam. Với một vũ trụ tâm linh vừa mới mẻ vừa quen thuộc, những câu chuyện sâu sắc và hình ảnh hoạt họa đẹp mắt, gần gũi với giới trẻ, dự án kí vọng sẽ là sự đột phát trong nền hoạt hình Việt Nam.
         `,
-        description_2: `
-            Không phải một dự án series, Ngọc Bảo Khí đơn thuần là lời khẳng định cho sự
-            nghiêm túc, bền bỉ và định hướng lâu dài của SiNo Studio trên con đường sáng tạo
-            phía trước.
-        `,
-        firstAired: "19 THÁNG 1, 2026",
-        characters: ['LINH', 'MA BÀ ĐỒNG'],
+        firstAired: "2028",
+        customTags: [{label: 'THỂ LOẠI', value: 'FANTASY'}, {label: 'ĐỘ DÀI', value: '90 PHÚT'}],
+        characters: ['LINH', 'MA BÀ ĐỒNG', 'MA XÂY MỘ'],
+        sections: ['characters', 'background', 'credits'],
+        backgrounds: [
+            {type: 'image'},
+            {type: 'image'},
+            {type: 'image'},
+            {type: 'image'},
+            {type: 'image'},
+            {type: 'image'},
+        ],
+        colorScriptCount: 6,
         credits: [
             {role: 'DIRECTOR', names: 'VU SINO'},
-            {role: 'ART DIRECTOR', names: 'TRUONG HANH'},
-            {role: 'ANIMATION DIRECTOR', names: 'HUNG NOMI'},
-            {role: 'CHARACTER DESIGN', names: 'TRAN QUYNH THU, VU SINO, LO MI'},
-            {role: 'SFX ARTIST', names: 'PEE PEE'},
-            {role: 'MIXING, MASTERING & SOUNDTRACK', names: 'HOANG JEMI'},
-            {role: 'ANIMATORS', names: 'ANH KHANG, VAN PHU, TRUONG HUY, HOANG DAI NGOC, CONGEE, TOKKI'},
-            {role: 'LAYOUT & BACKGROUND ARTISTS', names: 'TRAN LE ANH, TRUNG BA, NGUYEN THANG, TOAN PHAM'},
-            {role: '3D ARTISTS', names: 'NGUYEN HOANG KHANG, TRUNG BA, DAO GIA PHONG, QUYNH NGUYEN, LE NGOC DO'},
-            {role: 'VOICE CAST', names: 'THANH KHANG'},
-            {role: 'SAKKAN', names: 'HOANG DAI NGOC, TRAN QUYNH THU, TOKKI'},
-            {role: 'COMPOSITING ARTISTS', names: 'OUTLASTZEDD, DATTO, MOFU'},
+            {role: 'ART DIRECTOR', names: 'RAITO'},
+            {role: 'CHARACTER DESIGN', names: 'TRAN QUYNH THU, VU SINO, LO MI, HOANG DAI NGOC, NGUYEN DUY HUNG, BONG BONG'},
+            {role: 'ANIMATOR', names: 'ANH KHANG, VAN PHU, HOANG DAI NGOC, TRUONG HUY, TUE NHAN, BANANA, LO MI'},
+            {role: 'LAYOUT & BACKGROUND ARTIST', names: 'RAITO, PHUC NGUYEN, TRAN LE ANH, NGUYEN CHIP CHIP, TRAN NGOC ANH, THANG NGUYEN'},
+            {role: 'SAKKAN ARTIST', names: 'HOANG DAI NGOC, TRAN QUYNH THU, GIA HUY'},
+            {role: 'COMPOSITING ARTIST', names: 'OUTLASTZEDD, DUONG DINH HUY'},
+            {role: 'SFX ARTIST', names: 'VU SINO'},
+            {role: 'DESIGN CONSULTANT', names: 'NGHI, BAO THAI'},
+            {role: 'MIXING, MASTERING & SOUNDTRACK', names: 'OVALKID'},
+            {role: 'VOICE CAST', names: 'NGUYEN THU, THANH KHANG, BUN RIUCUA, TRONG NHAN, CHIEN KES'},
         ]
     },
     "tet-lien-quan-2026": {
@@ -109,24 +149,25 @@ export const PROJECTS: Record<string, ProjectMetaData> = {
             Ngay sau khi ra mắt trên fanpage chính thức, sản phẩm đã nhận được sự ủng hộ mạnh mẽ từ cộng đồng, khẳng định vị thế của studio trong việc triển khai các sản phẩm truyền thông hoạt hình chất lượng cao.
         `,
         firstAired: "31 THÁNG 1, 2026",
-        customTag: [{label: 'KHÁCH HÀNG', value: 'GARENA'}],
+        customTags: [{label: 'KHÁCH HÀNG', value: 'GARENA'}],
         characters: ['MURAD', 'LINH BẢO', 'TÀ THẦN'],
+        sections: ['color-script', 'characters', 'background', 'credits'],
         colorScriptCount: 6,
         credits: [
             {role: 'DIRECTOR', names: 'VU SINO'},
             {role: 'ART DIRECTOR', names: 'TRUONG HANH'},
             {role: 'CHARACTER DESIGN', names: 'TRAN QUYNH THU, TRUONG HUY, GIA HUY'},
-            {role: 'ANIMATORS', names: 'ANH KHANG, VAN PHU, TRUONG HUY, CONGEE, TOKKI, MINH TUAN, LO MI, JED PANULIN, THANH VAN, TOFU, ALPHA TECHNIME'},
-            {role: 'LAYOUT & BACKGROUND ARTISTS', names: 'TRUONG HANH, TRUNG BA, QUYT, NGOC ANH'},
+            {role: 'ANIMATOR', names: 'ANH KHANG, VAN PHU, TRUONG HUY, CONGEE, TOKKI, MINH TUAN, LO MI, JED PANULIN, THANH VAN, TOFU, ALPHA TECHNIME'},
+            {role: 'LAYOUT & BACKGROUND ARTIST', names: 'TRUONG HANH, TRUNG BA, QUYT, NGOC ANH'},
             {role: 'SAKKAN', names: 'TRAN QUYNH THU'},
             {role: 'SFX ARTIST', names: 'PEE PEE, DINH HUY, VU SINO'},
             {role: 'MIXING, MASTERING & SOUNDTRACK', names: 'HOANG JEMI'},
-            {role: 'COMPOSITING ARTISTS', names: 'OUTLASTZEDD, 高橋 幸福'},
+            {role: 'COMPOSITING ARTIST', names: 'OUTLASTZEDD, 高橋 幸福'},
         ]
     },
-    "chang-trai-bat-tinh": {
-        id: "chang-trai-bat-tinh",
-        type: 'animation',
+    "chang-trai-bat-tu": {
+        id: "chang-trai-bat-tu",
+        type: 'mv',
         title: "LINH: TRUY HỒN ÂM GIỚI",
         description_1: `
             Ngọc Bảo Khí là dự án hoạt hình ngắn được đội ngũ SiNo Studio thực hiện ngay sau
@@ -138,9 +179,88 @@ export const PROJECTS: Record<string, ProjectMetaData> = {
             nghiêm túc, bền bỉ và định hướng lâu dài của SiNo Studio trên con đường sáng tạo
             phía trước.
         `,
+        youtubeId: 'oWENAdVkHRk',
         firstAired: "JANUARY 19, 2026",
+        sections: ['snippets', 'video', 'fanart', 'credits'],
+        lyrics: `🎵
+        
+Và có lẽ hôm nay là ngày cuối cùng
+Anh sẽ không kêu la vì em đến muộn
+Đừng khóc như vậy làm anh lo lắng đấy
 
-        characters: ['LINH', 'MA BÀ ĐỒNG'],
+Anh sẽ lau nước mắt để em mỉm cười
+Ta sẽ bên cạnh nhau để ngày sau có nhớ lại
+Anh sẽ không thấy ân hận
+
+Anh vẫn muốn được ở bên em lần cuối
+Từng giờ từng giây trôi sẽ chỉ có em mà thôi
+Nếu sau này em yếu đuối khóc mỗi ngày nhưng không nguôi
+Chẳng ai lau giọt nước mắt nhớ đến anh mãi bên cạnh
+
+Có anh đây sẽ ôm em ngày em tệ nhất
+Có anh đây sẽ bên em cùng em ngồi mãi trong phòng
+Đến khi em đã quên đi tình yêu của ta ngày ấy
+Anh sẽ đi đời sau ta gặp lại
+
+Đây là lời nhắn cuối cùng anh viết
+Chỉ còn nỗi nhớ kể hoài không xiết
+Xin lỗi vì để nỗi buồn ở trong cuộc đời của em
+
+Sau này anh sẽ luôn đợi trong mơ
+Nên là đừng thức đêm nhiều em nhớ
+Nỗi buồn ngày ấy bây giờ để lại rồi đi tiếp thôi
+
+Anh chưa bao giờ muốn ôm chặt thế này
+Anh sợ phải nghĩ đến tim mình đứng lại
+Có những điều ta mơ cùng nhau dù chẳng đi được với nhau
+
+Em sẽ phải bước tiếp dẫu mình thế nào
+Anh vẫn sẽ ở mãi trong những kỉ niệm
+Lời hứa hôm nay đời sau gặp lại
+
+Có anh đây sẽ ôm em ngày em tệ nhất hoh
+Có anh đây sẽ bên em cùng em ngồi mãi trong phòng
+Đến khi em đã quên đi tình yêu của ta ngày ấy
+Anh sẽ đi đời sau ta gặp lại
+        `,
+        syncedLyrics: [
+            {t: 0, line: '🎵'},
+            {t: 42, line: 'Và có lẽ hôm nay là ngày cuối cùng'},
+            {t: 46.5, line: 'Anh sẽ không kêu la vì em đến muộn'},
+            {t: 50, line: 'Đừng khóc như vậy làm anh lo lắng đấy'},
+            {t: 57.5, line: 'Anh sẽ lau nước mắt để em mỉm cười'},
+            {t: 61.5, line: 'Ta sẽ bên cạnh nhau để ngày sau có nhớ lại'},
+            {t: 66, line: 'Anh sẽ không thấy ân hận'},
+            {t: 70, line: 'Anh vẫn muốn được ở bên em lần cuối'},
+            {t: 77, line: 'Từng giờ từng giây trôi sẽ chỉ có em mà thôi'},
+            {t: 84, line: 'Nếu sau này em yếu đuối khóc mỗi ngày nhưng không nguôi'},
+            {t: 91, line: 'Chẳng ai lau giọt nước mắt nhớ đến anh mãi bên cạnh'},
+            {t: 94, line: 'Có anh đây sẽ ôm em ngày em tệ nhất'},
+            {t: 100, line: 'Có anh đây sẽ bên em cùng em ngồi mãi trong phòng'},
+            {t: 106, line: 'Đến khi em đã quên đi tình yêu của ta ngày ấy'},
+            {t: 112, line: 'Anh sẽ đi đời sau ta gặp lại'},
+            {t: 118, line: 'Đây là lời nhắn cuối cùng anh viết'},
+            {t: 124, line: 'Chỉ còn nỗi nhớ kể hoài không xiết'},
+            {t: 130, line: 'Xin lỗi vì để nỗi buồn ở trong cuộc đời của em'},
+            {t: 136, line: 'Sau này anh sẽ luôn đợi trong mơ'},
+            {t: 142, line: 'Nên là đừng thức đêm nhiều em nhớ'},
+            {t: 148, line: 'Nỗi buồn ngày ấy bây giờ để lại rồi đi tiếp thôi'},
+            {t: 154, line: 'Anh chưa bao giờ muốn ôm chặt thế này'},
+            {t: 160, line: 'Anh sợ phải nghĩ đến tim mình đứng lại'},
+            {t: 166, line: 'Có những điều ta mơ cùng nhau dù chẳng đi được với nhau'},
+            {t: 172, line: 'Em sẽ phải bước tiếp dẫu mình thế nào'},
+            {t: 178, line: 'Anh vẫn sẽ ở mãi trong những kỉ niệm'},
+            {t: 184, line: 'Lời hứa hôm nay đời sau gặp lại'},
+            {t: 190, line: 'Có anh đây sẽ ôm em ngày em tệ nhất hoh'},
+            {t: 196, line: 'Có anh đây sẽ bên em cùng em ngồi mãi trong phòng'},
+            {t: 202, line: 'Đến khi em đã quên đi tình yêu của ta ngày ấy'},
+            {t: 208, line: 'Anh sẽ đi đời sau ta gặp lại'},
+        ],
+        videoStats: [
+            {label: 'YOUTUBE VIEWS', value: '17M+', color: '#e62d2d'},
+            {label: 'TIKTOK VIEWS', value: '100M+', color: '#6d41dc'},
+            {label: 'SPOTIFY STREAMS', value: '10M+', color: '#55e426'},
+        ],
         credits: [
             {role: 'DIRECTOR', names: 'VU SINO'},
             {role: 'ART DIRECTOR', names: 'TRƯỜNG HẠNH'},
@@ -158,7 +278,7 @@ export const PROJECTS: Record<string, ProjectMetaData> = {
     },
     "yeu-trong-co-doc": {
         id: "yeu-trong-co-doc",
-        type: 'animation',
+        type: 'mv',
         title: "LINH: TRUY HỒN ÂM GIỚI",
         description_1: `
             Ngọc Bảo Khí là dự án hoạt hình ngắn được đội ngũ SiNo Studio thực hiện ngay sau
@@ -171,8 +291,8 @@ export const PROJECTS: Record<string, ProjectMetaData> = {
             phía trước.
         `,
         firstAired: "JANUARY 19, 2026",
-
         characters: ['LINH', 'MA BÀ ĐỒNG'],
+        sections: ['color-script', 'video', 'credits'],
         credits: [
             {role: 'DIRECTOR', names: 'VU SINO'},
             {role: 'ART DIRECTOR', names: 'TRƯỜNG HẠNH'},
@@ -190,34 +310,21 @@ export const PROJECTS: Record<string, ProjectMetaData> = {
     },
     "tay-du-ki-gen-z": {
         id: "tay-du-ki-gen-z",
-        type: 'animation',
-        title: "LINH: TRUY HỒN ÂM GIỚI",
+        type: 'series',
+        title: "TÀY DU KÍ GEN Z",
         description_1: `
-            Ngọc Bảo Khí là dự án hoạt hình ngắn được đội ngũ SiNo Studio thực hiện ngay sau
-            teaser LINH: Truy Hồn Âm Giới. Đây là một bước tiến quan trọng của team, đánh dấu
-            sự trưởng thành rõ rệt về mặt kỹ thuật và tư duy sản xuất.
+            Series hoạt hình lấy cảm hứng từ nguyên tác Tây Du Ký kinh điển, nhưng trong một diện mạo hoàn toàn mới. Bằng việc lồng ghép yếu tố chuyển sinh (isekai), dự án đưa những nhân vật từ đa vũ trụ bước vào hành trình thỉnh kinh đầy biến số. Sự giao thoa giữa những thế giới khác biệt không chỉ mở ra những hướng đi không thể đoán trước, mà còn tạo nên một cuộc hành trình kịch tính, mãn nhãn và tràn đầy những cú twist bất ngờ.
         `,
-        description_2: `
-            Không phải một dự án series, Ngọc Bảo Khí đơn thuần là lời khẳng định cho sự
-            nghiêm túc, bền bỉ và định hướng lâu dài của SiNo Studio trên con đường sáng tạo
-            phía trước.
-        `,
-        firstAired: "JANUARY 19, 2026",
-
-        characters: ['LINH', 'MA BÀ ĐỒNG'],
+        firstAired: "2 THÁNG 9, 2021",
+        youtubeId: 'sRKFWiY5Rys',
+        sections: ['snippets', 'video', 'fanart', 'credits'],
         credits: [
             {role: 'DIRECTOR', names: 'VU SINO'},
-            {role: 'ART DIRECTOR', names: 'TRƯỜNG HẠNH'},
-            {role: 'ANIMATION DIRECTOR', names: 'HUNG NOMI'},
-            {role: 'CHARACTER DESIGN', names: 'TRAN QUYNH THU, VU SINO, LO MI'},
-            {role: 'SFX ARTIST', names: 'PEE PEE'},
-            {role: 'MIXING, MASTERING & SOUNDTRACK', names: 'HOANG JEMI'},
-            {role: 'ANIMATORS', names: 'ANH KHANG, VAN PHU, TRUONG HUY, HOANG DAI NGOC, CONGEE, TOKKI'},
-            {role: 'LAYOUT & BACKGROUND ARTISTS', names: 'TRAN LE ANH, TRUNG BA, NGUYEN THANG, TOAN PHAM'},
-            {role: '3D ARTISTS', names: 'NGUYEN HOANG KHANG, TRUNG BA, DAO GIA PHONG, QUYNH NGUYEN, LE NGOC DO'},
-            {role: 'VOICE CAST', names: 'THANH KHANG'},
-            {role: 'SAKKAN', names: 'HOANG DAI NGOC, TRAN QUYNH THU, TOKKI'},
-            {role: 'COMPOSITING ARTISTS', names: 'OUTLASTZEDD, DATTO, MOFU'},
+            {role: 'CHARACTER DESIGN', names: 'VU SINO'},
+            {role: 'SFX ARTIST', names: 'PEE PEE, VU SINO'},
+            {role: 'ANIMATOR', names: 'VU SINO, VAN PHU, ANHH KHANGG'},
+            {role: 'VOICE CAST', names: 'KHANG., NGO, NHAN, DUC DUY, CHIP'},
+            {role: 'COMPOSITING ARTISTS', names: 'OUTLASTZEDD, OVALKID'},
         ]
     },
 }
