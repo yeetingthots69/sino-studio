@@ -11,6 +11,10 @@ import styles from './Fanart.module.css';
 
 /** Choose the most square-ish grid for N images: prefer 4 cols, fall back gracefully */
 function gridCols(count: number): number {
+    // Special cases:
+    if (count === 4) return 2;
+    if (count === 5) return 3;
+    // General cases
     if (count % 4 === 0) return 4;
     if (count % 3 === 0) return 3;
     if (count % 2 === 0) return 4;

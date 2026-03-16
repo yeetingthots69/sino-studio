@@ -64,7 +64,7 @@ export default function Footer() {
 
                     {/* Brand + socials */}
                     <Stack gap={16} align="flex-start" className={styles.brandCol}>
-                        <Text className={styles.brandName}>120 YEN LANG</Text>
+                        <Text className={styles.brandName}>SINO STUDIO</Text>
                         <Group gap={10}>
                             {socialLinks.map((s) => (
                                 <ActionIcon

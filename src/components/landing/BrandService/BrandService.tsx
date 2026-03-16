@@ -20,7 +20,7 @@ const fadeUp: Variants = {
 
 export default function BrandService() {
     return (
-        <SimpleGrid cols={{base: 1, lg: 2}} spacing={0} className={styles.section}>
+        <SimpleGrid cols={{base: 1, lg: 2}} spacing={0} className={styles.section} id="brand-equity-services">
             {/* Brand Equity Panel */}
             <div className={`${styles.panel} ${styles.brandPanel}`}>
                 <motion.div

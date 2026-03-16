@@ -13,6 +13,7 @@
     "@mantine/charts": "^8.3.15",
     "@mantine/core": "^8.3.15",
     "@mantine/dates": "^8.3.15",
+    "@mantine/form": "^8.3.16",
     "@mantine/hooks": "^8.3.15",
     "@mantine/nprogress": "^8.3.15",
     "@tabler/icons-react": "^3.38.0",

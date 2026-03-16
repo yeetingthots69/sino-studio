@@ -2,27 +2,38 @@
 
 import {useState} from 'react';
 import {motion} from 'framer-motion';
-import {useWindowScroll, useDisclosure} from '@mantine/hooks';
+import {useDisclosure, useWindowScroll} from '@mantine/hooks';
 import {Menu} from '@mantine/core';
 import styles from './Navbar.module.css';
 import Image from 'next/image';
 import Link from 'next/link';
 import {usePathname} from "next/navigation";
+import {IconMenu2} from "@tabler/icons-react";
 
-const navItems = [
-    {label: 'About', href: 'about'},
-    {label: 'Projects', href: 'projects'},
-    {label: 'Services', href: 'services'},
-    {label: 'Brand Equity', href: 'brand-equity'},
-    {label: 'Contact', href: 'contact'},
+const otherNavItems = [
+    {label: 'About', href: '/about'},
+    {label: 'Projects', href: '/projects'},
+    {label: 'Services', href: '/services'},
+    {label: 'Brand Equity', href: '/brand-equity'},
+    {label: 'Contact', href: '/contact-us'},
 ];
+
+const landingNavItems = [
+    {label: 'About', href: '#about'},
+    {label: 'Projects', href: '#projects'},
+    {label: 'Services', href: '#brand-equity-services'},
+    {label: 'Brand Equity', href: '#brand-equity-services'},
+    {label: 'Contact', href: '/contact-us'},
+]
 
 export default function Navbar() {
     const pathname = usePathname();
     const isLandingPage = pathname === '/';
+    const isContactPage = pathname === '/contact-us';
     const [scroll] = useWindowScroll();
     const [opened, {open, close}] = useDisclosure(false);
     const [active, setActive] = useState<string | null>(null);
+    const navItems = isLandingPage ? landingNavItems : otherNavItems;
 
     const scrolled = scroll.y > 60;
 
@@ -33,6 +44,10 @@ export default function Navbar() {
                 initial={{y: -60, opacity: 0}}
                 animate={{y: 0, opacity: 1}}
                 transition={{duration: 0.6, ease: 'easeOut'}}
+                style={isContactPage ? {
+                    backgroundColor: 'rgba(10,10,10,0.5)',
+                    backdropFilter: 'blur(8px)',
+                } : {}}
             >
                 <Link href="/" className={styles.logo}>
                     <Image src="/sino-studio-full.png" alt="Sino Studio Logo" width={3129 / 25} height={1640 / 25}/>
@@ -69,22 +84,26 @@ export default function Navbar() {
                         }}
                     >
                         <Menu.Target>
-                            <button
-                                className={`${styles.menuBtn} ${opened ? styles.open : ''}`}
-                                aria-label="Toggle menu"
-                            >
-                                <span/><span/><span/>
-                            </button>
+                            {/*<button*/}
+                            {/*    className={`${styles.menuBtn} ${opened ? styles.open : ''}`}*/}
+                            {/*    aria-label="Toggle menu"*/}
+                            {/*>*/}
+                            {/*    <span/><span/><span/>*/}
+                            {/*</button>*/}
+                            <IconMenu2 className={`${styles.menuBtn} ${opened ? styles.open : ''}`}/>
                         </Menu.Target>
 
                         <Menu.Dropdown>
                             {navItems.map((item) => (
                                 <Menu.Item
                                     key={item.label}
-                                    component="a"
+                                    component={Link}
                                     href={item.href}
                                     className={`${styles.menuItem} ${active === item.label ? styles.menuItemActive : ''}`}
-                                    onClick={() => { setActive(item.label); close(); }}
+                                    onClick={() => {
+                                        setActive(item.label);
+                                        close();
+                                    }}
                                 >
                                     {item.label}
                                 </Menu.Item>
@@ -98,7 +117,7 @@ export default function Navbar() {
                     {navItems.map((item) => (
                         <li key={item.label}>
                             <Link
-                                href={isLandingPage ? `#${item.href}` : `/${item.href}`}
+                                href={item.href}
                                 className={`${styles.navLink} ${active === item.label ? styles.active : ''}`}
                                 onClick={() => setActive(item.label)}
                             >

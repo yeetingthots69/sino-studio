@@ -1,0 +1,154 @@
+/* ─── Section: full viewport, clips slide-in animation ─────────── */
+.section {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* Full-bleed background */
+.bg {
+    object-fit: cover;
+    z-index: 0;
+}
+
+/* ─── Heading — absolutely at the top, never moves ──────────────── */
+.heading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    /* top padding = navbar height + breathing room */
+    padding: 150px 24px 0;
+    text-align: center;
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: clamp(60px, 15vw, 88px);
+    line-height: 1;
+    color: var(--color-red);
+    text-transform: uppercase;
+    margin: 0;
+    /*text-shadow: 10px 10px 10px var(--color-black);*/
+    -webkit-text-stroke: 3px var(--color-black);
+    paint-order: stroke fill;
+    pointer-events: none;
+}
+
+/* ─── Stage — absolutely at the bottom, never moves ─────────────── */
+/* Both characters AND form are swapped inside here, so no reflow  */
+.stage {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    display: flex;
+    /*min-width: 800px;*/
+    justify-content: center;
+    align-items: flex-end;
+}
+
+/* ─── Characters ─────────────────────────────────────────────────── */
+.characters {
+    position: relative;
+    /* On mobile: force a minimum width so the 16:9 image isn't tiny.
+       min-width pushes past the viewport; section overflow:hidden clips it. */
+    width: max(100%, 500px);
+    max-width: 500px;
+    display: flex;
+    justify-content: center;
+}
+
+.charactersImg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ─── Toggle button (sits on the suitcase) ──────────────────────── */
+.toggleBtn {
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-red);
+    color: var(--color-white);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(11px, 2vw, 18px);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 14px 32px;
+    border: 3px solid var(--color-black);
+    border-radius: 8px;
+    box-shadow: 4px 4px 0 var(--color-black);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.toggleBtn:hover {
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 6px 6px 0 var(--color-black);
+}
+
+.toggleBtn:active {
+    transform: translateX(-50%) translateY(2px);
+    box-shadow: 2px 2px 0 var(--color-black);
+}
+
+/* ─── Form inner wrapper — adds bottom breathing room ───────────── */
+.formWrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 32px 20px 56px;
+}
+
+/* ─── Tablet (768px+) ────────────────────────────────────────────── */
+@media (min-width: 768px) {
+    .formWrap {
+        padding: 40px 40px 72px;
+    }
+
+    .heading {
+        padding: 160px 24px 0;
+    }
+
+    .characters {
+        max-width: 768px;
+    }
+
+    .toggleBtn {
+        left: 48%;
+        padding: 10px 20px;
+        font-size: clamp(11px, 2vw, 14px);
+    }
+}
+
+/* ─── Desktop (1024px+) ──────────────────────────────────────────── */
+@media (min-width: 1024px) {
+    .formWrap {
+        padding: 48px 60px 88px;
+    }
+
+    .heading {
+        padding: 160px 24px 0;
+    }
+
+    .characters {
+        max-width: 1000px;
+    }
+
+    .stage {
+        min-width: 100%;
+        left: 0;
+        transform: translateX(0);
+    }
+
+    .toggleBtn {
+        font-size: clamp(11px, 2vw, 18px);
+        padding: 14px 32px;
+    }
+}

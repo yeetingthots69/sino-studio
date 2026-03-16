@@ -103,8 +103,8 @@ const blocks: Block[] = [
         kind: 'image',
         src: '/images/projects/tet-lien-quan-2026/background-1.webp',
         alt: 'TVC Animation',
-        label: 'TVC Animation',
-        sub: 'Because sometimes hoorman go far, feels nice you mood. See the project.',
+        label: 'Social Media Ad',
+        sub: 'Video Tiktok, Reels, Facebook, Motion Banner.',
     },
 ];
 
