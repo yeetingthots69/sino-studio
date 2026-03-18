@@ -49,7 +49,7 @@ export default function BrandService() {
                         transition={{duration: 0.9, ease: 'easeOut'}}
                     >
                         <Image
-                            src="/images/brand-equity-character.png"
+                            src="/images/brand-equity-character.webp"
                             alt="Brand character"
                             fill
                             style={{objectFit: 'contain', objectPosition: 'bottom right'}}
@@ -87,7 +87,7 @@ export default function BrandService() {
                         transition={{duration: 0.9, ease: 'easeOut'}}
                     >
                         <Image
-                            src="/images/services-character-2.png"
+                            src="/images/services-character.webp"
                             alt="Service character"
                             fill
                             style={{objectFit: 'contain', objectPosition: 'bottom right'}}

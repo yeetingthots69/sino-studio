@@ -10,12 +10,12 @@ import '@mantine/carousel/styles.css';
 import styles from './Clients.module.css';
 
 const clients = [
-    {name: 'Garena', logo: '/images/clients/garena.png', width: 550, height: 410},
-    {name: 'Alpha Technime', logo: '/images/clients/alpha-technime.png', width: 450, height: 462},
-    {name: 'W2W', logo: '/images/clients/w2w.png', width: 228 * 2, height: 91 * 2},
-    {name: 'FG Studio', logo: '/images/clients/fg-studio.png', width: 602, height: 696},
-    {name: 'Hobby Horizon', logo: '/images/clients/hobby-horizon.png', width: 666 * 1.2, height: 374 * 1.2},
-    {name: 'Yin Yang Media', logo: '/images/clients/yin-yang-media.png', width: 300 * 2, height: 300 * 2},
+    {name: 'Garena', logo: '/images/clients/garena.webp', width: 550, height: 410},
+    {name: 'Alpha Technime', logo: '/images/clients/alpha-technime.webp', width: 450, height: 462},
+    {name: 'W2W', logo: '/images/clients/w2w.webp', width: 228 * 2, height: 91 * 2},
+    {name: 'FG Studio', logo: '/images/clients/fg-studio.webp', width: 602, height: 696},
+    {name: 'Hobby Horizon', logo: '/images/clients/hobby-horizon.webp', width: 666 * 1.2, height: 374 * 1.2},
+    {name: 'Yin Yang Media', logo: '/images/clients/yin-yang-media.webp', width: 300 * 2, height: 300 * 2},
 ];
 
 export default function Clients() {

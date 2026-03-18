@@ -67,13 +67,13 @@ export const PROJECTS: Record<string, ProjectMetaData> = {
         type: 'animation',
         title: "NGỌC BẢO KHÍ",
         description_1: `
-            Ngọc Bảo Khí là dự án hoạt hình ngắn được đội ngũ SiNo Studio thực hiện ngay sau
+            Ngọc Bảo Khí là dự án hoạt hình ngắn được đội ngũ Sino Studio thực hiện ngay sau
             teaser LINH: Truy Hồn Âm Giới. Đây là một bước tiến quan trọng của team, đánh dấu
             sự trưởng thành rõ rệt về mặt kỹ thuật và tư duy sản xuất.
         `,
         description_2: `
             Không phải một dự án series, Ngọc Bảo Khí đơn thuần là lời khẳng định cho sự
-            nghiêm túc, bền bỉ và định hướng lâu dài của SiNo Studio trên con đường sáng tạo
+            nghiêm túc, bền bỉ và định hướng lâu dài của Sino Studio trên con đường sáng tạo
             phía trước.
         `,
         firstAired: "19 THÁNG 1, 2026",
@@ -90,17 +90,17 @@ export const PROJECTS: Record<string, ProjectMetaData> = {
             {type: 'image'},
         ],
         credits: [
-            {role: 'DIRECTOR', names: 'VU SINO'},
-            {role: 'ART DIRECTOR', names: 'TRUONG HANH'},
-            {role: 'ANIMATION DIRECTOR', names: 'HUNG NOMI'},
-            {role: 'CHARACTER DESIGN', names: 'TRAN QUYNH THU, VU SINO, LO MI'},
+            {role: 'DIRECTOR', names: 'VŨ SINO'},
+            {role: 'ART DIRECTOR', names: 'TRƯƠNG HẠNH'},
+            {role: 'ANIMATION DIRECTOR', names: 'HƯNG NOMI'},
+            {role: 'CHARACTER DESIGN', names: 'TRẦN QUỲNH THƯ, VŨ SINO, LÔ MI'},
             {role: 'SFX ARTIST', names: 'PEE PEE'},
-            {role: 'MIXING, MASTERING & SOUNDTRACK', names: 'HOANG JEMI'},
-            {role: 'ANIMATOR', names: 'ANH KHANG, VAN PHU, TRUONG HUY, HOANG DAI NGOC, BANANA, TOKKI'},
-            {role: 'LAYOUT & BACKGROUND ARTIST', names: 'TRAN LE ANH, TRUNG BA, NGUYEN THANG, TOAN PHAM'},
-            {role: '3D ARTIST', names: 'NGUYEN HOANG KHANG, TRUNG BA, DAO GIA PHONG, QUYNH NGUYEN, LE NGOC DO'},
+            {role: 'MIXING, MASTERING & SOUNDTRACK', names: 'HOÀNG JEMI'},
+            {role: 'ANIMATOR', names: 'ANH KHANG, VĂN PHÚ, TRƯƠNG HUY, HOÀNG ĐẠI NGỌC, BANANA, TOKKI'},
+            {role: 'LAYOUT & BACKGROUND ARTIST', names: 'TRẦN LÊ ANH, TRUNG BÁ, NGUYỄN THẮNG, TOÀN PHẠM'},
+            {role: '3D ARTIST', names: 'NGUYỄN HOÀNG KHANG, TRUNG BÁ, ĐÀO GIA PHONG, QUỲNH NGUYỄN, LÊ NGỌC ĐÔ'},
             {role: 'VOICE CAST', names: 'THANH KHANG'},
-            {role: 'SAKKAN', names: 'HOANG DAI NGOC, TRAN QUYNH THU, TOKKI'},
+            {role: 'SAKKAN', names: 'HOÀNG ĐẠI NGỌC, TRẦN QUỲNH THƯ, TOKKI'},
             {role: 'COMPOSITING ARTIST', names: 'OUTLASTZEDD, DATTO, MOFU'},
         ]
     },
@@ -125,17 +125,17 @@ export const PROJECTS: Record<string, ProjectMetaData> = {
         ],
         colorScriptCount: 6,
         credits: [
-            {role: 'DIRECTOR', names: 'VU SINO'},
+            {role: 'DIRECTOR', names: 'VŨ SINO'},
             {role: 'ART DIRECTOR', names: 'RAITO'},
-            {role: 'CHARACTER DESIGN', names: 'TRAN QUYNH THU, VU SINO, LO MI, HOANG DAI NGOC, NGUYEN DUY HUNG, BONG BONG'},
-            {role: 'ANIMATOR', names: 'ANH KHANG, VAN PHU, HOANG DAI NGOC, TRUONG HUY, TUE NHAN, BANANA, LO MI'},
-            {role: 'LAYOUT & BACKGROUND ARTIST', names: 'RAITO, PHUC NGUYEN, TRAN LE ANH, NGUYEN CHIP CHIP, TRAN NGOC ANH, THANG NGUYEN'},
-            {role: 'SAKKAN ARTIST', names: 'HOANG DAI NGOC, TRAN QUYNH THU, GIA HUY'},
-            {role: 'COMPOSITING ARTIST', names: 'OUTLASTZEDD, DUONG DINH HUY'},
-            {role: 'SFX ARTIST', names: 'VU SINO'},
-            {role: 'DESIGN CONSULTANT', names: 'NGHI, BAO THAI'},
+            {role: 'CHARACTER DESIGN', names: 'TRẦN QUỲNH THƯ, VŨ SINO, LÔ MI, HOÀNG ĐẠI NGỌC, NGUYỄN DUY HƯNG, BÔNG BÔNG'},
+            {role: 'ANIMATOR', names: 'ANH KHANG, VĂN PHÚ, HOÀNG ĐẠI NGỌC, TRƯƠNG HUY, TUỆ NHÂN, BANANA, LÔ MI'},
+            {role: 'LAYOUT & BACKGROUND ARTIST', names: 'RAITO, PHÚC NGUYỄN, TRẦN LÊ ANH, NGUYỄN CHÍP CHÍP, TRẦN NGỌC ANH, THẮNG NGUYỄN'},
+            {role: 'SAKKAN ARTIST', names: 'HOÀNG ĐẠI NGỌC, TRẦN QUỲNH THƯ, GIA HUY'},
+            {role: 'COMPOSITING ARTIST', names: 'OUTLASTZEDD, HUYDS'},
+            {role: 'SFX ARTIST', names: 'VŨ SINO'},
+            {role: 'DESIGN CONSULTANT', names: 'NGHI, BẢO THÁI'},
             {role: 'MIXING, MASTERING & SOUNDTRACK', names: 'OVALKID'},
-            {role: 'VOICE CAST', names: 'NGUYEN THU, THANH KHANG, BUN RIUCUA, TRONG NHAN, CHIEN KES'},
+            {role: 'VOICE CAST', names: 'NGUYỄN THƯ, THANH KHANG, BÚN RIUCUA, TRỌNG NHÂN, CHIẾN KÊ\'S'},
         ]
     },
     "tet-lien-quan-2026": {
@@ -154,33 +154,26 @@ export const PROJECTS: Record<string, ProjectMetaData> = {
         sections: ['color-script', 'characters', 'background', 'credits'],
         colorScriptCount: 6,
         credits: [
-            {role: 'DIRECTOR', names: 'VU SINO'},
-            {role: 'ART DIRECTOR', names: 'TRUONG HANH'},
-            {role: 'CHARACTER DESIGN', names: 'TRAN QUYNH THU, TRUONG HUY, GIA HUY'},
-            {role: 'ANIMATOR', names: 'ANH KHANG, VAN PHU, TRUONG HUY, BANANA, TOKKI, MINH TUAN, LO MI, JED PANULIN, THANH VAN, TOFU, ALPHA TECHNIME'},
-            {role: 'LAYOUT & BACKGROUND ARTIST', names: 'TRUONG HANH, TRUNG BA, QUYT, NGOC ANH'},
-            {role: 'SAKKAN', names: 'TRAN QUYNH THU'},
-            {role: 'SFX ARTIST', names: 'PEE PEE, DINH HUY, VU SINO'},
-            {role: 'MIXING, MASTERING & SOUNDTRACK', names: 'HOANG JEMI'},
+            {role: 'DIRECTOR', names: 'VŨ SINO'},
+            {role: 'ART DIRECTOR', names: 'TRƯƠNG HẠNH'},
+            {role: 'CHARACTER DESIGN', names: 'TRẦN QUỲNH THƯ, TRƯƠNG HUY, GIA HUY'},
+            {role: 'ANIMATOR', names: 'ANH KHANG, VĂN PHÚ, TRƯƠNG HUY, BANANA, TOKKI, MINH TUẤN, LÔ MI, JED PANULIN, THANH VÂN, TOFU, ALPHA TECHNIME'},
+            {role: 'LAYOUT & BACKGROUND ARTIST', names: 'TRƯƠNG HẠNH, TRUNG BÁ, QUÝT, TRẦN NGỌC ANH'},
+            {role: 'SAKKAN', names: 'TRẦN QUỲNH THƯ'},
+            {role: 'SFX ARTIST', names: 'PEE PEE, HUYDS, VŨ SINO'},
+            {role: 'MIXING, MASTERING & SOUNDTRACK', names: 'HOÀNG JEMI'},
             {role: 'COMPOSITING ARTIST', names: 'OUTLASTZEDD, 高橋 幸福'},
         ]
     },
     "chang-trai-bat-tu": {
         id: "chang-trai-bat-tu",
         type: 'mv',
-        title: "LINH: TRUY HỒN ÂM GIỚI",
+        title: "CHÀNG TRAI BẤT TỬ",
         description_1: `
-            Ngọc Bảo Khí là dự án hoạt hình ngắn được đội ngũ SiNo Studio thực hiện ngay sau
-            teaser LINH: Truy Hồn Âm Giới. Đây là một bước tiến quan trọng của team, đánh dấu
-            sự trưởng thành rõ rệt về mặt kỹ thuật và tư duy sản xuất.
-        `,
-        description_2: `
-            Không phải một dự án series, Ngọc Bảo Khí đơn thuần là lời khẳng định cho sự
-            nghiêm túc, bền bỉ và định hướng lâu dài của SiNo Studio trên con đường sáng tạo
-            phía trước.
+            Dựa trên câu chuyện có thật, MV kể về mối tình đầy bi thương giữa Hạ và Hiền Lương - hai con người yêu nhau sâu đậm nhưng bị chia cắt bởi căn bệnh hiểm nghèo của chàng trai. Biết thời gian không còn nhiều, họ chọn bên nhau trong những buổi hẹn cuối, không còn giận hờn vì những lần đến muộn, chỉ còn những nụ cười gượng gạo và khoảnh khắc trân quý. Chàng Trai Bất Tử đã lặng lẽ chạm đến trái tim của hàng triệu người bằng chính sự chân thành và nỗi đau rất thật ấy.
         `,
         youtubeId: 'oWENAdVkHRk',
-        firstAired: "JANUARY 19, 2026",
+        firstAired: "11 THÁNG 1, 2024",
         sections: ['snippets', 'video', 'fanart', 'credits'],
         lyrics: `🎵
         
@@ -262,71 +255,90 @@ Anh sẽ đi đời sau ta gặp lại
             {label: 'SPOTIFY STREAMS', value: '10M+', color: '#55e426'},
         ],
         credits: [
-            {role: 'DIRECTOR', names: 'VU SINO'},
-            {role: 'ART DIRECTOR', names: 'TRƯỜNG HẠNH'},
-            {role: 'ANIMATION DIRECTOR', names: 'HUNG NOMI'},
-            {role: 'CHARACTER DESIGN', names: 'TRAN QUYNH THU, VU SINO, LO MI'},
-            {role: 'SFX ARTIST', names: 'PEE PEE'},
-            {role: 'MIXING, MASTERING & SOUNDTRACK', names: 'HOANG JEMI'},
-            {role: 'ANIMATORS', names: 'ANH KHANG, VAN PHU, TRUONG HUY, HOANG DAI NGOC, BANANA, TOKKI'},
-            {role: 'LAYOUT & BACKGROUND ARTISTS', names: 'TRAN LE ANH, TRUNG BA, NGUYEN THANG, TOAN PHAM'},
-            {role: '3D ARTISTS', names: 'NGUYEN HOANG KHANG, TRUNG BA, DAO GIA PHONG, QUYNH NGUYEN, LE NGOC DO'},
-            {role: 'VOICE CAST', names: 'THANH KHANG'},
-            {role: 'SAKKAN', names: 'HOANG DAI NGOC, TRAN QUYNH THU, TOKKI'},
-            {role: 'COMPOSITING ARTISTS', names: 'OUTLASTZEDD, DATTO, MOFU'},
+            {role: 'DIRECTOR', names: 'VŨ SINO'},
+            {role: 'COMPOSER', names: 'VŨ SINO'},
+            {role: 'PERFORMED BY', names: 'AN VŨ'},
+            {role: 'SFX ARTIST', names: 'NGHẾCH'},
+            {role: 'MIXING, MASTERING & SOUNDTRACK', names: 'MKM'},
+            {role: 'ANIMATOR', names: 'VŨ SINO'},
+            {role: 'LAYOUT & BACKGROUND ARTIST', names: 'TRẦN NGỌC ANH'},
+            {role: 'BACKING VOCAL', names: 'MKM'},
+            {role: 'VOICE CAST', names: 'KHANG (HA), HIMA (HIEN LUONG)'},
+            {role: 'EDITOR', names: 'OUTLASTZEDD'},
+            {role: 'CONSULTANT', names: 'HOÀNG KIỆT KTS'},
+            {role: 'MUSIC DISTRIBUTION', names: 'YIN YANG MEDIA'}
         ]
     },
     "yeu-trong-co-doc": {
         id: "yeu-trong-co-doc",
         type: 'mv',
-        title: "LINH: TRUY HỒN ÂM GIỚI",
+        title: "YÊU TRONG CÔ ĐỘC",
         description_1: `
-            Ngọc Bảo Khí là dự án hoạt hình ngắn được đội ngũ SiNo Studio thực hiện ngay sau
-            teaser LINH: Truy Hồn Âm Giới. Đây là một bước tiến quan trọng của team, đánh dấu
-            sự trưởng thành rõ rệt về mặt kỹ thuật và tư duy sản xuất.
+            Câu chuyện xoay quanh mối tình chênh lệch danh phận giữa Vũ - chàng xe công nghệ, và Heny - tiểu thư giàu có. Hai tâm hồn cô đơn tìm thấy nhau rồi lạc mất giữa thực tại. Nhiều năm sau, Vũ thành công với âm nhạc, họ gặp lại với tư cách đối tác - khi khoảng cách năm xưa không còn, chỉ còn cơ hội viết tiếp một chuyện tình còn dang dở.
         `,
-        description_2: `
-            Không phải một dự án series, Ngọc Bảo Khí đơn thuần là lời khẳng định cho sự
-            nghiêm túc, bền bỉ và định hướng lâu dài của SiNo Studio trên con đường sáng tạo
-            phía trước.
-        `,
-        firstAired: "JANUARY 19, 2026",
-        characters: ['LINH', 'MA BÀ ĐỒNG'],
-        sections: ['color-script', 'video', 'credits'],
+        firstAired: "28 THÁNG 6, 2024",
+        sections: ['snippets', 'video', 'fanart', 'credits'],
+        youtubeId: 'WN0itED9Iak',
+        videoStats: [
+            {label: 'YOUTUBE VIEWS', value: '800K+', color: '#e62d2d'},
+            {label: 'SPOTIFY STREAMS', value: '233K+', color: '#55e426'},
+        ],
         credits: [
-            {role: 'DIRECTOR', names: 'VU SINO'},
-            {role: 'ART DIRECTOR', names: 'TRƯỜNG HẠNH'},
-            {role: 'ANIMATION DIRECTOR', names: 'HUNG NOMI'},
-            {role: 'CHARACTER DESIGN', names: 'TRAN QUYNH THU, VU SINO, LO MI'},
-            {role: 'SFX ARTIST', names: 'PEE PEE'},
-            {role: 'MIXING, MASTERING & SOUNDTRACK', names: 'HOANG JEMI'},
-            {role: 'ANIMATORS', names: 'ANH KHANG, VAN PHU, TRUONG HUY, HOANG DAI NGOC, BANANA, TOKKI'},
-            {role: 'LAYOUT & BACKGROUND ARTISTS', names: 'TRAN LE ANH, TRUNG BA, NGUYEN THANG, TOAN PHAM'},
-            {role: '3D ARTISTS', names: 'NGUYEN HOANG KHANG, TRUNG BA, DAO GIA PHONG, QUYNH NGUYEN, LE NGOC DO'},
-            {role: 'VOICE CAST', names: 'THANH KHANG'},
-            {role: 'SAKKAN', names: 'HOANG DAI NGOC, TRAN QUYNH THU, TOKKI'},
-            {role: 'COMPOSITING ARTISTS', names: 'OUTLASTZEDD, DATTO, MOFU'},
+            {role: 'DIRECTOR', names: 'VŨ SINO'},
+            {role: 'COMPOSER', names: 'VŨ SINO'},
+            {role: 'PERFORMED BY', names: 'KAI, LIL TIAN'},
+            {role: 'SCRIPT WRITER', names: 'VŨ SINO'},
+            {role: 'SFX ARTIST', names: 'NGHẾCH'},
+            {role: 'MIXING, MASTERING & SOUNDTRACK', names: 'HOÀNG JEMI, KAI'},
+            {role: 'ANIMATOR', names: 'VŨ SINO, ANNE, HƯNG NOMI, MÈO'},
+            {role: 'LAYOUT & BACKGROUND ARTIST', names: 'TRẦN NGỌC ANH, LIÊN KHÚC CHUI, TRẦN QUỲNH THƯ'},
+            {role: 'VOICE CAST', names: 'KHANG (VŨ), CAARM LINH (HENY), DƯƠNG FG (ANH DƯƠNG)'},
+            {role: 'CHARACTER DESIGN', names: 'TRẦN QUỲNH THƯ, TRƯƠNG HUY, GIA HUY'},
+            {role: 'EDITOR', names: 'OUTLASTZEDD'},
+            {role: 'CONSULTANT', names: 'HOÀNG KIỆT KTS, HUYDS'},
+            {role: 'MUSIC DISTRIBUTION', names: 'YIN YANG MEDIA'}
         ]
     },
     "tay-du-ki-gen-z": {
         id: "tay-du-ki-gen-z",
         type: 'series',
-        title: "TÀY DU KÍ GEN Z",
+        title: "TÂY DU KÍ GEN Z",
         description_1: `
             Series hoạt hình lấy cảm hứng từ nguyên tác Tây Du Ký kinh điển, nhưng trong một diện mạo hoàn toàn mới. Bằng việc lồng ghép yếu tố chuyển sinh (isekai), dự án đưa những nhân vật từ đa vũ trụ bước vào hành trình thỉnh kinh đầy biến số. Sự giao thoa giữa những thế giới khác biệt không chỉ mở ra những hướng đi không thể đoán trước, mà còn tạo nên một cuộc hành trình kịch tính, mãn nhãn và tràn đầy những cú twist bất ngờ.
         `,
         snippetsCount: 16,
-        fanartCount: 4,
+        fanartCount: 9,
         firstAired: "2 THÁNG 9, 2021",
         youtubeId: 'sRKFWiY5Rys',
         sections: ['snippets', 'video', 'fanart', 'credits'],
         credits: [
-            {role: 'DIRECTOR', names: 'VU SINO'},
-            {role: 'CHARACTER DESIGN', names: 'VU SINO'},
-            {role: 'SFX ARTIST', names: 'PEE PEE, VU SINO'},
-            {role: 'ANIMATOR', names: 'VU SINO, VAN PHU, ANHH KHANGG'},
+            {role: 'DIRECTOR', names: 'VŨ SINO'},
+            {role: 'CHARACTER DESIGN', names: 'VŨ SINO'},
+            {role: 'SFX ARTIST', names: 'PEE PEE, VŨ SINO'},
+            {role: 'ANIMATOR', names: 'VŨ SINO, VĂN PHÚ, ANHH KHANGG'},
             {role: 'VOICE CAST', names: 'KHANG., NGO, NHAN, DUC DUY, CHIP'},
             {role: 'COMPOSITING ARTISTS', names: 'OUTLASTZEDD, OVALKID'},
+        ]
+    },
+    "khong-phai-la-ket-thuc": {
+        id: "khong-phai-la-ket-thuc",
+        type: 'mv',
+        title: "KHÔNG PHẢI LÀ KẾT THÚC",
+        description_1: `
+            Dự án hợp tác giữa Sino Studio và Remind kể về hành trình vượt qua bóng tối để chạm tới ước mơ âm nhạc. Hình ảnh cô bé nhỏ luôn lặng lẽ theo sau Remind - nhưng dường như không được nhìn thấy. Chỉ khi chạm đến thành công, Remind ngoảnh lại và nhận ra: đó chính là mình của ngày xưa - phiên bản luôn âm thầm đồng hành, níu giữ và dẫn lối cô trên hành trình trưởng thành.
+        `,
+        firstAired: "14 THÁNG 3, 2026",
+        characters: ['REMIND', 'YOUNG REMIND'],
+        sections: ['snippets', 'characters', 'background', 'video', 'credits'],
+        youtubeId: 'Y9z3uUep0NM',
+        credits: [
+            {role: 'DIRECTOR', names: 'VŨ SINO'},
+            {role: 'EXECUTIVE PRODUCER', names: 'VŨ SINO'},
+            {role: 'ANIMATORS', names: 'ANH KHANG, VĂN PHÚ, TRƯƠNG HUY, MINH TÚ, THANH VÂN, BANANA'},
+            {role: 'CHARACTER DESIGN', names: 'BANANA'},
+            {role: 'LAYOUT & BACKGROUND ARTISTS', names: 'MAC, TRẦN NGỌC ANH'},
+            {role: 'COMPOSITING ARTIST', names: 'OUTLASTZEDD, 高橋'},
+            {role: 'PRODUCTION MANAGER', names: 'HUYDS'},
         ]
     },
 }

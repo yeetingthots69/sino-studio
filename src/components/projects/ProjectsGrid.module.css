@@ -1,0 +1,89 @@
+/* ─── Mobile-first base ─────────────────────────────────────────── */
+.section {
+    background: linear-gradient(to bottom, var(--color-red) 0%, var(--color-black) 40%);
+    padding: 60px 20px 48px;
+    min-height: 100vh;
+}
+
+.heading {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(32px, 8vw, 72px);
+    text-align: center;
+    color: var(--color-white);
+    margin-bottom: 24px;
+}
+
+/* ─── Filter tabs ──────────────────────────────────────────────── */
+.filters {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 36px;
+}
+
+.filterBtn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.5);
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background-color 0.25s, color 0.25s, border-color 0.25s;
+}
+
+.filterBtn:hover {
+    color: var(--color-white);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.filterBtnActive {
+    background-color: var(--color-red);
+    border-color: var(--color-red);
+    color: var(--color-white);
+}
+
+/* ─── Empty state ──────────────────────────────────────────────── */
+.empty {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 14px;
+    padding: 60px 0;
+}
+
+/* ─── Tablet ────────────────────────────────────────────────────── */
+@media (min-width: 600px) {
+    .section {
+        padding: 60px 32px 48px;
+    }
+
+    .filters {
+        gap: 10px;
+    }
+
+    .filterBtn {
+        font-size: 12px;
+        padding: 8px 24px;
+    }
+}
+
+/* ─── Desktop ───────────────────────────────────────────────────── */
+@media (min-width: 1024px) {
+    .section {
+        padding: 80px 60px 60px;
+    }
+
+    .heading {
+        margin-bottom: 32px;
+    }
+
+    .filters {
+        margin-bottom: 48px;
+    }
+}
