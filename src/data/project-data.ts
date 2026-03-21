@@ -220,9 +220,9 @@ Anh sẽ đi đời sau ta gặp lại
         `,
         syncedLyrics: [
             {t: 0, line: '🎵'},
-            {t: 42, line: 'Và có lẽ hôm nay là ngày cuối cùng'},
+            {t: 43, line: 'Và có lẽ hôm nay là ngày cuối cùng'},
             {t: 46.5, line: 'Anh sẽ không kêu la vì em đến muộn'},
-            {t: 50, line: 'Đừng khóc như vậy làm anh lo lắng đấy'},
+            {t: 50.5, line: 'Đừng khóc như vậy làm anh lo lắng đấy'},
             {t: 57.5, line: 'Anh sẽ lau nước mắt để em mỉm cười'},
             {t: 61.5, line: 'Ta sẽ bên cạnh nhau để ngày sau có nhớ lại'},
             {t: 66, line: 'Anh sẽ không thấy ân hận'},
@@ -269,7 +269,8 @@ Anh sẽ đi đời sau ta gặp lại
             {role: 'EDITOR', names: 'OUTLASTZEDD'},
             {role: 'CONSULTANT', names: 'HOÀNG KIỆT KTS'},
             {role: 'MUSIC DISTRIBUTION', names: 'YIN YANG MEDIA'}
-        ]
+        ],
+        fanartCount: 6
     },
     "yeu-trong-co-doc": {
         id: "yeu-trong-co-doc",

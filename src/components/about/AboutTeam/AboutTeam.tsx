@@ -26,7 +26,7 @@ const teamMembers: TeamMember[] = [
     {role: 'STYLE ARTIST', names: 'TRẦN QUỲNH THƯ'},
     {role: 'ANIMATION DIRECTOR', names: 'HƯNG NOMI'},
     {role: 'ANIMATOR', names: 'VĂN PHÚ, ANH KHANG, TRƯƠNG HUY'},
-    {role: 'COMPOSITING ARTISTS', names: 'DATTO, OUTLASTZEDD'},
+    {role: 'COMPOSITING ARTIST', names: 'DATTO, OUTLASTZEDD'},
     {role: 'SOUND ARTIST', names: 'MKM, HOÀNG JEMI'},
     {role: '3D ARTIST', names: 'NGUYỄN HOÀNG KHANG'},
     {role: 'CONCEPT ARTIST', names: 'TRUNG BÁ'},

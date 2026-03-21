@@ -31,21 +31,11 @@ export default function WhoWeAre() {
                             WHO WE ARE <span className={styles.lightning}>⚡</span>
                         </motion.h2>
                         <motion.p className={styles.body} variants={fadeUp} custom={1}>
-                            Vũ SiNo – Người sáng lập SiNo Studio
+                            Sino Studio khởi nguồn từ khát vọng của một người trẻ mang trong mình sứ mệnh phát triển hoạt hình Việt Nam. Từ một bước đi đơn độc, tầm nhìn ấy đã kết nối những con người đầu tiên và từ đó chúng tôi hình thành, lớn mạnh và không ngừng mở rộng.
                             <br/>
-                            Bắt đầu thành lập Sino studio khi chỉ có một mình, Vũ Sino đã tự làm hết tất cả các vị trí
-                            của
-                            một
-                            studio hoạt hình trong những năm đầu tiên. Kết thúc sự thành công của series tây du kí genz,
-                            Sino
-                            chuyển sang con đường âm nhạc và gặt hái thành công với những bài hit như Chàng trai bất tử,
-                            yêu
-                            em
-                            trong mơ, không thể có,...
+                            Trải qua 6 năm bền bỉ ăn ngủ cùng hoạt hình, Sino Studio đã xây dựng được một hệ sinh thái sản phẩm đa dạng với nhiều dự án đạt hàng chục triệu lượt xem, ghi dấu ấn rõ nét trên thị trường.
                             <br/><br/>
-                            Mục tiêu của Vũ và SiNo Studio luôn chỉ có một đó là cho thế giới biết nhiều hơn về Việt Nam
-                            qua
-                            hoạt hình!
+                            Hướng tới tương lai, chúng tôi tập trung mở rộng hợp tác, phát triển các dự án phim ảnh chiến lược và từng bước hiện thực hóa mục tiêu đưa hoạt hình Việt vươn xa.
                         </motion.p>
                         <motion.div variants={fadeUp} custom={2}>
                             <Link href="/about" className={styles.exploreBtn}>

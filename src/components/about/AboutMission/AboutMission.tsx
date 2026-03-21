@@ -43,8 +43,7 @@ export default function AboutMission() {
                     <motion.div className={styles.statementBlock} variants={fadeUp} custom={0}>
                         <span className={styles.statementLabel}>MISSION</span>
                         <p className={styles.statementBody}>
-                            To create high-quality animated products that are deeply rooted in Vietnamese
-                            identity while delivering exceptional artistic and entertainment value.
+                            Tạo ra các sản phẩm hoạt hình chất lượng, mang đậm bản sắc Việt và có giá trị nghệ thuật, giải trí cao.
                         </p>
                     </motion.div>
 
@@ -54,7 +53,7 @@ export default function AboutMission() {
                     <motion.div className={styles.statementBlock} variants={fadeUp} custom={2}>
                         <span className={styles.statementLabel}>VISION</span>
                         <p className={styles.statementBody}>
-                            To be the pioneer studio bringing Vietnamese animation to a global audience.
+                            Trở thành studio tiên phong đưa hoạt hình Việt Nam tiếp cận khán giả toàn cầu.
                         </p>
                     </motion.div>
                 </motion.div>
@@ -71,9 +70,7 @@ export default function AboutMission() {
                 <div className={styles.strengthsInner}>
                     <span className={styles.strengthsLabel}>STRENGTHS</span>
                     <p className={styles.strengthsBody}>
-                        A renowned animation brand recognized by millions, with cost-optimized processes
-                        and expert personnel across all departments — including music, voice acting,
-                        SFX, and media.
+                        Là thương hiệu hoạt hình được hàng triệu khán giả biết đến, quy trình tối ưu chi phí. Có kinh nghiêm và nhân sự trong tất cả bộ phận từ âm nhạc, lồng tiếng, SFX, truyền thông,...
                     </p>
                 </div>
             </motion.section>
