@@ -1,8 +1,8 @@
 'use client';
 
-import {useState} from 'react';
+import {useState, useRef, useEffect} from 'react';
 import Image from 'next/image';
-import {motion, type Variants} from 'framer-motion';
+import {motion, AnimatePresence, type Variants} from 'framer-motion';
 import {useMediaQuery} from '@mantine/hooks';
 import {Modal, Tooltip, Text} from '@mantine/core';
 import {CHARACTER_ORDER, IP_DATA} from '@/data/ip-data';
@@ -17,17 +17,67 @@ const fadeUp: Variants = {
     }),
 };
 
+const glitchVariant: Variants = {
+    initial: {
+        x: 0,
+        y: 0,
+        scale: 1,
+        skewX: 0,
+        filter: 'none',
+        opacity: 1,
+    },
+    hover: {
+        x: [-3, 5, -1, 6, -4, 2, 0, -5, 3, 0],
+        y: [0, -2, 3, -1, 2, -3, 0, 1, -2, 0],
+        skewX: [0, -2, 1, 3, -1, 0, 2, -3, 0],
+        scale: [1, 1.05, 1.02, 1.07, 1, 1.04, 1],
+        filter: [
+            'none',
+            'drop-shadow(3px 0 0 rgba(255,0,0,0.9)) drop-shadow(-3px 0 0 rgba(0,255,255,0.9)) brightness(1.2)',
+            'hue-rotate(50deg) brightness(0.7)',
+            'drop-shadow(0 0 10px rgba(255,0,0,1)) contrast(1.6)',
+            'drop-shadow(-4px 0 0 rgba(255,0,80,0.9)) drop-shadow(4px 0 0 rgba(0,200,255,0.9)) brightness(1.5)',
+            'hue-rotate(200deg) saturate(3) brightness(0.8)',
+            'none',
+        ],
+        opacity: [1, 0.9, 1, 0.12, 1, 0.85, 1, 0.3, 1],
+        transition: {
+            duration: 0.35,
+            repeat: Infinity,
+            repeatType: 'mirror',
+            ease: 'linear',
+        },
+    },
+};
+
 const moveDown = ['a-vu', 'hien-luong', 'linh', 'nachi'];
 
 export default function BrandEquityShowcase() {
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+    const [jumpscareActive, setJumpscareActive] = useState(false);
+    const jumpscareTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const isMobile = useMediaQuery('(max-width: 767px)');
+
+    // Start 5-second timer when modal 4 is open; reset on any other modal
+    useEffect(() => {
+        if (jumpscareTimerRef.current) {
+            clearTimeout(jumpscareTimerRef.current);
+            jumpscareTimerRef.current = null;
+        }
+        if (selectedIndex === 4) {
+            jumpscareTimerRef.current = setTimeout(() => setJumpscareActive(true), 5_000);
+        }
+        return () => {
+            if (jumpscareTimerRef.current) clearTimeout(jumpscareTimerRef.current);
+        };
+    }, [selectedIndex]);
 
     const characters = CHARACTER_ORDER.map((id) => IP_DATA[id]);
     const selected = selectedIndex !== null ? characters[selectedIndex] : null;
 
     const openModal = (i: number) => setSelectedIndex(i);
-    const closeModal = () => setSelectedIndex(null);
+    const closeModal = () => { setSelectedIndex(null); setJumpscareActive(false); };
+    const dismissJumpscare = () => { setJumpscareActive(false); closeModal(); };
     const prev = () =>
         setSelectedIndex((cur) =>
             cur !== null ? (cur - 1 + characters.length) % characters.length : null,
@@ -142,9 +192,10 @@ export default function BrandEquityShowcase() {
                     <Tooltip label={characters[4].name} position="top" withArrow
                              events={{hover: true, focus: true, touch: false}}>
                         <div className={styles.charHa}>
-                            <motion.div whileHover={{scale: 1.08}}
-                                        transition={{type: 'spring', stiffness: 300, damping: 20}}
-                                        onClick={() => openModal(4)}>
+                            {/*<motion.div whileHover={{scale: 1.08, opacity: 0.25}}*/}
+                            {/*            transition={{type: 'spring', stiffness: 300, damping: 20}}*/}
+                            {/*            onClick={() => openModal(4)}>*/}
+                            <motion.div variants={glitchVariant} initial="initial" whileHover="hover" onClick={() => openModal(4)}>
                                 <Image src={characters[4].imageUrl} alt={characters[4].name}
                                        width={characters[4].imageW} height={characters[4].imageH} sizes="25vw"
                                        className={styles.characterImg}/>
@@ -354,6 +405,41 @@ export default function BrandEquityShowcase() {
                     </div>
                 )}
             </Modal>
+
+            {/* ── Jumpscare ──────────────────────────────────────────────── */}
+            {/* Fires after 5 s while modal 4 (Hạ) stays open.              */}
+            {/* Replace src paths below with real assets before shipping.   */}
+            <AnimatePresence>
+                {jumpscareActive && (
+                    <motion.div
+                        className={styles.jumpscareOverlay}
+                        initial={{opacity: 0}}
+                        animate={{opacity: 1}}
+                        exit={{opacity: 0}}
+                        transition={{duration: 0.06}}
+                        onClick={dismissJumpscare}
+                    >
+                        <motion.div
+                            className={styles.jumpscareImgWrapper}
+                            initial={{scale: 0.04, rotate: -8}}
+                            animate={{scale: 1.2, rotate: 3}}
+                            transition={{duration: 0.12, ease: [0.2, 0, 0.8, 1]}}
+                        >
+                            {/* TODO: replace with actual jumpscare image */}
+                            <Image
+                                src="/images/brand-equity/jumpscare.webp"
+                                alt=""
+                                width={0}
+                                height={0}
+                                sizes="100vw"
+                                className={styles.jumpscareImg}
+                            />
+                        </motion.div>
+                        {/* TODO: replace with actual jumpscare sound */}
+                        <audio src="/music/brand-equity/jumpscare.mp3" autoPlay/>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </section>
     );
 }

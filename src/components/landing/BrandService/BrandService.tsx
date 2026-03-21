@@ -33,8 +33,7 @@ export default function BrandService() {
                         BRAND EQUITY
                     </motion.h2>
                     <motion.p className={styles.panelDesc} variants={fadeUp} custom={1}>
-                        Enter the Garden is an anime anthology series created in
-                        collaboration with Dentsu and Goro Taniguchi.
+                        Từ ý tưởng đến IP sáng tạo, Sino Studio xây dựng giá trị thương hiệu qua hàng triệu lượt tiếp cận trên nền tảng số.
                     </motion.p>
                     <MotionLink href="/brand-equity" className={styles.learnBtn} variants={fadeUp} custom={2}>
                         LEARN MORE <IconArrowRight size={16} stroke={2} />
@@ -68,11 +67,10 @@ export default function BrandService() {
                     viewport={{once: true, amount: 0.3}}
                 >
                     <motion.h2 className={styles.panelTitle} variants={fadeUp} custom={0}>
-                        SERVICE
+                        SERVICES
                     </motion.h2>
                     <motion.p className={styles.panelDesc} variants={fadeUp} custom={1}>
-                        Explore the Azuki universe from the alley to the
-                        garden through interactive web experiences.
+                        Sino Studio mang đến các giải pháp sáng tạo từ animation, motion design đến phát triển IP gốc.
                     </motion.p>
                     <MotionLink href="/services" className={styles.learnBtn} variants={fadeUp} custom={2}>
                         LEARN MORE <IconArrowRight size={16} stroke={2} />

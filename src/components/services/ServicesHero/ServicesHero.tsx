@@ -33,7 +33,7 @@ export default function ServicesHero() {
 
                 <motion.p className={styles.sub} variants={fadeUp} custom={2} initial="hidden" animate="visible">
                     Sino Studio cung cấp các dịch vụ sáng tạo từ phim hoạt hình, thiết kế tĩnh &amp; motion,
-                    đến visual sự kiện và IP gốc — tất cả với phong cách đậm chất Việt Nam.
+                    đến visual sự kiện và IP gốc - tất cả với phong cách đậm chất Việt Nam.
                 </motion.p>
             </div>
         </section>

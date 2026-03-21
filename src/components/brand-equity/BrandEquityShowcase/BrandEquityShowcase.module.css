@@ -150,6 +150,11 @@
     transform: translateX(3vw);
 }
 
+/*.charHa:hover {*/
+/*    opacity: 0.25;*/
+/*    transition: opacity 0.3s ease-in-out;*/
+/*}*/
+
 .charSino {
     width: 9%; /* 881×1812 → shorter character, ~20vw target height */
     transform: translateX(1vw);
@@ -460,6 +465,36 @@
         height: 40px;
         font-size: 24px;
     }
+}
+
+/* ─── Jumpscare ──────────────────────────────────────────────────── */
+
+.jumpscareOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.jumpscareImgWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.jumpscareImg {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    object-fit: cover;
+    display: block;
 }
 
 /* ─── Desktop ────────────────────────────────────────────────────── */

@@ -1,14 +1,14 @@
 import styles from './Footer.module.css';
 import Image from 'next/image';
-import {SimpleGrid, Group, Stack, ActionIcon, Text, Anchor} from '@mantine/core';
-import {IconBrandFacebook, IconBrandInstagram, IconBrandTiktok, IconBrandYoutube} from '@tabler/icons-react';
+import {ActionIcon, Anchor, Group, SimpleGrid, Stack, Text} from '@mantine/core';
+import {IconBrandFacebook, IconBrandTiktok, IconBrandYoutube} from '@tabler/icons-react';
 
 const navLinks = [
     {label: 'PROJECTS', href: '/projects'},
-    {label: 'ABOUT', href: '#about'},
-    {label: 'PROCEDURES', href: '#procedure'},
-    {label: 'TEAM', href: '#team'},
-    {label: 'JOIN', href: '#join'},
+    {label: 'ABOUT', href: '/about'},
+    {label: 'BRAND EQUITY', href: '/brand-equity'},
+    {label: 'SERVICES', href: '/services'},
+    {label: 'CONTACT US', href: '/contact-us'},
 ];
 
 const socialLinks = [
@@ -54,10 +54,10 @@ export default function Footer() {
 
                     {/* Contact */}
                     <Stack gap={8}>
-                        <Text className={styles.contactItem}>095 378 91 22</Text>
-                        <Text className={styles.contactItem}>SINOSTUDIO.F@GMAIL.COM</Text>
+                        {/*<Text className={styles.contactItem}>phonr number</Text>*/}
+                        <Text className={styles.contactItem}>CONTACT@SINOSTUDIO.VN</Text>
                         <Text className={styles.contactItem}>
-                            3/9 ĐƯỜNG SỐ 10, PHƯỜNG HIỆP BÌNH,{'\n'}THỦ ĐỨC
+                            3/9 ĐƯỜNG SỐ 10, PHƯỜNG HIỆP BÌNH, THỦ ĐỨC, HỒ CHÍ MINH
                         </Text>
                     </Stack>
 
@@ -85,7 +85,7 @@ export default function Footer() {
                 </SimpleGrid>
 
                 <div className={styles.bottomBar}>
-                    <p>TẤT CẢ HÌNH ẢNH TRÊN WEBSITE ĐỀU THUỘC SỞ HỮU BỞI SINO STUDIO ©</p>
+                    <p>TẤT CẢ SẢN PHẨM TRÊN WEBSITE ĐỀU THUỘC QUYỀN SỞ HỮU BỞI SINO STUDIO ©</p>
                 </div>
             </div>
         </footer>

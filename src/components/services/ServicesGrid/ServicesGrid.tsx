@@ -58,7 +58,7 @@ const blocks: Block[] = [
     },
     {
         kind: 'image',
-        src: '/images/projects/ngoc-bao-khi/color-script-1.webp',
+        src: '/images/services/animated-series.webp',
         alt: 'Animated Series / Web Series',
         label: 'Animated Series / Web Series',
         sub: 'Phim hoạt hình nhiều tập cho YouTube, OTT hoặc brand series.',
@@ -66,7 +66,7 @@ const blocks: Block[] = [
     /* Row 3 – left: TVC image, right: trailer image */
     {
         kind: 'image',
-        src: '/images/projects/tet-lien-quan-2026/hero.webp',
+        src: '/images/services/tvc-animation.webp',
         alt: 'TVC Animation',
         label: 'TVC Animation',
         sub: 'TVC 2D, 3D hoặc hybrid.',
@@ -94,7 +94,7 @@ const blocks: Block[] = [
     /* Row 5 – left: MV image, right: TVC image */
     {
         kind: 'image',
-        src: '/images/projects/ngoc-bao-khi/characters-1.webp',
+        src: '/images/services/mv-animation.webp',
         alt: 'MV Animation',
         label: 'MV Animation',
         sub: 'MV anime, lyric MV, visual MV.',

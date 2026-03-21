@@ -10,7 +10,7 @@ import Link from 'next/link';
 import {usePathname} from "next/navigation";
 import {IconMenu2} from "@tabler/icons-react";
 
-const otherNavItems = [
+const navItems = [
     {label: 'About', href: '/about'},
     {label: 'Projects', href: '/projects'},
     {label: 'Services', href: '/services'},
@@ -18,23 +18,12 @@ const otherNavItems = [
     {label: 'Contact', href: '/contact-us'},
 ];
 
-const landingNavItems = [
-    {label: 'About', href: '#about'},
-    {label: 'Projects', href: '#projects'},
-    {label: 'Services', href: '#brand-equity-services'},
-    {label: 'Brand Equity', href: '#brand-equity-services'},
-    {label: 'Contact', href: '/contact-us'},
-]
-
 export default function Navbar() {
     const pathname = usePathname();
-    const isLandingPage = pathname === '/';
     const isContactPage = pathname === '/contact-us';
     const [scroll] = useWindowScroll();
     const [opened, {open, close}] = useDisclosure(false);
     const [active, setActive] = useState<string | null>(null);
-    const navItems = isLandingPage ? landingNavItems : otherNavItems;
-
     const scrolled = scroll.y > 60;
 
     return (
