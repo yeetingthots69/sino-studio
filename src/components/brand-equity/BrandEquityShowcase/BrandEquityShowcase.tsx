@@ -25,24 +25,24 @@ const glitchVariant: Variants = {
         skewX: 0,
         filter: 'none',
         opacity: 1,
+        transition: {duration: 0.15, ease: 'easeOut'},
     },
     hover: {
-        x: [-3, 5, -1, 6, -4, 2, 0, -5, 3, 0],
-        y: [0, -2, 3, -1, 2, -3, 0, 1, -2, 0],
-        skewX: [0, -2, 1, 3, -1, 0, 2, -3, 0],
-        scale: [1, 1.05, 1.02, 1.07, 1, 1.04, 1],
+        x: [-1, 2, -1, 3, -2, 1, 0, -2, 1, 0],
+        y: [0, -1, 1, 0, 1, -1, 0, 0, -1, 0],
+        skewX: [0, -1, 0, 1, -0.5, 0, 0.5, -1, 0],
+        scale: [1, 1.03, 1.01, 1.04, 1, 1.02, 1],
         filter: [
             'none',
-            'drop-shadow(3px 0 0 rgba(255,0,0,0.9)) drop-shadow(-3px 0 0 rgba(0,255,255,0.9)) brightness(1.2)',
-            'hue-rotate(50deg) brightness(0.7)',
-            'drop-shadow(0 0 10px rgba(255,0,0,1)) contrast(1.6)',
-            'drop-shadow(-4px 0 0 rgba(255,0,80,0.9)) drop-shadow(4px 0 0 rgba(0,200,255,0.9)) brightness(1.5)',
-            'hue-rotate(200deg) saturate(3) brightness(0.8)',
+            'drop-shadow(2px 0 0 rgba(255,0,0,0.6)) drop-shadow(-2px 0 0 rgba(0,255,255,0.6)) brightness(1.1)',
+            'hue-rotate(30deg) brightness(0.9)',
+            'drop-shadow(0 0 6px rgba(255,0,0,0.7)) contrast(1.3)',
+            'drop-shadow(-2px 0 0 rgba(255,0,80,0.6)) drop-shadow(2px 0 0 rgba(0,200,255,0.6))',
             'none',
         ],
-        opacity: [1, 0.9, 1, 0.12, 1, 0.85, 1, 0.3, 1],
+        opacity: [1, 0.95, 1, 0.4, 1, 0.9, 1, 0.6, 1],
         transition: {
-            duration: 0.35,
+            duration: 0.5,
             repeat: Infinity,
             repeatType: 'mirror',
             ease: 'linear',
@@ -65,12 +65,20 @@ export default function BrandEquityShowcase() {
             jumpscareTimerRef.current = null;
         }
         if (selectedIndex === 4) {
-            jumpscareTimerRef.current = setTimeout(() => setJumpscareActive(true), 5_000);
+            jumpscareTimerRef.current = setTimeout(() => setJumpscareActive(true), 5_000 * 1);
         }
         return () => {
             if (jumpscareTimerRef.current) clearTimeout(jumpscareTimerRef.current);
         };
     }, [selectedIndex]);
+
+    // Auto-dismiss jumpscare after 5 seconds
+    useEffect(() => {
+        if (!jumpscareActive) return;
+        const id = setTimeout(() => dismissJumpscare(), 5_000);
+        return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [jumpscareActive]);
 
     const characters = CHARACTER_ORDER.map((id) => IP_DATA[id]);
     const selected = selectedIndex !== null ? characters[selectedIndex] : null;
@@ -425,18 +433,21 @@ export default function BrandEquityShowcase() {
                             animate={{scale: 1.2, rotate: 3}}
                             transition={{duration: 0.12, ease: [0.2, 0, 0.8, 1]}}
                         >
-                            {/* TODO: replace with actual jumpscare image */}
                             <Image
                                 src="/images/brand-equity/jumpscare.webp"
                                 alt=""
                                 width={0}
                                 height={0}
                                 sizes="100vw"
+                                priority
                                 className={styles.jumpscareImg}
                             />
                         </motion.div>
-                        {/* TODO: replace with actual jumpscare sound */}
-                        <audio src="/music/brand-equity/jumpscare.mp3" autoPlay/>
+                        <audio
+                            src="/music/brand-equity/jumpscare.mp3"
+                            autoPlay
+                            ref={(el) => { if (el) el.volume = 0.6; }}
+                        />
                     </motion.div>
                 )}
             </AnimatePresence>
