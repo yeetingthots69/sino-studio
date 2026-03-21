@@ -2,7 +2,7 @@
 
 .section {
     background-color: var(--color-black);
-    padding: 64px 24px 72px;
+    padding: 64px 0 72px;
 }
 
 /* ─── Heading ────────────────────────────────────────────────────── */
@@ -23,76 +23,172 @@
     line-height: 1;
 }
 
-/* ─── Desktop grid ───────────────────────────────────────────────── */
+/* ─── Cloud section ─────────────────────────────────────────────── */
 
-.grid {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px 16px;
-}
-
-/* ─── Card ───────────────────────────────────────────────────────── */
-
-.card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    cursor: default;
-}
-
-.cardImg {
+.cloudSection {
+    aspect-ratio: 16 / 9; /* matches video native ratio (1920×1080) */
     position: relative;
     width: 100%;
-    aspect-ratio: 1 / 1;
-    border-radius: 14px;
+    margin: 0 auto;
     overflow: hidden;
-    background: #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.cardName {
-    font-family: var(--font-heading);
-    font-size: clamp(11px, 1.2vw, 14px);
-    font-weight: 700;
-    color: var(--color-white);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    text-align: center;
-}
-
-/* ─── Carousel (mobile) ─────────────────────────────────────────── */
-
-.carousel {
-    padding-bottom: 32px;
-}
-
-.slideInner {
-    padding: 4px 4px 8px;
-}
-
-.indicators {
+/* Bottom-anchored video: as the section shrinks, the top is clipped */
+.cloudVideo {
+    position: absolute;
     bottom: 0;
-    gap: 6px;
+    left: 0;
+    width: 100%;
+    height: auto; /* preserves 16:9 ratio, natural height from width */
+    z-index: 0;
 }
 
-.indicator {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.25);
-    transition: background 0.2s;
+.cloudBg {
+    object-fit: cover;
+    object-position: center bottom;
+    z-index: 0;
 }
 
-.indicator[data-active] {
-    background: var(--color-red);
-    width: 20px;
-    border-radius: 3px;
+.cloudOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+            to bottom,
+            var(--color-black) 0%,
+            rgba(10, 10, 10, 0.4) 35%,
+            transparent 65%
+    );
+    z-index: 1;
+    pointer-events: none;
 }
 
-/* ─── Footer tag ────────────────────────────────────────────────── */
+.logoWrapper {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
+.logo {
+    width: clamp(120px, 30vw, 440px);
+    height: auto;
+}
+
+/* ─── Character row ─────────────────────────────────────────────── */
+
+.characterRow {
+    position: absolute;
+    bottom: 6%;
+    left: 0;
+    right: 0;
+    width: 100vw;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 2;
+    padding: 0 8px;
+}
+
+/* ─── Shared character base ─────────────────────────────────────── */
+
+.charMaBaDong,
+.charAVu,
+.charHeny,
+.charHienLuong,
+.charHa,
+.charSino,
+.charLinh,
+.charNachi,
+.charVu,
+.charBoss {
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    /*
+     * HOW TO POSITION CHARACTERS
+     * ─────────────────────────────────────────────────────────────────
+     * Each character's `width` is calculated so all characters render
+     * at the same physical height (≈ 65% of the cloud section).
+     * Formula: target_height_vw × (img_w / img_h)
+     *
+     * To nudge a character, use transform only — never margin or left:
+     *   transform: translateX(Xvw) translateY(Yvh)
+     *     positive X = right,  negative X = left
+     *     positive Y = down,   negative Y = up
+     * vw/vh units keep the ratios identical at every screen size.
+     * transform is invisible to flex, so the group stays centered.
+     */
+}
+
+/* ─── Per-character tweaks ──────────────────────────────────────── */
+/* Widths derived from: 25vw target height × (img_w / img_h)        */
+/* All 10 sum to ~100% so no unintended horizontal overflow.         */
+
+.charMaBaDong {
+    width: 17%; /* 1927×3240 → 25vw × 0.595 */
+    transform: translateX(10vw);
+}
+
+.charAVu {
+    width: 8%; /* 783×2560 → 25vw × 0.306 */
+    transform: translateX(7vw);
+}
+
+.charHeny {
+    width: 9%; /* 950×2560 → 25vw × 0.371 */
+    transform: translateX(5vw);
+}
+
+.charHienLuong {
+    width: 7%; /* 766×2560 → 25vw × 0.299 */
+    transform: translateX(3vw);
+}
+
+.charHa {
+    width: 8%; /* 824×2560 → 25vw × 0.322 */
+    transform: translateX(3vw);
+}
+
+.charSino {
+    width: 9%; /* 881×1812 → shorter character, ~20vw target height */
+    transform: translateX(1vw);
+    z-index: 1;
+}
+
+.charLinh {
+    width: 10%; /* 1012×2560 → 25vw × 0.395 */
+    transform: translateX(-1vw);
+}
+
+.charNachi {
+    width: 10%; /* 1032×2475 → 25vw × 0.417 */
+    transform: translateX(-3vw);
+    z-index: 2;
+}
+
+.charVu {
+    width: 10.5%; /* 956×2560 → 25vw × 0.373 */
+    transform: translateX(-7vw);
+    z-index: 1;
+}
+
+.charBoss {
+    width: 20%; /* 2218×4029 → 25vw × 0.550 */
+    transform: translateX(-10vw);
+    z-index: -1;
+}
+
+/* ─── Character image ────────────────────────────────────────────── */
+/* Fills the wrapper width, auto height → preserves 1080×1920 ratio. */
+
+.characterImg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ─── Tag line ──────────────────────────────────────────────────── */
 
 .tag {
     text-align: center;
@@ -100,31 +196,288 @@
     font-weight: 500;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.30);
-    margin: 48px auto 0;
+    color: rgba(255, 255, 255, 0.3);
+    margin: 24px auto 48px;
+}
+
+/* ─── 5×2 Card grid ─────────────────────────────────────────────── */
+
+.cardGrid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.gridCard {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    cursor: pointer;
+    border-radius: 10px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #d60000, #830000);
+    min-height: clamp(70px, 14vw, 110px);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gridCard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(214, 0, 0, 0.4);
+}
+
+.gridCardName {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    font-family: var(--font-heading);
+    font-size: clamp(14px, 3vw, 18px);
+    font-weight: 800;
+    color: var(--color-white);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-align: left;
+    padding: 8px 10px;
+    line-height: 1.2;
+}
+
+.gridCardImg {
+    position: relative;
+    flex-shrink: 0;
+    width: 50%;
+    align-self: stretch;
+    overflow: hidden;
+}
+
+.gridCardImgEl {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.gridCardSino {
+    width: 80%;
+}
+
+/* ─── Modal ─────────────────────────────────────────────────────── */
+
+.modalOverlay {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+}
+
+.modalContent {
+    background: var(--color-dark);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+}
+
+.modalHeader {
+    background: transparent;
+    border-bottom: none;
+    padding: 12px 16px;
+}
+
+.modalClose {
+    color: var(--color-white);
+}
+
+.modalClose:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.modalBody {
+    padding: 0;
+}
+
+.modalInner {
+    position: relative;
+    padding: 8px 60px 24px;
+}
+
+.modalLayout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.modalImageCol {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 280px;
+}
+
+.modalCharImg {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+}
+
+.modalDetailsCol {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.modalCharName {
+    font-family: var(--font-heading);
+    font-size: clamp(24px, 5vw, 40px);
+    font-weight: 900;
+    color: var(--color-red);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0;
+}
+
+.modalField {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.modalLabel {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.45);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+}
+
+.modalValue {
+    font-size: 14px;
+    color: var(--color-white);
+    line-height: 1.65;
+    margin: 0;
+}
+
+/* ─── Modal navigation ──────────────────────────────────────────── */
+
+.navArrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-white);
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+    z-index: 10;
+}
+
+.navArrow:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.navPrev {
+    left: 8px;
+}
+
+.navNext {
+    right: 8px;
+}
+
+.modalDots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.2s, width 0.2s, border-radius 0.2s;
+}
+
+.dotActive {
+    background: var(--color-red);
+    width: 20px;
+    border-radius: 4px;
 }
 
 /* ─── Tablet ─────────────────────────────────────────────────────── */
 
 @media (min-width: 768px) {
-    .section {
-        padding: 72px 40px 80px;
+    .logoWrapper {
+        top: 6%;
     }
 
-    .grid {
-        gap: 24px 20px;
+    .cardGrid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+    }
+
+    .gridCardName {
+        font-size: clamp(9px, 1.1vw, 13px);
+    }
+
+    .modalLayout {
+        flex-direction: row;
+        gap: 32px;
+        align-items: flex-start;
+    }
+
+    .modalImageCol {
+        flex: 0 0 40%;
+        min-height: 380px;
+    }
+
+    .modalCharImg {
+        max-height: 420px;
+    }
+
+    .modalDetailsCol {
+        flex: 1;
+        gap: 20px;
+    }
+
+    .navArrow {
+        width: 40px;
+        height: 40px;
+        font-size: 24px;
     }
 }
 
 /* ─── Desktop ────────────────────────────────────────────────────── */
 
 @media (min-width: 1024px) {
-    .section {
-        padding: 80px 60px 96px;
+    .logoWrapper {
+        position: absolute;
+        top: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
     }
 
-    .cardImg {
-        border-radius: 18px;
+    .cardGrid {
+        gap: 12px;
+    }
+
+    .gridCardName {
+        font-size: 22px;
     }
 }
-

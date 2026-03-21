@@ -2,41 +2,37 @@
 
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { useMediaQuery } from '@mantine/hooks';
-import { Carousel } from '@mantine/carousel';
-import AutoScroll from 'embla-carousel-auto-scroll';
-import '@mantine/carousel/styles.css';
+import { MasonryPhotoAlbum } from 'react-photo-album';
+import 'react-photo-album/masonry.css';
 import { type ProjectMetaData } from '@/data/project-data';
 import styles from './Fanart.module.css';
 
-/** Choose the most square-ish grid for N images: prefer 4 cols, fall back gracefully */
-function gridCols(count: number): number {
-    // Special cases:
-    if (count === 4) return 2;
-    if (count === 5) return 3;
-    // General cases
-    if (count % 4 === 0) return 4;
-    if (count % 3 === 0) return 3;
-    if (count % 2 === 0) return 4;
-    return 4;
-}
+/** Cycling fallback dimensions to produce layout variety when real dims are unknown */
+const DEFAULT_DIMS = [
+    { w: 1920, h: 1080 }, // landscape 16:9
+    { w: 1080, h: 1350 }, // portrait 4:5
+    { w: 1080, h: 1080 }, // square 1:1
+    { w: 1920, h: 1080 }, // landscape 16:9
+    { w: 1350, h: 1080 }, // wide 5:4
+];
 
 interface Props {
     project: ProjectMetaData;
 }
 
 export default function Fanart({ project }: Props) {
-    const isDesktop = useMediaQuery('(min-width: 1024px)');
-    const autoScroll = AutoScroll({ speed: 2, stopOnInteraction: false, stopOnMouseEnter: true, startDelay: 0 });
-
     const count = project.fanartCount ?? 12;
-    const cols  = gridCols(count);
 
-    const images = Array.from({ length: count }, (_, i) => ({
-        id: i + 1,
-        src: `/images/projects/${project.id}/fanart-${i + 1}.webp`,
-        alt: `${project.title} fanart ${i + 1}`,
-    }));
+    const photos = Array.from({ length: count }, (_, i) => {
+        const dims = project.fanartDimensions?.[i] ?? DEFAULT_DIMS[i % DEFAULT_DIMS.length];
+        return {
+            key: String(i + 1),
+            src: `/images/projects/${project.id}/fanart-${i + 1}.webp`,
+            alt: `${project.title} fanart ${i + 1}`,
+            width: dims.w,
+            height: dims.h,
+        };
+    });
 
     return (
         <section id="fanart" className={styles.section}>
@@ -51,57 +47,37 @@ export default function Fanart({ project }: Props) {
                 <h2 className={styles.bannerTitle}>FANART</h2>
             </motion.div>
 
-            {/* ── Desktop: flush grid ── */}
-            {isDesktop && (
-                <motion.div
-                    className={styles.grid}
-                    style={{ '--grid-cols': cols } as React.CSSProperties}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.1 }}
-                    transition={{ duration: 0.6 }}
-                >
-                    {images.map((img) => (
-                        <div key={img.id} className={styles.cell}>
+            {/* ── Masonry grid (all screen sizes) ── */}
+            <motion.div
+                className={styles.albumWrapper}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ duration: 0.6 }}
+            >
+                <MasonryPhotoAlbum
+                    photos={photos}
+                    columns={(containerWidth) => {
+                        if (containerWidth < 640) return 2;
+                        if (containerWidth < 1024) return 3;
+                        return 4;
+                    }}
+                    spacing={10}
+                    componentsProps={{ wrapper: { className: styles.photo } }}
+                    render={{
+                        image: (imageProps, { photo }) => (
                             <Image
-                                src={img.src}
-                                alt={img.alt}
-                                fill
-                                sizes="25vw"
-                                style={{ objectFit: 'cover' }}
+                                src={photo.src}
+                                alt={imageProps.alt ?? photo.alt}
+                                width={photo.width}
+                                height={photo.height}
+                                sizes={imageProps.sizes}
+                                style={{ width: '100%', height: 'auto', display: 'block' }}
                             />
-                        </div>
-                    ))}
-                </motion.div>
-            )}
-
-            {/* ── Mobile / Tablet: continuous auto-scroll carousel ── */}
-            {!isDesktop && (
-                <Carousel
-                    plugins={[autoScroll]}
-                    slideSize={{ base: '83%', sm: '46%' }}
-                    slideGap="md"
-                    emblaOptions={{ loop: true, dragFree: true, align: 'center' }}
-                    withControls={false}
-                    withIndicators={false}
-                    className={styles.carousel}
-                >
-                    {images.map((img) => (
-                        <Carousel.Slide key={img.id}>
-                            <div className={styles.slide}>
-                                <Image
-                                    src={img.src}
-                                    alt={img.alt}
-                                    fill
-                                    sizes="(max-width: 767px) 83vw, 46vw"
-                                    style={{ objectFit: 'cover' }}
-                                />
-                            </div>
-                        </Carousel.Slide>
-                    ))}
-                </Carousel>
-            )}
+                        ),
+                    }}
+                />
+            </motion.div>
         </section>
     );
 }
-

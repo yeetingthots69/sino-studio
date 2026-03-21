@@ -25,41 +25,23 @@
     line-height: 1;
 }
 
-/* ── Carousel (mobile / tablet) ─────────────────────────────────── */
-.carousel {
-    padding: 20px 0;
-    width: 100%;
-}
-
-.slide {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-    border-radius: 10px;
-}
-
-/* ── Desktop flush grid ─────────────────────────────────────────── */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(var(--grid-cols, 4), 1fr);
-    gap: 10px;
+/* ── Masonry album wrapper ───────────────────────────────────────── */
+.albumWrapper {
     padding: 10px;
 }
 
-.cell {
+/* ── Individual photo card ──────────────────────────────────────── */
+.photo {
     border-radius: 10px;
-    position: relative;
-    aspect-ratio: 16 / 9;
     overflow: hidden;
+    cursor: default;
 }
 
-/* Subtle hover zoom on desktop */
-.cell img {
+.photo img {
     transition: transform 0.4s ease;
 }
 
-.cell:hover img {
+.photo:hover img {
     transform: scale(1.05);
 }
 
@@ -76,4 +58,3 @@
         padding: 24px 60px;
     }
 }
-

@@ -91,6 +91,65 @@
     box-shadow: 2px 2px 0 #000;
 }
 
+/* ─── Button disabled state ─────────────────────────────────────── */
+.submitBtn:disabled,
+.backBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ─── Error message ──────────────────────────────────────────────── */
+.errorMsg {
+    margin: 0;
+    color: var(--color-red);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* ─── Success feedback panel ─────────────────────────────────────── */
+.feedback {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 32px 16px;
+    text-align: center;
+}
+
+.feedbackIcon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background-color: var(--color-red);
+    color: #fff;
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #000;
+    box-shadow: 3px 3px 0 #000;
+}
+
+.feedbackTitle {
+    margin: 0;
+    color: #fff;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.feedbackBody {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
 /* ─── Tablet+ ───────────────────────────────────────────────────── */
 @media (min-width: 768px) {
     .card {

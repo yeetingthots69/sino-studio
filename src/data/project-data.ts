@@ -35,6 +35,8 @@ export interface ProjectMetaData {
     snippetsCount?: number;
     /** How many fanart images exist (fanart-1.webp … fanart-N.webp). Default: 12 */
     fanartCount?: number;
+    /** Per-image dimensions for react-photo-album. Falls back to a cycling default pattern if omitted. */
+    fanartDimensions?: Array<{ w: number; h: number }>;
     /**
      * Ordered list of background media. Each entry declares its type so the grid
      * can render images (.webp) and videos (.webm) in the same grid without guessing.
@@ -278,6 +280,7 @@ Anh sẽ đi đời sau ta gặp lại
         `,
         firstAired: "28 THÁNG 6, 2024",
         sections: ['snippets', 'video', 'fanart', 'credits'],
+        fanartCount: 18,
         youtubeId: 'WN0itED9Iak',
         videoStats: [
             {label: 'YOUTUBE VIEWS', value: '800K+', color: '#e62d2d'},

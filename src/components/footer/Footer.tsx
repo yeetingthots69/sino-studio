@@ -12,10 +12,9 @@ const navLinks = [
 ];
 
 const socialLinks = [
-    {name: 'Facebook', href: '#', icon: <IconBrandFacebook size={16}/>},
-    {name: 'Instagram', href: '#', icon: <IconBrandInstagram size={16}/>},
-    {name: 'TikTok', href: '#', icon: <IconBrandTiktok size={16}/>},
-    {name: 'YouTube', href: '#', icon: <IconBrandYoutube size={16}/>},
+    {name: 'Facebook', href: 'https://www.facebook.com/profile.php?id=100069323215001', icon: <IconBrandFacebook size={16}/>},
+    {name: 'TikTok', href: 'https://www.tiktok.com/@sino.studio', icon: <IconBrandTiktok size={16}/>},
+    {name: 'YouTube', href: 'https://www.youtube.com/@SiNoStudio', icon: <IconBrandYoutube size={16}/>},
 ];
 
 export default function Footer() {
@@ -75,6 +74,7 @@ export default function Footer() {
                                     variant="subtle"
                                     radius="xl"
                                     size={34}
+                                    target="_blank"
                                     className={styles.socialIcon}
                                 >
                                     {s.icon}

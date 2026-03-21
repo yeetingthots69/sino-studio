@@ -19,17 +19,17 @@ interface TeamMember {
 }
 
 const teamMembers: TeamMember[] = [
-    {role: 'CEO DIRECTOR', names: 'VU SINO'},
-    {role: 'PRODUCER / PROJECT MANAGER', names: 'HOA NGOC'},
-    {role: 'MARKETING & COMMUNICATIONS', names: 'HUYDS'},
-    {role: 'ART DIRECTOR', names: 'TRUONG HANH'},
-    {role: 'STYLE ARTIST', names: 'TRAN QUYNH THU'},
-    {role: 'ANIMATION DIRECTOR', names: 'HUNG NOMI'},
-    {role: 'ANIMATOR', names: 'VAN PHU, ANH KHANG, TRUONG HUY'},
+    {role: 'CEO DIRECTOR', names: 'VŨ SINO'},
+    {role: 'HEAD OF COMMUNICATION', names: 'HOA NGỌC'},
+    {role: 'PROJECT MANAGER', names: 'HUYDS'},
+    {role: 'ART DIRECTOR', names: 'TRƯƠNG HẠNH'},
+    {role: 'STYLE ARTIST', names: 'TRẦN QUỲNH THƯ'},
+    {role: 'ANIMATION DIRECTOR', names: 'HƯNG NOMI'},
+    {role: 'ANIMATOR', names: 'VĂN PHÚ, ANH KHANG, TRƯƠNG HUY'},
     {role: 'COMPOSITING ARTISTS', names: 'DATTO, OUTLASTZEDD'},
-    {role: 'SOUND ARTIST', names: 'MKM, HOANG JEMI'},
-    {role: '3D ARTIST', names: 'NGUYEN HOANG KHANG'},
-    {role: 'CONCEPT ARTIST', names: 'TRUNG BA'},
+    {role: 'SOUND ARTIST', names: 'MKM, HOÀNG JEMI'},
+    {role: '3D ARTIST', names: 'NGUYỄN HOÀNG KHANG'},
+    {role: 'CONCEPT ARTIST', names: 'TRUNG BÁ'},
     {role: '', names: '+ 10 OTHER MEMBERS'},
 ];
 
