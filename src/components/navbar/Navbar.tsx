@@ -2,7 +2,7 @@
 
 import {useState} from 'react';
 import {motion} from 'framer-motion';
-import {useDisclosure, useWindowScroll} from '@mantine/hooks';
+import {useDisclosure} from '@mantine/hooks';
 import {Menu} from '@mantine/core';
 import styles from './Navbar.module.css';
 import Image from 'next/image';
@@ -25,10 +25,8 @@ export default function Navbar() {
     const locale = useLocale();
     const dict = useDictionary();
     const isContactPage = pathname.endsWith('/contact-us');
-    const [scroll] = useWindowScroll();
     const [opened, {open, close}] = useDisclosure(false);
     const [active, setActive] = useState<string | null>(null);
-    const scrolled = scroll.y > 60;
 
     const navItems = NAV_ROUTES.map((route) => ({
         label: dict.nav[route.key],
@@ -38,7 +36,7 @@ export default function Navbar() {
     return (
         <>
             <motion.nav
-                className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}
+                className={styles.navbar}
                 initial={{y: -60, opacity: 0}}
                 animate={{y: 0, opacity: 1}}
                 transition={{duration: 0.6, ease: 'easeOut'}}

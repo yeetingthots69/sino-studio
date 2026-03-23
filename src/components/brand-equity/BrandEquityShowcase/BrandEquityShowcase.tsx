@@ -67,7 +67,7 @@ export default function BrandEquityShowcase() {
             jumpscareTimerRef.current = null;
         }
         if (selectedIndex === 0) {
-            jumpscareTimerRef.current = setTimeout(() => setJumpscareActive(true), 1_000 * 5);
+            jumpscareTimerRef.current = setTimeout(() => setJumpscareActive(true), 5_000 * 1);
         }
         return () => {
             if (jumpscareTimerRef.current) clearTimeout(jumpscareTimerRef.current);
@@ -93,7 +93,7 @@ export default function BrandEquityShowcase() {
 
     const openModal = (i: number) => setSelectedIndex(i);
     const closeModal = () => { setSelectedIndex(null); setJumpscareActive(false); };
-    const dismissJumpscare = () => { setJumpscareActive(false); closeModal(); };
+    const dismissJumpscare = () => { setJumpscareActive(false); };
     const prev = () =>
         setSelectedIndex((cur) =>
             cur !== null ? (cur - 1 + characters.length) % characters.length : null,
@@ -422,9 +422,6 @@ export default function BrandEquityShowcase() {
                 )}
             </Modal>
 
-            {/* ── Jumpscare ──────────────────────────────────────────────── */}
-            {/* Fires after 5 s while modal 4 (Hạ) stays open.              */}
-            {/* Replace src paths below with real assets before shipping.   */}
             <AnimatePresence>
                 {jumpscareActive && (
                     <motion.div
