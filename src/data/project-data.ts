@@ -214,7 +214,7 @@ Em sẽ phải bước tiếp dẫu mình thế nào
 Anh vẫn sẽ ở mãi trong những kỉ niệm
 Lời hứa hôm nay đời sau gặp lại
 
-Có anh đây sẽ ôm em ngày em tệ nhất hoh
+Có anh đây sẽ ôm em ngày em tệ nhất
 Có anh đây sẽ bên em cùng em ngồi mãi trong phòng
 Đến khi em đã quên đi tình yêu của ta ngày ấy
 Anh sẽ đi đời sau ta gặp lại
@@ -223,34 +223,34 @@ Anh sẽ đi đời sau ta gặp lại
             {t: 0, line: '🎵'},
             {t: 43, line: 'Và có lẽ hôm nay là ngày cuối cùng'},
             {t: 46.5, line: 'Anh sẽ không kêu la vì em đến muộn'},
-            {t: 50.5, line: 'Đừng khóc như vậy làm anh lo lắng đấy'},
+            {t: 50.8, line: 'Đừng khóc như vậy làm anh lo lắng đấy'},
             {t: 57.5, line: 'Anh sẽ lau nước mắt để em mỉm cười'},
-            {t: 61.5, line: 'Ta sẽ bên cạnh nhau để ngày sau có nhớ lại'},
-            {t: 66, line: 'Anh sẽ không thấy ân hận'},
-            {t: 70, line: 'Anh vẫn muốn được ở bên em lần cuối'},
-            {t: 77, line: 'Từng giờ từng giây trôi sẽ chỉ có em mà thôi'},
-            {t: 84, line: 'Nếu sau này em yếu đuối khóc mỗi ngày nhưng không nguôi'},
-            {t: 91, line: 'Chẳng ai lau giọt nước mắt nhớ đến anh mãi bên cạnh'},
-            {t: 94, line: 'Có anh đây sẽ ôm em ngày em tệ nhất'},
-            {t: 100, line: 'Có anh đây sẽ bên em cùng em ngồi mãi trong phòng'},
-            {t: 106, line: 'Đến khi em đã quên đi tình yêu của ta ngày ấy'},
-            {t: 112, line: 'Anh sẽ đi đời sau ta gặp lại'},
-            {t: 118, line: 'Đây là lời nhắn cuối cùng anh viết'},
-            {t: 124, line: 'Chỉ còn nỗi nhớ kể hoài không xiết'},
-            {t: 130, line: 'Xin lỗi vì để nỗi buồn ở trong cuộc đời của em'},
-            {t: 136, line: 'Sau này anh sẽ luôn đợi trong mơ'},
-            {t: 142, line: 'Nên là đừng thức đêm nhiều em nhớ'},
-            {t: 148, line: 'Nỗi buồn ngày ấy bây giờ để lại rồi đi tiếp thôi'},
-            {t: 154, line: 'Anh chưa bao giờ muốn ôm chặt thế này'},
-            {t: 160, line: 'Anh sợ phải nghĩ đến tim mình đứng lại'},
-            {t: 166, line: 'Có những điều ta mơ cùng nhau dù chẳng đi được với nhau'},
-            {t: 172, line: 'Em sẽ phải bước tiếp dẫu mình thế nào'},
-            {t: 178, line: 'Anh vẫn sẽ ở mãi trong những kỉ niệm'},
-            {t: 184, line: 'Lời hứa hôm nay đời sau gặp lại'},
-            {t: 190, line: 'Có anh đây sẽ ôm em ngày em tệ nhất hoh'},
-            {t: 196, line: 'Có anh đây sẽ bên em cùng em ngồi mãi trong phòng'},
-            {t: 202, line: 'Đến khi em đã quên đi tình yêu của ta ngày ấy'},
-            {t: 208, line: 'Anh sẽ đi đời sau ta gặp lại'},
+            {t: 60 + 1, line: 'Ta sẽ bên cạnh nhau để ngày sau có nhớ lại'},
+            {t: 60 + 6, line: 'Anh sẽ không thấy ân hận'},
+            {t: 60 + 10, line: 'Anh vẫn muốn được ở bên em lần cuối'},
+            {t: 60 + 17, line: 'Từng giờ từng giây trôi sẽ chỉ có em mà thôi'},
+            {t: 60 + 24.5, line: 'Nếu sau này em yếu đuối khóc mỗi ngày nhưng không nguôi'},
+            {t: 60 + 31.7, line: 'Chẳng ai lau giọt nước mắt nhớ đến anh mãi bên cạnh'},
+            {t: 60 + 40, line: 'Có anh đây sẽ ôm em ngày em tệ nhất'},
+            {t: 60 + 48.5, line: 'Có anh đây sẽ bên em cùng em ngồi mãi trong phòng'},
+            {t: 60 + 55.1, line: 'Đến khi em đã quên đi tình yêu của ta ngày ấy'},
+            {t: 120 + 2, line: 'Anh sẽ đi đời sau ta gặp lại'},
+            {t: 120 + 11.5, line: 'Đây là lời nhắn cuối cùng anh viết'},
+            {t: 120 + 15, line: 'Chỉ còn nỗi nhớ kể hoài không xiết'},
+            {t: 120 + 18.8, line: 'Xin lỗi vì để nỗi buồn ở trong cuộc đời của em'},
+            {t: 120 + 26, line: 'Sau này anh sẽ luôn đợi trong mơ'},
+            {t: 120 + 30, line: 'Nên là đừng thức đêm nhiều em nhớ'},
+            {t: 120 + 33.8, line: 'Nỗi buồn ngày ấy bây giờ để lại rồi đi tiếp thôi'},
+            {t: 120 + 40.9, line: 'Anh chưa bao giờ muốn ôm chặt thế này'},
+            {t: 120 + 44.7, line: 'Anh sợ phải nghĩ đến tim mình đứng lại'},
+            {t: 120 + 48.5, line: 'Có những điều ta mơ cùng nhau dù chẳng đi được với nhau'},
+            {t: 120 + 55.8, line: 'Em sẽ phải bước tiếp dẫu mình thế nào'},
+            {t: 120 + 59.5, line: 'Anh vẫn sẽ ở mãi trong những kỉ niệm'},
+            {t: 180 + 4.5, line: 'Lời hứa hôm nay đời sau gặp lại'},
+            {t: 180 + 8.8, line: 'Có anh đây sẽ ôm em ngày em tệ nhất'},
+            {t: 180 + 16, line: 'Có anh đây sẽ bên em cùng em ngồi mãi trong phòng'},
+            {t: 180 + 23.4, line: 'Đến khi em đã quên đi tình yêu của ta ngày ấy'},
+            {t: 180 + 30.5, line: 'Anh sẽ đi đời sau ta gặp lại'},
         ],
         videoStats: [
             {label: 'YOUTUBE VIEWS', value: '17M+', color: '#e62d2d'},
@@ -284,6 +284,101 @@ Anh sẽ đi đời sau ta gặp lại
         sections: ['snippets', 'video', 'fanart', 'credits'],
         fanartCount: 18,
         youtubeId: 'WN0itED9Iak',
+        lyrics: `🎵
+        
+Ngoài trời là nước mắt rơi tí tách trong vô vọng
+Người vội vàng bước đến khiến ta yêu mãi trong cô độc
+Đơn phương là thế đó, chỉ vài phút giây thôi mà
+Lại làm ta vấn vương?
+
+Lại một lần yếu đuối khi phía trước là bóng người
+Ngầm ngùi cứ như, ở ngay trước mắt mà chẳng thể
+Chẳng thể nắm lấy đôi bàn tay ấy
+Chạy về phía nhau
+
+Ngày em rời đi chẳng nói một câu
+Câu rằng em sẽ đi bao lâu sẽ đến bao lâu về lại
+Sẽ có những câu chuyện mà anh chẳng thể một lần nhìn lại
+Chìm đắm ngay trong cuộc tình cô đơn
+Thà em từ chối
+Dù là sẽ đau nhưng mà sẽ đau một lần
+Và anh sẽ cố quên đi kí ức ngày ấy
+Ngày mà người đến cuộc đời anh
+
+Ah
+Sau vài lần mình thương lại đau
+Chỉ là trái tim nhỏ bé một lần trong đời mình thương hại nhau
+Cả nỗi đau rơi từ khóe mắt chắc cũng đã nói thành lời
+Điều gì đó vô tình ngăn cản mình lại nên đành vậy thôi
+Chơi vơi...siết đi những kí ức thành dòng
+Sao hôm đó em không dừng lại một chút để anh hành động
+Như đứa trẻ một lần như thế anh lại khóc ngay trong đêm
+Không có ngày nào anh được tỉnh táo để mong phút giây trong em
+Có lẽ lần cuối gặp nhau là những tin nhắn muộn màng
+Gặp được em là điều may mắn mặc dù khoảng cách, thời gian
+Nụ cười em vào ngày hôm đó anh mong sẽ không nhớ nữa
+Mặc dù anh biết kí ức về em lúc đó là anh có thừa
+Lần này nữa thôi, rồi cũng sẽ không còn nữa
+Anh xin lần này nữa thôi, anh biết đã mất nhau rồi
+Lần này nữa thôi, tim anh cũng không còn lửa
+Lần này nữa thôi, xin ta đừng quên nhau vội
+Em!
+
+Ngày em rời đi chẳng nói một câu
+Câu rằng em sẽ đi bao lâu sẽ đến bao lâu về lại
+Sẽ có những câu chuyện mà anh chẳng thể một lần nhìn lại
+Chìm đắm ngay trong cuộc tình cô đơn
+Thà em từ chối
+Dù là sẽ đau nhưng mà sẽ đau một lần
+Và anh sẽ cố quên đi kí ức ngày ấy
+Ngày mà người đến cuộc đời anh
+        `,
+        syncedLyrics: [
+            {t: 0, line: '🎵'},
+            {t: 35, line: 'Ngoài trời là nước mắt rơi tí tách trong vô vọng'},
+            {t: 39.9, line: 'Người vội vàng bước đến khiến ta yêu mãi trong cô độc'},
+            {t: 45.4, line: 'Đơn phương là thế đó, chỉ vài phút giây thôi mà'},
+            {t: 50.2, line: 'Lại làm ta vấn vương?'},
+            {t: 56.5, line: 'Lại một lần yếu đuối khi phía trước là bóng người'},
+            {t: 60 + 1.5, line: 'Ngầm ngùi cứ như, ở ngay trước mắt mà chẳng thể'},
+            {t: 60 + 5.9, line: 'Chẳng thể nắm lấy đôi bàn tay ấy'},
+            {t: 60 + 11, line: 'Chạy về phía nhau'},
+            {t: 60 + 16.4, line: 'Ngày em rời đi chẳng nói một câu'},
+            {t: 60 + 20.9, line: 'Câu rằng em sẽ đi bao lâu sẽ đến bao lâu về lại'},
+            {t: 60 + 25.9, line: 'Sẽ có những câu chuyện mà anh chẳng thể một lần nhìn lại'},
+            {t: 60 + 31.6, line: 'Chìm đắm ngay trong cuộc tình cô đơn'},
+            {t: 60 + 38, line: 'Thà em từ chối'},
+            {t: 60 + 41.9, line: 'Dù là sẽ đau nhưng mà sẽ đau một lần'},
+            {t: 60 + 47.6, line: 'Và anh sẽ cố quên đi kí ức ngày ấy'},
+            {t: 60 + 53, line: 'Ngày mà người đến cuộc đời anh'},
+            {t: 120 + 0, line: 'Ah'},
+            {t: 120 + 1.9, line: 'Sau vài lần mình thương lại đau'},
+            {t: 120 + 3.4, line: 'Chỉ là trái tim nhỏ bé một lần trong đời mình thương hại nhau'},
+            {t: 120 + 6.1, line: 'Cả nỗi đau rơi từ khóe mắt chắc cũng đã nói thành lời'},
+            {t: 120 + 9, line: 'Điều gì đó vô tình ngăn cản mình lại nên đành vậy thôi'},
+            {t: 120 + 11.4, line: 'Chơi vơi...siết đi những kí ức thành dòng'},
+            {t: 120 + 14, line: 'Sao hôm đó em không dừng lại một chút để anh hành động'},
+            {t: 120 + 16.6, line: 'Như đứa trẻ một lần như thế anh lại khóc ngay trong đêm'},
+            {t: 120 + 19.1, line: 'Không có ngày nào anh được tỉnh táo để mong phút giây trong em'},
+            {t: 120 + 22.1, line: 'Có lẽ lần cuối gặp nhau là những tin nhắn muộn màng'},
+            {t: 120 + 24.9, line: 'Gặp được em là điều may mắn mặc dù khoảng cách, thời gian'},
+            {t: 120 + 27.6, line: 'Nụ cười em vào ngày hôm đó anh mong sẽ không nhớ nữa'},
+            {t: 120 + 30.1, line: 'Mặc dù anh biết kí ức về em lúc đó là anh có thừa'},
+            {t: 120 + 33, line: 'Lần này nữa thôi, rồi cũng sẽ không còn nữa'},
+            {t: 120 + 35.6, line: 'Anh xin lần này nữa thôi, anh biết đã mất nhau rồi'},
+            {t: 120 + 38.1, line: 'Lần này nữa thôi, tim anh cũng không còn lửa'},
+            {t: 120 + 41, line: 'Lần này nữa thôi, xin ta đừng quên nhau vội'},
+            {t: 120 + 43.7, line: 'Em!'},
+            {t: 120 + 44.6, line: 'Ngày em rời đi chẳng nói một câu'},
+            {t: 120 + 48.9, line: 'Câu rằng em sẽ đi bao lâu sẽ đến bao lâu về lại'},
+            {t: 120 + 54, line: 'Sẽ có những câu chuyện mà anh chẳng thể một lần nhìn lại'},
+            {t: 120 + 59.1, line: 'Chìm đắm ngay trong cuộc tình cô đơn'},
+            {t: 180 + 6, line: 'Thà em từ chối'},
+            {t: 180 + 10.4, line: 'Dù là sẽ đau nhưng mà sẽ đau một lần'},
+            {t: 180 + 15.9, line: 'Và anh sẽ cố quên đi kí ức ngày ấy'},
+            {t: 180 + 20.6, line: 'Ngày mà người đến cuộc đời anh'},
+            {t: 180 + 26, line: '🎵'}
+        ],
         videoStats: [
             {label: 'YOUTUBE VIEWS', value: '800K+', color: '#e62d2d'},
             {label: 'SPOTIFY STREAMS', value: '233K+', color: '#55e426'},

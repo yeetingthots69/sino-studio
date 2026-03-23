@@ -7,9 +7,8 @@ import {Menu} from '@mantine/core';
 import styles from './Navbar.module.css';
 import Image from 'next/image';
 import Link from 'next/link';
-import {usePathname} from "next/navigation";
 import {IconMenu2} from "@tabler/icons-react";
-import {useLocale, useDictionary} from '@/i18n/DictionaryProvider';
+import {useDictionary, useLocale} from '@/i18n/DictionaryProvider';
 import LanguageSwitcher from '@/components/language-switcher/LanguageSwitcher';
 
 const NAV_ROUTES = [
@@ -21,10 +20,8 @@ const NAV_ROUTES = [
 ];
 
 export default function Navbar() {
-    const pathname = usePathname();
     const locale = useLocale();
     const dict = useDictionary();
-    const isContactPage = pathname.endsWith('/contact-us');
     const [opened, {open, close}] = useDisclosure(false);
     const [active, setActive] = useState<string | null>(null);
 
@@ -40,10 +37,6 @@ export default function Navbar() {
                 initial={{y: -60, opacity: 0}}
                 animate={{y: 0, opacity: 1}}
                 transition={{duration: 0.6, ease: 'easeOut'}}
-                style={isContactPage ? {
-                    backgroundColor: 'rgba(10,10,10,0.5)',
-                    backdropFilter: 'blur(8px)',
-                } : {}}
             >
                 <Link href={`/${locale}`} className={styles.logo}>
                     <Image src="/sino-studio-full.png" alt="Sino Studio Logo" width={3129 / 25} height={1640 / 25}/>

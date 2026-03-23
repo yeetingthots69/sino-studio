@@ -9,7 +9,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 14px 20px;
-    background: transparent;
+    background: rgba(10, 10, 10, 0.0);
+    /*backdrop-filter: blur(1px);*/
     transition: background 0.4s ease;
 }
 
