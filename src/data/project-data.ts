@@ -153,7 +153,8 @@ export const PROJECTS: Record<string, ProjectMetaData> = {
         firstAired: "31 THÁNG 1, 2026",
         customTags: [{label: 'KHÁCH HÀNG', value: 'GARENA'}],
         characters: ['MURAD', 'LINH BẢO', 'TÀ THẦN'],
-        sections: ['color-script', 'characters', 'background', 'credits'],
+        sections: ['color-script', 'characters', 'background', 'video', 'credits'],
+        youtubeId: 'xEM42nP20ZQ',
         colorScriptCount: 6,
         credits: [
             {role: 'DIRECTOR', names: 'VŨ SINO'},
