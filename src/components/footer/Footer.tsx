@@ -1,14 +1,18 @@
+'use client';
+
 import styles from './Footer.module.css';
 import Image from 'next/image';
 import {ActionIcon, Anchor, Group, SimpleGrid, Stack, Text} from '@mantine/core';
 import {IconBrandFacebook, IconBrandTiktok, IconBrandYoutube} from '@tabler/icons-react';
+import {useLocale, useDictionary} from '@/i18n/DictionaryProvider';
+import LanguageSwitcher from '@/components/language-switcher/LanguageSwitcher';
 
-const navLinks = [
-    {label: 'PROJECTS', href: '/projects'},
-    {label: 'ABOUT', href: '/about'},
-    {label: 'BRAND EQUITY', href: '/brand-equity'},
-    {label: 'SERVICES', href: '/services'},
-    {label: 'CONTACT US', href: '/contact-us'},
+const NAV_ROUTES = [
+    {key: 'projects' as const, label: 'PROJECTS', href: '/projects'},
+    {key: 'about' as const, label: 'ABOUT', href: '/about'},
+    {key: 'brandEquity' as const, label: 'BRAND EQUITY', href: '/brand-equity'},
+    {key: 'services' as const, label: 'SERVICES', href: '/services'},
+    {key: 'contactUs' as const, label: 'CONTACT US', href: '/contact-us'},
 ];
 
 const socialLinks = [
@@ -18,6 +22,12 @@ const socialLinks = [
 ];
 
 export default function Footer() {
+    const locale = useLocale();
+    const dict = useDictionary();
+    const navLinks = NAV_ROUTES.map((route) => ({
+        label: dict.footer[route.key],
+        href: `/${locale}${route.href}`,
+    }));
     return (
         <footer className={styles.footer}>
             <div className={styles.inner}>
@@ -57,7 +67,7 @@ export default function Footer() {
                         {/*<Text className={styles.contactItem}>phonr number</Text>*/}
                         <Text className={styles.contactItem}>CONTACT@SINOSTUDIO.VN</Text>
                         <Text className={styles.contactItem}>
-                            3/9 ĐƯỜNG SỐ 10, PHƯỜNG HIỆP BÌNH, THỦ ĐỨC, HỒ CHÍ MINH
+                            412 Nguyễn Thị Minh Khai, Phường 5, Quận 3, Hồ Chí Minh 70000
                         </Text>
                     </Stack>
 
@@ -85,7 +95,8 @@ export default function Footer() {
                 </SimpleGrid>
 
                 <div className={styles.bottomBar}>
-                    <p>TẤT CẢ SẢN PHẨM TRÊN WEBSITE ĐỀU THUỘC QUYỀN SỞ HỮU BỞI SINO STUDIO ©</p>
+                    <p>{dict.footer.copyright}</p>
+                    <LanguageSwitcher variant="footer" />
                 </div>
             </div>
         </footer>

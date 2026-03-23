@@ -2,6 +2,7 @@
 
 import { motion, type Variants } from 'framer-motion';
 import styles from './ServicesHero.module.css';
+import {useDictionary} from "@/i18n/DictionaryProvider";
 
 const fadeUp: Variants = {
     hidden: { opacity: 0, y: 30 },
@@ -13,6 +14,7 @@ const fadeUp: Variants = {
 };
 
 export default function ServicesHero() {
+    const dict = useDictionary().services.hero;
     return (
         <section className={styles.section}>
             <div className={styles.inner}>
@@ -22,7 +24,7 @@ export default function ServicesHero() {
                     animate="visible"
                 >
                     <motion.h1 className={styles.heading} variants={fadeUp} custom={0}>
-                        SERVICES
+                        {dict.heading}
                     </motion.h1>
                     <motion.div className={styles.bars} variants={fadeUp} custom={1} aria-hidden>
                         <span className={`${styles.bar} ${styles.barShort}`} />
@@ -32,8 +34,7 @@ export default function ServicesHero() {
                 </motion.div>
 
                 <motion.p className={styles.sub} variants={fadeUp} custom={2} initial="hidden" animate="visible">
-                    Sino Studio cung cấp các dịch vụ sáng tạo từ phim hoạt hình, thiết kế tĩnh &amp; motion,
-                    đến visual sự kiện và IP gốc - tất cả với phong cách đậm chất Việt Nam.
+                    {dict.body}
                 </motion.p>
             </div>
         </section>

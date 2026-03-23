@@ -9,6 +9,7 @@
     font-weight: 800;
     font-size: clamp(32px, 8vw, 72px);
     text-align: center;
+    text-transform: uppercase;
     color: var(--color-white);
     margin-bottom: 36px;
 }

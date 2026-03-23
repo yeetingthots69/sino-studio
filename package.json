@@ -25,7 +25,8 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-photo-album": "^3.5.1",
-    "resend": "^6.9.4"
+    "resend": "^6.9.4",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@types/node": "^20",

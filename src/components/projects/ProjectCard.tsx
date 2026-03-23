@@ -5,12 +5,7 @@ import Link from 'next/link';
 import { motion, type Variants } from 'framer-motion';
 import { AspectRatio } from '@mantine/core';
 import styles from './ProjectCard.module.css';
-
-const TYPE_LABELS: Record<string, string> = {
-    animation: 'HOẠT HÌNH',
-    mv: 'MV',
-    series: 'SERIES',
-};
+import {useLocale, useDictionary} from '@/i18n/DictionaryProvider';
 
 const cardVariants: Variants = {
     hidden: { opacity: 0, y: 40 },
@@ -29,8 +24,10 @@ interface Props {
 }
 
 export default function ProjectCard({ id, title, type, index }: Props) {
+    const locale = useLocale();
+    const typeLabels = useDictionary().projects.grid.filters;
     return (
-        <Link href={`/projects/${id}`}>
+        <Link href={`/${locale}/projects/${id}`}>
             <motion.div
                 className={styles.card}
                 custom={index}
@@ -54,7 +51,7 @@ export default function ProjectCard({ id, title, type, index }: Props) {
                         <div className={styles.cardOverlay} />
                         <div className={styles.cardInfo}>
                             <span className={styles.typeBadge}>
-                                {TYPE_LABELS[type] ?? type.toUpperCase()}
+                                {typeLabels[type as keyof typeof typeLabels] ?? type.toUpperCase()}
                             </span>
                             <h3 className={styles.cardTitle}>{title}</h3>
                         </div>

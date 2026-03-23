@@ -1,0 +1,382 @@
+{
+    "metadata": {
+        "home": {
+            "title": "Sino Studio | Studio Hoạt Hình Việt Nam",
+            "description": "Sino Studio - Studio hoạt hình Việt Nam. Chuyên sản xuất phim hoạt hình, MV hoạt hình và thiết kế nhân vật."
+        },
+        "about": {
+            "title": "Giới Thiệu",
+            "description": "Tìm hiểu về Sino Studio, sứ mệnh, tầm nhìn và đội ngũ đằng sau các dự án hoạt hình."
+        },
+        "services": {
+            "title": "Dịch Vụ",
+            "description": "Khám phá các dịch vụ sáng tạo của Sino Studio: phim hoạt hình, thiết kế, IP gốc và nhiều hơn nữa."
+        },
+        "brandEquity": {
+            "title": "Brand Equity",
+            "description": "Sino Studio xây dựng hệ thống IP gốc mang đậm bản sắc Việt với hơn 330K followers và 115M lượt xem."
+        },
+        "projects": {
+            "title": "Dự Án",
+            "description": "Khám phá tất cả các dự án hoạt hình, MV và series của Sino Studio."
+        },
+        "contact": {
+            "title": "Liên Hệ",
+            "description": "Liên hệ với Sino Studio cho các dự án hoạt hình, hợp tác và yêu cầu."
+        }
+    },
+    "nav": {
+        "about": "Giới Thiệu",
+        "projects": "Dự Án",
+        "services": "Dịch Vụ",
+        "brandEquity": "Nội Tại",
+        "contactUs": "Liên Hệ"
+    },
+    "footer": {
+        "projects": "Dự Án",
+        "about": "Giới Thiệu",
+        "brandEquity": "Nội Tại",
+        "services": "Dịch Vụ",
+        "contactUs": "Liên Hệ",
+        "copyright": "TẤT CẢ SẢN PHẨM TRÊN WEBSITE ĐỀU THUỘC QUYỀN SỞ HỮU BỞI SINO STUDIO ©"
+    },
+    "common": {
+        "learnMore": "TÌM HIỂU THÊM",
+        "explore": "KHÁM PHÁ",
+        "backToProjects": "← Quay lại Dự Án",
+        "projectNotFound": "Không Tìm Thấy Dự Án",
+        "projectNotFoundDescription": "Dự án bạn đang tìm kiếm không tồn tại hoặc chưa được thêm vào."
+    },
+    "landing": {
+        "whoWeAre": {
+            "heading": "CHÚNG TÔI LÀ AI",
+            "body-1": "Sino Studio khởi nguồn từ khát vọng của một người trẻ mang trong mình sứ mệnh phát triển hoạt hình Việt Nam. Từ một bước đi đơn độc, tầm nhìn ấy đã kết nối những con người đầu tiên và từ đó chúng tôi hình thành, lớn mạnh và không ngừng mở rộng.",
+            "body-2": "Trải qua 6 năm bền bỉ ăn ngủ cùng hoạt hình, Sino Studio đã xây dựng được một hệ sinh thái sản phẩm đa dạng với nhiều dự án đạt hàng chục triệu lượt xem, ghi dấu ấn rõ nét trên thị trường.",
+            "body-3": "Hướng tới tương lai, chúng tôi tập trung mở rộng hợp tác, phát triển các dự án phim ảnh chiến lược và từng bước hiện thực hóa mục tiêu đưa hoạt hình Việt vươn xa.",
+            "explore": "KHÁM PHÁ THÊM"
+        },
+        "clients": {
+            "heading": "ĐỐI TÁC"
+        },
+        "projects": {
+            "heading": "DỰ ÁN NỔI BẬT",
+            "learnMore": "Xem Tất Cả Dự Án"
+        },
+        "brandServices": {
+            "brandEquity": {
+                "heading": "NỘI TẠI",
+                "body": "Từ ý tưởng đến IP sáng tạo, Sino Studio xây dựng giá trị thương hiệu qua hàng triệu lượt tiếp cận trên nền tảng số.",
+                "learnMore": "Khám Phá Nội Tại"
+            },
+            "services": {
+                "heading": "DỊCH VỤ",
+                "body": "Sino Studio mang đến các giải pháp sáng tạo từ animation, motion design đến phát triển IP gốc.",
+                "learnMore": "Khám Phá Dịch Vụ"
+            }
+        }
+    },
+    "about": {
+        "hero": {
+            "heading": "GIỚI THIỆU",
+            "body-1": "Sino Studio khởi nguồn từ khát vọng của một người trẻ mang trong mình sứ mệnh phát triển hoạt hình Việt Nam. Từ một bước đi đơn độc, tầm nhìn ấy đã kết nối những con người đầu tiên và từ đó chúng tôi hình thành, lớn mạnh và không ngừng mở rộng. Trải qua 6 năm bền bỉ ăn ngủ cùng hoạt hình, Sino Studio đã xây dựng được một hệ sinh thái sản phẩm đa dạng với nhiều dự án đạt hàng chục triệu lượt xem, ghi dấu ấn rõ nét trên thị trường.",
+            "body-2": "Hướng tới tương lai, chúng tôi tập trung mở rộng hợp tác, phát triển các dự án phim ảnh chiến lược và từng bước hiện thực hóa mục tiêu đưa hoạt hình Việt vươn xa."
+        },
+        "mission": {
+            "heading": "CHÚNG TÔI LÀ AI",
+            "mission": {
+                "heading": "NHIỆM VỤ",
+                "body": "Tạo ra các sản phẩm hoạt hình chất lượng, mang đậm bản sắc Việt và có giá trị nghệ thuật, giải trí cao."
+            },
+            "vision": {
+                "heading": "TẦM NHÌN",
+                "body": "Hướng tới tương lai, chúng tôi tập trung mở rộng hợp tác, phát triển các dự án phim ảnh chiến lược và từng bước hiện thực hóa mục tiêu đưa hoạt hình Việt vươn xa."
+            },
+            "strength": {
+                "heading": "LỢI THẾ",
+                "body": "Là thương hiệu hoạt hình được hàng triệu khán giả biết đến, quy trình tối ưu chi phí. Có kinh nghiêm và nhân sự trong tất cả bộ phận từ âm nhạc, lồng tiếng, SFX, truyền thông,..."
+            }
+        }
+    },
+    "brandEquity": {
+        "hero": {
+            "heading": "NỘI TẠI THƯƠNG HIỆU",
+            "body": "Sino Studio xây dựng hệ thống IP gốc mang đậm bản sắc Việt - từ nhân vật đến vũ trụ sáng tạo, kết nối với hàng triệu khán giả trên các nền tảng số."
+        },
+        "stats": {
+            "followers": {
+                "value": 330,
+                "suffix": "K+",
+                "label": "Lượt theo dõi\n(các nền tảng MXH)"
+            },
+            "views": {
+                "value": 115,
+                "suffix": "M+",
+                "label": "Lượt xem trên tất\ncả các nền tảng"
+            },
+            "streams": {
+                "value": 280,
+                "suffix": "K+",
+                "label": "Người nghe hàng tháng\n(nền tảng Spotify)"
+            }
+        },
+        "showcase": {
+            "heading": "ORIGINAL IP SHOWCASE",
+            "tagline": "MV ÂM NHẠC · SERIES PHIM HOẠT HÌNH · MOVIE LINH",
+            "modals": {
+                "ma-ba-dong": {
+                    "dob": "????",
+                    "description": "Một linh hồn cổ xưa từ chối đầu thai, chọn ở lại nơi trần thế. Bà lặng lẽ dẫn lối, bảo vệ con người khỏi những tai ương và hiểm họa tâm linh vô hình."
+                },
+                "vu": {
+                    "dob": "03 Tháng 06",
+                    "description": "Một chàng sinh viên với đam mê âm nhạc, nhưng cuộc sống không dễ dàng. Vũ phải làm tài xế công nghệ để kiếm thêm thu nhập và vô tình gặp được tình yêu đời mình qua những chuyến đi. Tiếc thay, cô gái anh yêu khi ấy với anh như cỏ và mây. Tình yêu ngắt quãng khi cô rời đi du học. Mãi về sau, khi đã theo đuổi thành công con đường âm nhạc, Vũ có cơ hội gặp lại cô ở một khoảng cách gần hơn, để bắt đầu."
+                },
+                "heny": {
+                    "dob": "14 Tháng 12",
+                    "description": "Một cô gái trẻ với ước mơ trở thành ca sĩ, nhưng lại bị mắc kẹt trong một công việc văn phòng nhàm chán. Một ngày nọ, cô tình cờ phát hiện ra một thế giới âm nhạc kỳ diệu ẩn giấu trong chiếc tai nghe cũ của mình. Khi đeo tai nghe, cô được đưa đến một vũ trụ song song nơi âm nhạc là ngôn ngữ chính và cô có thể sống theo đam mê của mình. Tuy nhiên, để trở thành ca sĩ thực thụ, cô phải vượt qua những thử thách và tìm ra bản thân mình trong thế giới mới này."
+                },
+                "hien-luong": {
+                    "dob": "01 Tháng 09",
+                    "description": "Là một cô gái dễ thương và xinh xắn. Ở độ tuổi rực rỡ nhất, đáng ra Hilary phải được đón nhận những hạnh phúc trọn vẹn, nhưng cuộc sống đã lấy đi người cô yêu thương nhất. Trong những giây phút cuối cùng, cô đã ở bên, đồng hành và dành trọn tình yêu đẹp nhất của tuổi trẻ cho anh. Sau cơn mưa, Hilary vẫn mạnh mẽ đứng dậy, bước tiếp trên hành trình phía trước và sống thật hạnh phúc như di nguyện của “mặt trời”."
+                },
+                "ha": {
+                    "dob": "28 Tháng 03",
+                    "description": "Sunny là chàng trai ấm áp như mặt trời. Ở độ tuổi rực rỡ, anh có một tình yêu đẹp với Hilary – một cô gái xinh xắn. Nhưng mọi thứ không mãi hạnh phúc với Sunny. Đến một ngày, anh biết mình mắc bệnh nan y, không còn sống được lâu. Anh đã dành những khoảnh khắc cuối cùng để an ủi người mình yêu và gửi đến cô những lời chúc đẹp nhất. Dù đã tồn tại ở một hình dạng khác, anh vẫn luôn dõi theo và mỉm cười trước hạnh phúc của cô ấy trên chặng đường phía trước."
+                },
+                "sino": {
+                    "dob": "09 Tháng 04",
+                    "description": "Là linh vật đại diện của Sino Studio ngay từ những ngày đầu hình thành, Sino không chỉ mang ý nghĩa nhận diện mà còn là tinh thần cốt lõi của tập thể. Trong series Tây Du Kí GenZ, Sino hóa thân thành Huyết Quỷ – một nhân vật trung tâm sở hữu sức mạnh vượt trội cùng chiều sâu nội tâm phức tạp."
+                },
+                "linh": {
+                    "dob": "23 Tháng 02",
+                    "description": "Nhân vật trung tâm của Linh: Truy Hồn Âm Giới, Linh là cô gái trẻ giàu năng lượng nhưng mang đôi mắt nhìn thấu linh hồn. Cô từng che giấu khả năng ấy cho đến khi biến cố ập đến gia đình. Từ đó, Linh chấp nhận bản thân, bước vào hành trình tìm em trai và đối mặt với thế giới tâm linh mà cô đã từng trốn tránh."
+                },
+                "nachi": {
+                    "dob": "07 Tháng 08",
+                    "description": "Sinh ra với bệnh bạch tạng, Nachi lớn lên trong sự xa cách và tổn thương. Sau một tai nạn, cô rơi vào hôn mê và lạc vào giấc mơ của Shino – nơi lần đầu cô được sống trong hạnh phúc. Nhưng khi cơ thể ngoài đời thực ngừng tồn tại, Nachi cũng buộc phải rời bỏ giấc mơ ấy mãi mãi."
+                },
+                "shino": {
+                    "dob": "09 Tháng 04",
+                    "description": "Shino là một chàng trai trầm lặng, lạc lối giữa cuộc sống u tối. Ý nghĩa duy nhất của anh từng nằm trong những giấc mơ, nơi Nachi xuất hiện như một ánh sáng dịu dàng. Khi cô biến mất, Shino mới thấu hiểu những gì cô đã phải trải qua. Từ đó, anh trở thành một họa sĩ – dùng từng bức tranh để tôn lên vẻ đẹp của những người mắc bệnh bạch tạng, như một cách tiếp tục yêu thương Nachi và mang lại cho những người như cô một hạnh phúc mà họ xứng đáng có được."
+                },
+                "boss": {
+                    "dob": "13 Tháng 06",
+                    "description": "Boss là một nhân vật hư cấu được tạo ra bởi Sino Studio, một con quái vật to lớn, mạnh mẽ và điên cuồng. Ở dự án ngắn Ngọc Bảo Khí, Boss như là trùm cuối và là thử thách lớn nhất của chiến binh đối diện."
+                }
+            }
+        }
+    },
+    "contactUs": {
+        "hero": {
+            "heading": "LIÊN HỆ VỚI CHÚNG TÔI",
+            "button": "GỬI TIN NHẮN"
+        },
+        "form": {
+            "name": {
+                "label": "HỌ VÀ TÊN",
+                "placeholder": "Tên của bạn",
+                "validation": "Vui lòng nhập họ và tên của bạn"
+            },
+            "email": {
+                "label": "EMAIL",
+                "placeholder": "your@email.com",
+                "validation": "Vui lòng nhập địa chỉ email hợp lệ"
+            },
+            "reason": {
+                "label": "MỤC ĐÍCH LIÊN HỆ",
+                "placeholder": "Nhập lý do liên hệ",
+                "validation": "Vui lòng nhập lý do liên hệ của bạn"
+            },
+            "message": {
+                "label": "TIN NHẮN",
+                "placeholder": "Nhập tin nhắn của bạn",
+                "validation": "Vui lòng nhập tin nhắn của bạn"
+            },
+            "backButton": "QUAY LẠI",
+            "submitButton": {
+                "default": "GỬI TIN NHẮN",
+                "loading": "ĐANG GỬI..."
+            },
+            "result": {
+                "success": {
+                    "heading": "GỬI THÀNH CÔNG!",
+                    "message": "Tin nhắn của bạn đã được gửi thành công! Chúng tôi sẽ liên hệ lại với bạn sớm nhất có thể.",
+                    "button": "GỬI TIN NHẮN MỚI"
+                },
+                "error": {
+                    "message": "Đã có lỗi xảy ra khi gửi tin nhắn của bạn. Vui lòng thử lại sau.",
+                    "button": "THỬ LẠI"
+                }
+            }
+        }
+    },
+    "services": {
+        "hero": {
+            "heading": "DỊCH VỤ SÁNG TẠO",
+            "body": "Sino Studio cung cấp các dịch vụ sáng tạo từ phim hoạt hình, thiết kế tĩnh & motion, đến visual sự kiện và IP gốc - tất cả với phong cách đậm chất Việt Nam."
+        },
+        "grid": {
+            "short-film": {
+                "label": "Short Film / Pilot",
+                "sub": "Phim ngắn hoặc tập thử nghiệm để giới thiệu ý tưởng, gọi vốn và phát triển IP."
+            },
+            "original-ip": {
+                "heading": "IP ORIGINAL\nDỰ ÁN GỐC",
+                "bullets": [
+                    "Series gốc",
+                    "Phim điện ảnh",
+                    "Character IP",
+                    "World Building Project"
+                ],
+                "notes": [
+                    "Truyện tranh",
+                    "Game",
+                    "Merchandising"
+                ]
+            },
+            "design-motion": {
+                "heading": "THIẾT KẾ TĨNH\n& MOTION",
+                "bullets": [
+                    "Key Visual",
+                    "Poster",
+                    "Character Design",
+                    "Concept Art",
+                    "Motion Graphic"
+                ]
+            },
+            "animated-series": {
+                "label": "Animated Series / Web Series",
+                "sub": "Phim hoạt hình nhiều tập cho YouTube, OTT hoặc brand series."
+            },
+            "tvc-animation": {
+                "label": "TVC Animation",
+                "sub": "TVC 2D, 3D hoặc hybrid."
+            },
+            "trailer": {
+                "label": "Trailer / Teaser Animation",
+                "sub": "Trailer phim, trailer game, trailer dự án."
+            },
+            "game-interactive": {
+                "heading": "GAME &\nINTERACTIVE",
+                "bullets": [
+                    "Game Assets Nhân vật, môi trường, UI animation.",
+                    "Cutscene Game"
+                ]
+            },
+            "event-visual": {
+                "heading": "VISUAL SỰ KIỆN\n& SÂN KHẤU",
+                "bullets": [
+                    "Concert Visual",
+                    "LED Background",
+                    "Event Visual",
+                    "Stage Opening Animation"
+                ]
+            },
+            "mv-animation": {
+                "label": "MV Animation",
+                "sub": "MV anime, lyrical MV, visual MV."
+            },
+            "social-media-ad": {
+                "label": "Social Media Ad",
+                "sub": "Video Tiktok, Reels, Facebook, Motion Banner."
+            }
+        }
+    },
+    "projects": {
+        "grid": {
+            "heading": "TẤT CẢ DỰ ÁN",
+            "filters": {
+                "all": "TẤT CẢ",
+                "tvc": "TVC",
+                "animation": "HOẠT HÌNH",
+                "mv": "MV",
+                "series": "SERIES"
+            },
+            "empty": "Chưa có dự án nào."
+        },
+        "details": {
+            "ngoc-bao-khi": {
+                "description_1": "Ngọc Bảo Khí là dự án hoạt hình ngắn được đội ngũ Sino Studio thực hiện ngay sau teaser LINH: Truy Hồn Âm Giới. Đây là một bước tiến quan trọng của team, đánh dấu sự trưởng thành rõ rệt về mặt kỹ thuật và tư duy sản xuất.",
+                "description_2": "Không phải một dự án series, Ngọc Bảo Khí đơn thuần là lời khẳng định cho sự nghiêm túc, bền bỉ và định hướng lâu dài của Sino Studio trên con đường sáng tạo phía trước.",
+                "labels": [
+                    {
+                        "label": "NGÀY CÔNG CHIẾU",
+                        "value": "19 THÁNG 1, 2026"
+                    }
+                ]
+            },
+            "linh-truy-hon-am-gioi": {
+                "description_1": "Dự án phim được lấy cảm hứng từ văn hóa và yếu tố tâm linh của Việt Nam. Với một vũ trụ tâm linh vừa mới mẻ vừa quen thuộc, những câu chuyện sâu sắc và hình ảnh hoạt họa đẹp mắt, gần gũi với giới trẻ, dự án kì vọng sẽ là sự đột phát trong nền hoạt hình Việt Nam.",
+                "description_2": "",
+                "labels": [
+                    {
+                        "label": "NGÀY CÔNG CHIẾU",
+                        "value": "2028"
+                    },
+                    {
+                        "label": "THỂ LOẠI",
+                        "value": "FANTASY"
+                    },
+                    {
+                        "label": "THỜI LƯỢNG",
+                        "value": "90 PHÚT"
+                    }
+                ]
+            },
+            "tet-lien-quan-2026": {
+                "description_1": "Sino Studio đã tái hiện thành công không khí ngày Tết trong thế giới Liên Quân Mobile thông qua phong cách hội họa hoàn toàn mới và quy trình thiết kế nhân vật có độ khó cao. Dù yêu cầu về kỹ thuật phức tạp, đội ngũ đã chứng minh năng lực sản xuất tối ưu khi hoàn thiện dự án chỉ trong vòng 01 tháng.",
+                "description_2": "Ngay sau khi ra mắt trên fanpage chính thức, sản phẩm đã nhận được sự ủng hộ mạnh mẽ từ cộng đồng, khẳng định vị thế của studio trong việc triển khai các sản phẩm truyền thông hoạt hình chất lượng cao.",
+                "labels": [
+                    {
+                        "label": "NGÀY CÔNG CHIẾU",
+                        "value": "31 THÁNG 1, 2026"
+                    },
+                    {
+                        "label": "KHÁCH HÀNG",
+                        "value": "GARENA"
+                    }
+                ]
+            },
+            "chang-trai-bat-tu": {
+                "description_1": "Dựa trên câu chuyện có thật, MV kể về mối tình đầy bi thương giữa Hạ và Hiền Lương - hai con người yêu nhau sâu đậm nhưng bị chia cắt bởi căn bệnh hiểm nghèo của chàng trai. Biết thời gian không còn nhiều, họ chọn bên nhau trong những buổi hẹn cuối, không còn giận hờn vì những lần đến muộn, chỉ còn những nụ cười gượng gạo và khoảnh khắc trân quý. Chàng Trai Bất Tử đã lặng lẽ chạm đến trái tim của hàng triệu người bằng chính sự chân thành và nỗi đau rất thật ấy.",
+                "description_2": "",
+                "labels": [
+                    {
+                        "label": "NGÀY CÔNG CHIẾU",
+                        "value": "11 THÁNG 1, 2024"
+                    }
+                ]
+            },
+            "yeu-trong-co-doc": {
+                "description_1": "Câu chuyện xoay quanh mối tình chênh lệch danh phận giữa Vũ - chàng xe công nghệ, và Heny - tiểu thư giàu có. Hai tâm hồn cô đơn tìm thấy nhau rồi lạc mất giữa thực tại. Nhiều năm sau, Vũ thành công với âm nhạc, họ gặp lại với tư cách đối tác - khi khoảng cách năm xưa không còn, chỉ còn cơ hội viết tiếp một chuyện tình còn dang dở.",
+                "description_2": "",
+                "labels": [
+                    {
+                        "label": "NGÀY CÔNG CHIẾU",
+                        "value": "28 THÁNG 6, 2024"
+                    }
+                ]
+            },
+            "tay-du-ki-gen-z": {
+                "description_1": "Series hoạt hình lấy cảm hứng từ nguyên tác Tây Du Ký kinh điển, nhưng trong một diện mạo hoàn toàn mới. Bằng việc lồng ghép yếu tố chuyển sinh (isekai), dự án đưa những nhân vật từ đa vũ trụ bước vào hành trình thỉnh kinh đầy biến số. Sự giao thoa giữa những thế giới khác biệt không chỉ mở ra những hướng đi không thể đoán trước, mà còn tạo nên một cuộc hành trình kịch tính, mãn nhãn và tràn đầy những cú twist bất ngờ.",
+                "description_2": "",
+                "labels": [
+                    {
+                        "label": "NGÀY CÔNG CHIẾU",
+                        "value": "2 THÁNG 9, 2021"
+                    }
+                ]
+            },
+            "khong-phai-la-ket-thuc": {
+                "description_1": "Dự án hợp tác giữa Sino Studio và Remind kể về hành trình vượt qua bóng tối để chạm tới ước mơ âm nhạc. Hình ảnh cô bé nhỏ luôn lặng lẽ theo sau Remind - nhưng dường như không được nhìn thấy. Chỉ khi chạm đến thành công, Remind ngoảnh lại và nhận ra: đó chính là mình của ngày xưa - phiên bản luôn âm thầm đồng hành, níu giữ và dẫn lối cô trên hành trình trưởng thành.",
+                "description_2": "",
+                "labels": [
+                    {
+                        "label": "NGÀY CÔNG CHIẾU",
+                        "value": "14 THÁNG 3, 2026"
+                    }
+                ]
+            }
+        }
+    }
+}

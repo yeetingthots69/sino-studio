@@ -1,23 +1,12 @@
-import Navbar from '@/components/navbar/Navbar';
-import Hero from '@/components/landing/Hero/Hero';
-import Ticker from '@/components/landing/Ticker/Ticker';
-import WhoWeAre from '@/components/landing/WhoWeAre/WhoWeAre';
-import Clients from '@/components/landing/Clients/Clients';
-import Projects from '@/components/landing/Projects/Projects';
-import BrandService from '@/components/landing/BrandService/BrandService';
-import Footer from '@/components/footer/Footer';
+import {redirect} from 'next/navigation';
+import {cookies} from 'next/headers';
+import {LOCALES, DEFAULT_LOCALE} from '@/i18n/config';
 
-export default function Home() {
-  return (
-    <>
-      <Navbar />
-      <Hero />
-      <Ticker />
-      <WhoWeAre />
-      <Clients />
-      <Projects />
-      <BrandService />
-      <Footer />
-    </>
-  );
+export default async function RootPage() {
+    const cookieStore = await cookies();
+    const cookieLocale = cookieStore.get('NEXT_LOCALE')?.value;
+    const locale = cookieLocale && (LOCALES as readonly string[]).includes(cookieLocale)
+        ? cookieLocale
+        : DEFAULT_LOCALE;
+    redirect(`/${locale}`);
 }

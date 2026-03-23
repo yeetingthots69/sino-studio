@@ -6,19 +6,16 @@ import {SimpleGrid} from '@mantine/core';
 import {PROJECTS, type ProjectMetaData} from '@/data/project-data';
 import ProjectCard from './ProjectCard';
 import styles from './ProjectsGrid.module.css';
+import {useDictionary} from '@/i18n/DictionaryProvider';
 
-type FilterType = 'all' | 'animation' | 'mv' | 'series';
+type FilterType = 'all' | 'animation' | 'mv' | 'series' | 'tvc';
 
-const FILTER_OPTIONS: {label: string; value: FilterType}[] = [
-    {label: 'TẤT CẢ', value: 'all'},
-    {label: 'HOẠT HÌNH', value: 'animation'},
-    {label: 'MV', value: 'mv'},
-    {label: 'SERIES', value: 'series'},
-];
+const FILTER_VALUES: FilterType[] = ['all', 'tvc', 'animation', 'mv', 'series'];
 
 const allProjects: ProjectMetaData[] = Object.values(PROJECTS);
 
 export default function ProjectsGrid() {
+    const dict = useDictionary().projects.grid;
     const [activeFilter, setActiveFilter] = useState<FilterType>('all');
 
     const filtered = activeFilter === 'all'
@@ -34,18 +31,18 @@ export default function ProjectsGrid() {
                 viewport={{once: true}}
                 transition={{duration: 0.6}}
             >
-                PROJECTS
+                {dict.heading}
             </motion.h2>
 
             {/* ── Filter tabs ── */}
             <div className={styles.filters}>
-                {FILTER_OPTIONS.map((opt) => (
+                {FILTER_VALUES.map((value) => (
                     <button
-                        key={opt.value}
-                        className={`${styles.filterBtn} ${activeFilter === opt.value ? styles.filterBtnActive : ''}`}
-                        onClick={() => setActiveFilter(opt.value)}
+                        key={value}
+                        className={`${styles.filterBtn} ${activeFilter === value ? styles.filterBtnActive : ''}`}
+                        onClick={() => setActiveFilter(value)}
                     >
-                        {opt.label}
+                        {dict.filters[value]}
                     </button>
                 ))}
             </div>
@@ -77,7 +74,7 @@ export default function ProjectsGrid() {
                             ))}
                         </SimpleGrid>
                     ) : (
-                        <p className={styles.empty}>Chưa có dự án nào.</p>
+                        <p className={styles.empty}>{dict.empty}</p>
                     )}
                 </motion.div>
             </AnimatePresence>

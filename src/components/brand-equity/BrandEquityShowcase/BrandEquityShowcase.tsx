@@ -5,8 +5,9 @@ import Image from 'next/image';
 import {motion, AnimatePresence, type Variants} from 'framer-motion';
 import {useMediaQuery} from '@mantine/hooks';
 import {Modal, Tooltip, Text} from '@mantine/core';
-import {CHARACTER_ORDER, IP_DATA} from '@/data/ip-data';
+import {CHARACTER_ORDER, IP_DATA, IpData} from '@/data/ip-data';
 import styles from './BrandEquityShowcase.module.css';
+import {useDictionary} from "@/i18n/DictionaryProvider";
 
 const fadeUp: Variants = {
     hidden: {opacity: 0, y: 40},
@@ -30,13 +31,13 @@ const glitchVariant: Variants = {
     hover: {
         x: [-1, 2, -1, 3, -2, 1, 0, -2, 1, 0],
         y: [0, -1, 1, 0, 1, -1, 0, 0, -1, 0],
-        skewX: [0, -1, 0, 1, -0.5, 0, 0.5, -1, 0],
-        scale: [1, 1.03, 1.01, 1.04, 1, 1.02, 1],
+        // skewX: [0, -1, 0, 1, -0.5, 0, 0.5, -1, 0],
+        // scale: [1, 1.03, 1.01, 1.04, 1, 1.02, 1],
         filter: [
             'none',
             'drop-shadow(2px 0 0 rgba(255,0,0,0.6)) drop-shadow(-2px 0 0 rgba(0,255,255,0.6)) brightness(1.1)',
             'hue-rotate(30deg) brightness(0.9)',
-            'drop-shadow(0 0 6px rgba(255,0,0,0.7)) contrast(1.3)',
+            // 'drop-shadow(0 0 6px rgba(255,0,0,0.7)) contrast(1.3)',
             'drop-shadow(-2px 0 0 rgba(255,0,80,0.6)) drop-shadow(2px 0 0 rgba(0,200,255,0.6))',
             'none',
         ],
@@ -53,19 +54,20 @@ const glitchVariant: Variants = {
 const moveDown = ['a-vu', 'hien-luong', 'linh', 'nachi'];
 
 export default function BrandEquityShowcase() {
+    const dict = useDictionary().brandEquity.showcase;
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
     const [jumpscareActive, setJumpscareActive] = useState(false);
     const jumpscareTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const isMobile = useMediaQuery('(max-width: 767px)');
 
-    // Start 5-second timer when modal 4 is open; reset on any other modal
+    // Start 5-minute timer when modal 4 is open; reset on any other modal
     useEffect(() => {
         if (jumpscareTimerRef.current) {
             clearTimeout(jumpscareTimerRef.current);
             jumpscareTimerRef.current = null;
         }
-        if (selectedIndex === 4) {
-            jumpscareTimerRef.current = setTimeout(() => setJumpscareActive(true), 5_000 * 1);
+        if (selectedIndex === 0) {
+            jumpscareTimerRef.current = setTimeout(() => setJumpscareActive(true), 1_000 * 5);
         }
         return () => {
             if (jumpscareTimerRef.current) clearTimeout(jumpscareTimerRef.current);
@@ -80,7 +82,13 @@ export default function BrandEquityShowcase() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [jumpscareActive]);
 
-    const characters = CHARACTER_ORDER.map((id) => IP_DATA[id]);
+    const characters = CHARACTER_ORDER.map((id) => IP_DATA[id]).map(ip => {
+        return {
+            ...ip,
+            dob: dict.modals[ip.id as keyof typeof dict.modals].dob,
+            description: dict.modals[ip.id as keyof typeof dict.modals].description,
+        }
+    });
     const selected = selectedIndex !== null ? characters[selectedIndex] : null;
 
     const openModal = (i: number) => setSelectedIndex(i);
@@ -105,7 +113,7 @@ export default function BrandEquityShowcase() {
                 viewport={{once: true, amount: 0.3}}
             >
                 <motion.h2 className={styles.heading} variants={fadeUp}>
-                    ORIGINAL IP SHOWCASE
+                    {dict.heading}
                 </motion.h2>
             </motion.div>
 
@@ -200,10 +208,10 @@ export default function BrandEquityShowcase() {
                     <Tooltip label={characters[4].name} position="top" withArrow
                              events={{hover: true, focus: true, touch: false}}>
                         <div className={styles.charHa}>
-                            {/*<motion.div whileHover={{scale: 1.08, opacity: 0.25}}*/}
-                            {/*            transition={{type: 'spring', stiffness: 300, damping: 20}}*/}
-                            {/*            onClick={() => openModal(4)}>*/}
-                            <motion.div variants={glitchVariant} initial="initial" whileHover="hover" onClick={() => openModal(4)}>
+                            <motion.div whileHover={{scale: 1.08}}
+                                        transition={{type: 'spring', stiffness: 300, damping: 20}}
+                                        onClick={() => openModal(4)}>
+                            {/*<motion.div variants={glitchVariant} initial="initial" whileHover="hover" onClick={() => openModal(4)}>*/}
                                 <Image src={characters[4].imageUrl} alt={characters[4].name}
                                        width={characters[4].imageW} height={characters[4].imageH} sizes="25vw"
                                        className={styles.characterImg}/>

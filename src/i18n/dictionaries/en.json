@@ -1,0 +1,329 @@
+{
+    "metadata": {
+        "home": {
+            "title": "Sino Studio | Vietnamese Animation Studio",
+            "description": "Sino Studio - Vietnamese Animation Studio. Specializing in animated films, animated MVs, and character design."
+        },
+        "about": {
+            "title": "About",
+            "description": "Learn about Sino Studio, our mission, vision, and the team behind the animation."
+        },
+        "services": {
+            "title": "Services",
+            "description": "Discover Sino Studio's creative services: animation, design, original IP, and more."
+        },
+        "brandEquity": {
+            "title": "Brand Equity",
+            "description": "Sino Studio builds original Vietnamese IP with over 330K followers and 115M views."
+        },
+        "projects": {
+            "title": "Projects",
+            "description": "Explore all animation, MV, and series projects by Sino Studio."
+        },
+        "contact": {
+            "title": "Contact",
+            "description": "Get in touch with Sino Studio for animation projects, collaborations, and inquiries."
+        }
+    },
+    "nav": {
+        "about": "About",
+        "projects": "Projects",
+        "services": "Services",
+        "brandEquity": "Brand Equity",
+        "contactUs": "Contact"
+    },
+    "footer": {
+        "projects": "Projects",
+        "about": "About",
+        "brandEquity": "Brand Equity",
+        "services": "Services",
+        "contactUs": "Contact Us",
+        "copyright": "ALL INTELLECTUAL PROPERTIES ON THIS WEBSITE ARE OWNED BY SINO STUDIO ©"
+    },
+    "common": {
+        "learnMore": "LEARN MORE",
+        "explore": "EXPLORE",
+        "backToProjects": "← Back to Projects",
+        "projectNotFound": "Project Not Found",
+        "projectNotFoundDescription": "The project you're looking for doesn't exist or hasn't been added yet."
+    },
+    "landing": {
+        "whoWeAre": {
+            "heading": "WHO WE ARE",
+            "body-1": "Sino Studio was born from the aspiration of a young person driven by a mission to develop Vietnamese animation. From a solitary first step, that vision connected the founding members, and from there we grew, strengthened, and continuously expanded.",
+            "body-2": "After 6 years of unwavering dedication to animation, Sino Studio has built a diverse product ecosystem with multiple projects reaching tens of millions of views, making a clear mark in the market.",
+            "body-3": "Looking to the future, we focus on expanding partnerships, developing strategic film projects, and step by step realizing the goal of bringing Vietnamese animation to the world.",
+            "explore": "EXPLORE MORE"
+        },
+        "clients": {
+            "heading": "OUR CLIENTS"
+        },
+        "projects": {
+            "heading": "FEATURED PROJECTS",
+            "learnMore": "View All Projects"
+        },
+        "brandServices": {
+            "brandEquity": {
+                "heading": "BRAND EQUITY",
+                "body": "From idea to creative IP, Sino Studio builds brand value through millions of engagements across digital platforms.",
+                "learnMore": "Explore Brand Equity"
+            },
+            "services": {
+                "heading": "CREATIVE SERVICES",
+                "body": "Sino Studio delivers creative solutions from animation and motion design to original IP development.",
+                "learnMore": "Explore Services"
+            }
+        }
+    },
+    "about": {
+        "hero": {
+            "heading": "ABOUT",
+            "body-1": "Sino Studio was born from the aspiration of a young person driven by a mission to develop Vietnamese animation. From a solitary first step, that vision connected the founding members, and from there we grew, strengthened, and continuously expanded. After 6 years of unwavering dedication to animation, Sino Studio has built a diverse product ecosystem with multiple projects reaching tens of millions of views, making a clear mark in the market.",
+            "body-2": "Looking to the future, we focus on expanding partnerships, developing strategic film projects, and step by step realizing the goal of bringing Vietnamese animation to the world."
+        },
+        "mission": {
+            "heading": "WHO WE ARE",
+            "mission": {
+                "heading": "MISSION",
+                "body": "To create high-quality animation products that carry a distinctly Vietnamese identity with strong artistic and entertainment value."
+            },
+            "vision": {
+                "heading": "VISION",
+                "body": "Looking to the future, we focus on expanding partnerships, developing strategic film projects, and step by step realizing the goal of bringing Vietnamese animation to the world."
+            },
+            "strength": {
+                "heading": "STRENGTHS",
+                "body": "An animation brand known by millions of viewers, with an optimized production process. We have experienced staff across all departments - from music and voice acting to SFX and communications."
+            }
+        }
+    },
+    "brandEquity": {
+        "hero": {
+            "heading": "BRAND EQUITY",
+            "body": "Sino Studio builds an original IP system deeply rooted in Vietnamese identity - from characters to creative universes - connecting with millions of audiences across digital platforms."
+        },
+        "stats": {
+            "followers": {
+                "value": 330,
+                "suffix": "K+",
+                "label": "Followers\n(across social media platforms)"
+            },
+            "views": {
+                "value": 115,
+                "suffix": "M+",
+                "label": "Views\n(on all digital platforms)"
+            },
+            "streams": {
+                "value": 280,
+                "suffix": "K+",
+                "label": "Monthly streams\n(on Spotify)"
+            }
+        },
+        "showcase": {
+            "heading": "ORIGINAL IP SHOWCASE",
+            "tagline": "MUSIC MV · ANIMATED SERIES · MOVIE LINH",
+            "modals": {
+                "ma-ba-dong": {
+                    "dob": "????",
+                    "description": "An ancient soul who refused to reincarnate, choosing to remain in the mortal world. She quietly guides and protects people from unseen misfortunes and spiritual dangers."
+                },
+                "vu": {
+                    "dob": "June 3rd",
+                    "description": "A student passionate about music, but life wasn't easy. Vũ had to work as a rideshare driver to make ends meet, and by chance found the love of his life through his rides. Sadly, the girl he loved felt as distant as clouds. Their love was interrupted when she left to study abroad. Much later, after successfully pursuing his music career, Vũ had the chance to meet her again - and begin anew."
+                },
+                "heny": {
+                    "dob": "December 14th",
+                    "description": "A young girl who dreams of becoming a singer but finds herself stuck in a boring office job. One day she accidentally discovers a magical world of music hidden inside an old pair of headphones. When she puts them on, she's transported to a parallel universe where music is the primary language and she can live her dream. But to become a true singer, she must overcome challenges and discover who she truly is."
+                },
+                "hien-luong": {
+                    "dob": "September 1st",
+                    "description": "A sweet and beautiful girl. At the most radiant age of her life, Hilary should have had every happiness - but life took away the person she loved most. In those final moments, she stayed by his side, giving him the most beautiful love of her youth. After the storm, Hilary rose back up, moved forward, and lived as happily as the 'sun' had always wished for her."
+                },
+                "ha": {
+                    "dob": "March 28th",
+                    "description": "Sunny is a young man as warm as the sun. In his most radiant days, he had a beautiful love with Hilary - a sweet girl. But happiness didn't last. One day, he learned he had a terminal illness and not much time left. He spent his final moments comforting the one he loved and sending her his best wishes. Though now existing in another form, he continues to watch over her and smile at her happiness on the road ahead."
+                },
+                "sino": {
+                    "dob": "April 9th",
+                    "description": "The mascot of Sino Studio since its very founding, Sino carries not only brand recognition but also the core spirit of the collective. In the Tây Du Kí GenZ series, Sino transforms into Huyết Quỷ - a central character with overwhelming power and a deeply complex inner world."
+                },
+                "linh": {
+                    "dob": "February 23rd",
+                    "description": "The central character of Linh: Soul Chase, Linh is a vibrant young girl with eyes that can see through souls. She once hid this ability until tragedy struck her family. From that moment, Linh accepts herself, embarks on a journey to find her younger brother, and confronts the spiritual world she had long avoided."
+                },
+                "nachi": {
+                    "dob": "August 7th",
+                    "description": "Born with albinism, Nachi grew up in isolation and pain. After an accident, she fell into a coma and drifted into Shino's dream - where for the first time she experienced true happiness. But when her real-world body ceased to exist, Nachi was forced to leave that dream forever."
+                },
+                "shino": {
+                    "dob": "April 9th",
+                    "description": "Shino is a quiet young man, lost in a dark and aimless life. The only meaning he once had lay in his dreams, where Nachi appeared like a gentle light. When she disappeared, Shino finally understood what she had endured. From then on, he became an artist - using each painting to celebrate the beauty of those with albinism, as a way to continue loving Nachi and bring the happiness they deserved to people like her."
+                },
+                "boss": {
+                    "dob": "June 13th",
+                    "description": "Boss is a fictional character created by Sino Studio - a massive, powerful, and ferocious monster. In the short project Ngọc Bảo Khí, Boss serves as the final boss and the greatest challenge the warrior must face."
+                }
+            }
+        }
+    },
+    "services": {
+        "hero": {
+            "heading": "CREATIVE SERVICES",
+            "body": "Sino Studio offers creative services from animation films, static & motion design, to event visuals and original IP - all with a distinctly Vietnamese style."
+        },
+        "grid": {
+            "short-film": {
+                "label": "Short Film / Pilot",
+                "sub": "Short films, pilot episodes for fundraising or IP introduction."
+            },
+            "original-ip": {
+                "heading": "ORIGINAL IP\nORIGINAL PROJECTS",
+                "bullets": ["Original Series", "Feature Film", "Character IP", "World Building Project"],
+                "notes": ["Extensions:", "- Comics", "- Games", "- Merchandising"]
+            },
+            "design-motion": {
+                "heading": "STATIC DESIGN\n& MOTION",
+                "bullets": ["Key Visual", "Poster", "Character Design", "Concept Art", "Motion Graphic"]
+            },
+            "animated-series": {
+                "label": "Animated Series / Web Series",
+                "sub": "Multi-episode animation for YouTube, OTT or brand series."
+            },
+            "tvc-animation": {
+                "label": "TVC Animation",
+                "sub": "2D, 3D or hybrid TVC production."
+            },
+            "trailer": {
+                "label": "Trailer / Teaser Animation",
+                "sub": "Film trailers, game trailers, project trailers."
+            },
+            "game-interactive": {
+                "heading": "GAME &\nINTERACTIVE",
+                "bullets": ["Game Assets - Characters, environments, UI animation.", "Game Cutscenes"]
+            },
+            "event-visual": {
+                "heading": "EVENT VISUAL\n& STAGE",
+                "bullets": ["Concert Visual", "LED Background", "Event Visual", "Stage Opening Animation"]
+            },
+            "mv-animation": {
+                "label": "MV Animation",
+                "sub": "Anime MV, lyric MV, visual MV."
+            },
+            "social-media-ad": {
+                "label": "Social Media Ad",
+                "sub": "TikTok, Reels, Facebook videos, Motion Banners."
+            }
+        }
+    },
+    "contactUs": {
+        "hero": {
+            "heading": "CONTACT US",
+            "button": "GET IN TOUCH"
+        },
+        "form": {
+            "name": {
+                "label": "NAME",
+                "placeholder": "Your name",
+                "validation": "Name is required"
+            },
+            "email": {
+                "label": "EMAIL",
+                "placeholder": "your@email.com",
+                "validation": "Please enter a valid email address"
+            },
+            "reason": {
+                "label": "REASON",
+                "placeholder": "What is this about?",
+                "validation": "Please enter a reason for contacting us"
+            },
+            "message": {
+                "label": "MESSAGE",
+                "placeholder": "Tell us more...",
+                "validation": "Message is required"
+            },
+            "backButton": "BACK",
+            "submitButton": {
+                "default": "SEND MESSAGE",
+                "loading": "SENDING..."
+            },
+            "result": {
+                "success": {
+                    "heading": "MESSAGE SENT!",
+                    "message": "Your message has been sent successfully! We will get back to you as soon as possible.",
+                    "button": "SEND NEW MESSAGE"
+                },
+                "error": {
+                    "message": "An error occurred while sending your message. Please try again later.",
+                    "button": "TRY AGAIN"
+                }
+            }
+        }
+    },
+    "projects": {
+        "grid": {
+            "heading": "PROJECTS",
+            "filters": {
+                "all": "ALL",
+                "tvc": "TVC",
+                "animation": "ANIMATION",
+                "mv": "MV",
+                "series": "SERIES"
+            },
+            "empty": "No projects found."
+        },
+        "details": {
+            "ngoc-bao-khi": {
+                "description_1": "Ngọc Bảo Khí (Jade Spirit) is a short animated film produced by Sino Studio right after the LINH: Soul Chase teaser. This was an important milestone for the team, marking a clear leap forward in technical skill and production thinking.",
+                "description_2": "Not a series project, Ngọc Bảo Khí is simply a statement of Sino Studio's dedication, perseverance, and long-term creative direction.",
+                "labels": [
+                    { "label": "RELEASE DATE", "value": "JANUARY 19, 2026" }
+                ]
+            },
+            "linh-truy-hon-am-gioi": {
+                "description_1": "A film project inspired by Vietnamese culture and spiritual mythology. With a spiritual universe that feels both fresh and familiar, compelling stories, and stunning animation that resonates with young audiences, this project aims to be a breakthrough in Vietnamese animation.",
+                "description_2": "",
+                "labels": [
+                    { "label": "RELEASE DATE", "value": "2028" },
+                    { "label": "GENRE", "value": "FANTASY" },
+                    { "label": "RUNTIME", "value": "90 MIN" }
+                ]
+            },
+            "tet-lien-quan-2026": {
+                "description_1": "Sino Studio successfully recreated the Lunar New Year atmosphere in the world of Arena of Valor through a completely new painting style and a highly demanding character design process. Despite the complex technical requirements, the team proved their optimized production capabilities by completing the project in just one month.",
+                "description_2": "Immediately after launch on the official fanpage, the product received overwhelming support from the community, reaffirming the studio's position in delivering high-quality animated media content.",
+                "labels": [
+                    { "label": "RELEASE DATE", "value": "JANUARY 31, 2026" },
+                    { "label": "CLIENT", "value": "GARENA" }
+                ]
+            },
+            "chang-trai-bat-tu": {
+                "description_1": "Based on a true story, the MV tells the bittersweet love of Hạ and Hiền Lương - two people deeply in love but torn apart by a terminal illness. Knowing time was running out, they chose to stay together through their final dates, letting go of petty arguments and holding onto bittersweet smiles and cherished moments. Chàng Trai Bất Tử quietly touched the hearts of millions with its sincerity and very real pain.",
+                "description_2": "",
+                "labels": [
+                    { "label": "RELEASE DATE", "value": "JANUARY 11, 2024" }
+                ]
+            },
+            "yeu-trong-co-doc": {
+                "description_1": "The story revolves around a love between two people from different worlds - Vũ, a rideshare driver, and Heny, a wealthy young woman. Two lonely souls find each other, then lose each other in the reality of their lives. Years later, Vũ succeeds in his music career and they reunite as equals - the gap that once separated them is gone, leaving only the chance to finish an unfinished love story.",
+                "description_2": "",
+                "labels": [
+                    { "label": "RELEASE DATE", "value": "JUNE 28, 2024" }
+                ]
+            },
+            "tay-du-ki-gen-z": {
+                "description_1": "An animated series inspired by the classic Journey to the West, but in a completely new form. By weaving in isekai elements, the project brings characters from multiple universes into an unpredictable pilgrimage. The collision of different worlds not only opens up unforeseen directions, but creates a thrilling, visually spectacular journey filled with unexpected twists.",
+                "description_2": "",
+                "labels": [
+                    { "label": "RELEASE DATE", "value": "SEPTEMBER 2, 2021" }
+                ]
+            },
+            "khong-phai-la-ket-thuc": {
+                "description_1": "A collaboration between Sino Studio and Remind, this project tells the story of a journey through darkness to reach a dream in music. A small girl always quietly follows Remind - but seems unseen. Only when success is reached does Remind look back and realize: that girl was her younger self - the version who silently walked alongside her, holding on and guiding her through the journey of growing up.",
+                "description_2": "",
+                "labels": [
+                    { "label": "RELEASE DATE", "value": "MARCH 14, 2026" }
+                ]
+            }
+        }
+    }
+}

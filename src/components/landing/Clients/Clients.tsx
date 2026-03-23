@@ -8,6 +8,7 @@ import {Carousel} from '@mantine/carousel';
 import AutoScroll from 'embla-carousel-auto-scroll';
 import '@mantine/carousel/styles.css';
 import styles from './Clients.module.css';
+import {useDictionary} from "@/i18n/DictionaryProvider";
 
 const clients = [
     {name: 'Garena', logo: '/images/clients/garena.webp', width: 550, height: 410},
@@ -21,6 +22,7 @@ const clients = [
 export default function Clients() {
     const isDesktop = useMediaQuery('(min-width: 1024px)');
     const autoScroll = AutoScroll({speed: 1.5, stopOnInteraction: false, stopOnMouseEnter: true, startDelay: 0});
+    const dict = useDictionary().landing.clients;
 
     return (
         <section className={styles.section}>
@@ -31,7 +33,7 @@ export default function Clients() {
                 viewport={{once: true}}
                 transition={{duration: 0.6}}
             >
-                OUR CLIENTS
+                {dict.heading}
             </motion.h2>
 
             {/* Mobile / Tablet: Embla auto-scroll carousel */}

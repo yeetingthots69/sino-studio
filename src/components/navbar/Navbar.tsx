@@ -9,22 +9,31 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {usePathname} from "next/navigation";
 import {IconMenu2} from "@tabler/icons-react";
+import {useLocale, useDictionary} from '@/i18n/DictionaryProvider';
+import LanguageSwitcher from '@/components/language-switcher/LanguageSwitcher';
 
-const navItems = [
-    {label: 'About', href: '/about'},
-    {label: 'Projects', href: '/projects'},
-    {label: 'Services', href: '/services'},
-    {label: 'Brand Equity', href: '/brand-equity'},
-    {label: 'Contact', href: '/contact-us'},
+const NAV_ROUTES = [
+    {key: 'about' as const, href: '/about'},
+    {key: 'projects' as const, href: '/projects'},
+    {key: 'services' as const, href: '/services'},
+    {key: 'brandEquity' as const, href: '/brand-equity'},
+    {key: 'contactUs' as const, href: '/contact-us'},
 ];
 
 export default function Navbar() {
     const pathname = usePathname();
-    const isContactPage = pathname === '/contact-us';
+    const locale = useLocale();
+    const dict = useDictionary();
+    const isContactPage = pathname.endsWith('/contact-us');
     const [scroll] = useWindowScroll();
     const [opened, {open, close}] = useDisclosure(false);
     const [active, setActive] = useState<string | null>(null);
     const scrolled = scroll.y > 60;
+
+    const navItems = NAV_ROUTES.map((route) => ({
+        label: dict.nav[route.key],
+        href: `/${locale}${route.href}`,
+    }));
 
     return (
         <>
@@ -38,12 +47,13 @@ export default function Navbar() {
                     backdropFilter: 'blur(8px)',
                 } : {}}
             >
-                <Link href="/" className={styles.logo}>
+                <Link href={`/${locale}`} className={styles.logo}>
                     <Image src="/sino-studio-full.png" alt="Sino Studio Logo" width={3129 / 25} height={1640 / 25}/>
                 </Link>
 
                 {/* Hamburger + Mantine Menu – mobile only */}
                 <div className={styles.mobileMenu}>
+                    <LanguageSwitcher variant="navbar" />
                     <Menu
                         opened={opened}
                         onOpen={open}
@@ -73,12 +83,6 @@ export default function Navbar() {
                         }}
                     >
                         <Menu.Target>
-                            {/*<button*/}
-                            {/*    className={`${styles.menuBtn} ${opened ? styles.open : ''}`}*/}
-                            {/*    aria-label="Toggle menu"*/}
-                            {/*>*/}
-                            {/*    <span/><span/><span/>*/}
-                            {/*</button>*/}
                             <IconMenu2 className={`${styles.menuBtn} ${opened ? styles.open : ''}`}/>
                         </Menu.Target>
 
@@ -102,19 +106,22 @@ export default function Navbar() {
                 </div>
 
                 {/* Desktop nav links */}
-                <ul className={styles.navLinks}>
-                    {navItems.map((item) => (
-                        <li key={item.label}>
-                            <Link
-                                href={item.href}
-                                className={`${styles.navLink} ${active === item.label ? styles.active : ''}`}
-                                onClick={() => setActive(item.label)}
-                            >
-                                {item.label}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
+                <div className={styles.desktopNav}>
+                    <ul className={styles.navLinks}>
+                        {navItems.map((item) => (
+                            <li key={item.label}>
+                                <Link
+                                    href={item.href}
+                                    className={`${styles.navLink} ${active === item.label ? styles.active : ''}`}
+                                    onClick={() => setActive(item.label)}
+                                >
+                                    {item.label}
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                    <LanguageSwitcher variant="navbar" />
+                </div>
             </motion.nav>
         </>
     );

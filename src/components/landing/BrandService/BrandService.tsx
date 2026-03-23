@@ -8,6 +8,7 @@ const MotionLink = motion.create(Link);
 import {IconArrowRight} from '@tabler/icons-react';
 import {SimpleGrid} from '@mantine/core';
 import styles from './BrandService.module.css';
+import {useDictionary, useLocale} from '@/i18n/DictionaryProvider';
 
 const fadeUp: Variants = {
     hidden: {opacity: 0, y: 40},
@@ -19,6 +20,8 @@ const fadeUp: Variants = {
 };
 
 export default function BrandService() {
+    const locale = useLocale();
+    const dict = useDictionary().landing.brandServices;
     return (
         <SimpleGrid cols={{base: 1, lg: 2}} spacing={0} className={styles.section} id="brand-equity-services">
             {/* Brand Equity Panel */}
@@ -30,13 +33,13 @@ export default function BrandService() {
                     viewport={{once: true, amount: 0.3}}
                 >
                     <motion.h2 className={styles.panelTitle} variants={fadeUp} custom={0}>
-                        BRAND EQUITY
+                        {dict.brandEquity.heading}
                     </motion.h2>
                     <motion.p className={styles.panelDesc} variants={fadeUp} custom={1}>
-                        Từ ý tưởng đến IP sáng tạo, Sino Studio xây dựng giá trị thương hiệu qua hàng triệu lượt tiếp cận trên nền tảng số.
+                        {dict.brandEquity.body}
                     </motion.p>
-                    <MotionLink href="/brand-equity" className={styles.learnBtn} variants={fadeUp} custom={2}>
-                        LEARN MORE <IconArrowRight size={16} stroke={2} />
+                    <MotionLink href={`/${locale}/brand-equity`} className={styles.learnBtn} variants={fadeUp} custom={2}>
+                        {dict.brandEquity.learnMore} <IconArrowRight size={16} stroke={2} />
                     </MotionLink>
                 </motion.div>
                 <div className={styles.characterWrap}>
@@ -67,13 +70,13 @@ export default function BrandService() {
                     viewport={{once: true, amount: 0.3}}
                 >
                     <motion.h2 className={styles.panelTitle} variants={fadeUp} custom={0}>
-                        SERVICES
+                        {dict.services.heading}
                     </motion.h2>
                     <motion.p className={styles.panelDesc} variants={fadeUp} custom={1}>
-                        Sino Studio mang đến các giải pháp sáng tạo từ animation, motion design đến phát triển IP gốc.
+                        {dict.services.body}
                     </motion.p>
-                    <MotionLink href="/services" className={styles.learnBtn} variants={fadeUp} custom={2}>
-                        LEARN MORE <IconArrowRight size={16} stroke={2} />
+                    <MotionLink href={`/${locale}/services`} className={styles.learnBtn} variants={fadeUp} custom={2}>
+                        {dict.services.learnMore} <IconArrowRight size={16} stroke={2} />
                     </MotionLink>
                 </motion.div>
                 <div className={styles.characterWrap}>

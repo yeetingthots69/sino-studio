@@ -1,0 +1,13 @@
+import 'server-only';
+import type {Locale} from './config';
+
+const dictionaries = {
+    en: () => import('./dictionaries/en.json').then((m) => m.default),
+    vi: () => import('./dictionaries/vi.json').then((m) => m.default),
+};
+
+export type Dictionary = Awaited<ReturnType<(typeof dictionaries)['vi']>>;
+
+export async function getDictionary(locale: Locale): Promise<Dictionary> {
+    return dictionaries[locale]();
+}

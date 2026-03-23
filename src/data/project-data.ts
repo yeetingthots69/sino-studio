@@ -21,7 +21,7 @@ export type ProjectSection =
 
 export interface ProjectMetaData {
     id: string;
-    type: 'animation' | 'mv' | 'series';
+    type: 'animation' | 'mv' | 'series' | 'tvc';
     title: string;
     description_1: string;
     description_2?: string;
@@ -111,7 +111,7 @@ export const PROJECTS: Record<string, ProjectMetaData> = {
         type: 'animation',
         title: "LINH: TRUY HỒN ÂM GIỚI",
         description_1: `
-            Dự án phim được lấy cảm hứng từ văn hóa và yếu tố tâm linh của Việt Nam. Với một vũ trụ tâm linh vừa mới mẻ vừa quen thuộc, những câu chuyện sâu sắc và hình ảnh hoạt họa đẹp mắt, gần gũi với giới trẻ, dự án kí vọng sẽ là sự đột phát trong nền hoạt hình Việt Nam.
+            Dự án phim được lấy cảm hứng từ văn hóa và yếu tố tâm linh của Việt Nam. Với một vũ trụ tâm linh vừa mới mẻ vừa quen thuộc, những câu chuyện sâu sắc và hình ảnh hoạt họa đẹp mắt, gần gũi với giới trẻ, dự án kì vọng sẽ là sự đột phát trong nền hoạt hình Việt Nam.
         `,
         firstAired: "2028",
         customTags: [{label: 'THỂ LOẠI', value: 'FANTASY'}, {label: 'ĐỘ DÀI', value: '90 PHÚT'}],
@@ -142,7 +142,7 @@ export const PROJECTS: Record<string, ProjectMetaData> = {
     },
     "tet-lien-quan-2026": {
         id: "tet-lien-quan-2026",
-        type: 'animation',
+        type: 'tvc',
         title: "TẾT LIÊN QUÂN 2026",
         description_1: `
             Sino Studio đã tái hiện thành công không khí ngày Tết trong thế giới Liên Quân Mobile thông qua phong cách hội họa hoàn toàn mới và quy trình thiết kế nhân vật có độ khó cao. Dù yêu cầu về kỹ thuật phức tạp, đội ngũ đã chứng minh năng lực sản xuất tối ưu khi hoàn thiện dự án chỉ trong vòng 01 tháng. 

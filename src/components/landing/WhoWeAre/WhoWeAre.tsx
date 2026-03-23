@@ -6,6 +6,7 @@ import {IconArrowRight} from '@tabler/icons-react';
 import styles from './WhoWeAre.module.css';
 import {Group} from "@mantine/core";
 import Link from "next/link";
+import {useDictionary, useLocale} from '@/i18n/DictionaryProvider';
 
 const fadeUp: Variants = {
     hidden: {opacity: 0, y: 40},
@@ -17,6 +18,8 @@ const fadeUp: Variants = {
 };
 
 export default function WhoWeAre() {
+    const locale = useLocale();
+    const dict = useDictionary().landing.whoWeAre;
     return (
         <div className={styles.wrapper}>
             <section className={styles.section} id="about">
@@ -28,18 +31,18 @@ export default function WhoWeAre() {
                         viewport={{once: true, amount: 0.3}}
                     >
                         <motion.h2 className={styles.heading} variants={fadeUp} custom={0}>
-                            WHO WE ARE <span className={styles.lightning}>⚡</span>
+                            {dict.heading} <span className={styles.lightning}>⚡</span>
                         </motion.h2>
                         <motion.p className={styles.body} variants={fadeUp} custom={1}>
-                            Sino Studio khởi nguồn từ khát vọng của một người trẻ mang trong mình sứ mệnh phát triển hoạt hình Việt Nam. Từ một bước đi đơn độc, tầm nhìn ấy đã kết nối những con người đầu tiên và từ đó chúng tôi hình thành, lớn mạnh và không ngừng mở rộng.
+                            {dict["body-1"]}
                             <br/>
-                            Trải qua 6 năm bền bỉ ăn ngủ cùng hoạt hình, Sino Studio đã xây dựng được một hệ sinh thái sản phẩm đa dạng với nhiều dự án đạt hàng chục triệu lượt xem, ghi dấu ấn rõ nét trên thị trường.
-                            <br/><br/>
-                            Hướng tới tương lai, chúng tôi tập trung mở rộng hợp tác, phát triển các dự án phim ảnh chiến lược và từng bước hiện thực hóa mục tiêu đưa hoạt hình Việt vươn xa.
+                            {dict["body-2"]}
+                            <br/>
+                            {dict["body-3"]}
                         </motion.p>
                         <motion.div variants={fadeUp} custom={2}>
-                            <Link href="/about" className={styles.exploreBtn}>
-                                EXPLORE
+                            <Link href={`/${locale}/about`} className={styles.exploreBtn}>
+                                {dict.explore}
                                 <IconArrowRight size={18} stroke={1.5}/>
                             </Link>
                         </motion.div>

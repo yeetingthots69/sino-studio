@@ -1,0 +1,50 @@
+.switcher {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.localeButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 6px;
+    transition: color 0.2s;
+}
+
+.active {
+    color: #fff;
+}
+
+.inactive {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.inactive:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.divider {
+    color: rgba(255, 255, 255, 0.2);
+    font-size: 12px;
+    margin: 0 2px;
+    user-select: none;
+}
+
+/* Navbar variant */
+.navbar .localeButton {
+    font-size: 13px;
+}
+
+/* Footer variant */
+.footer .localeButton {
+    font-size: 10px;
+}
+
+.footer .divider {
+    font-size: 10px;
+}

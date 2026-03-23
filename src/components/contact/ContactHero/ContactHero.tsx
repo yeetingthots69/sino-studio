@@ -6,8 +6,10 @@ import Image from 'next/image';
 import styles from './ContactHero.module.css';
 import ContactForm from '../ContactForm/ContactForm';
 import {useMediaQuery} from "@mantine/hooks";
+import {useDictionary} from "@/i18n/DictionaryProvider";
 
 export default function ContactHero() {
+    const dict = useDictionary().contactUs.hero;
     const [showForm, setShowForm] = useState(false);
     const isMobile = useMediaQuery('(max-width: 768px)');
 
@@ -23,7 +25,7 @@ export default function ContactHero() {
             />
 
             {/* Heading — absolutely at top, never participates in layout */}
-            <h1 className={styles.heading}>CONTACT US</h1>
+            <h1 className={styles.heading}>{dict.heading}</h1>
 
             {/* Stage — absolutely at bottom, position never changes on toggle */}
             <div className={styles.stage}>
@@ -49,7 +51,7 @@ export default function ContactHero() {
                                 className={styles.toggleBtn}
                                 onClick={() => setShowForm(true)}
                             >
-                                GET IN TOUCH
+                                {dict.button}
                             </button>
                         </motion.div>
                     ) : (

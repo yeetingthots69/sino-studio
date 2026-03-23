@@ -1,7 +1,8 @@
 'use client';
 
-import { motion, type Variants } from 'framer-motion';
+import {motion, type Variants} from 'framer-motion';
 import styles from './AboutMission.module.css';
+import {useDictionary} from "@/i18n/DictionaryProvider";
 
 const fadeUp: Variants = {
     hidden: { opacity: 0, y: 30 },
@@ -13,6 +14,7 @@ const fadeUp: Variants = {
 };
 
 export default function AboutMission() {
+    const dict = useDictionary()["about"].mission;
     return (
         <>
             {/* ── WHO WE ARE + MISSION / VISION ── */}
@@ -25,7 +27,7 @@ export default function AboutMission() {
                     viewport={{ once: true, amount: 0.3 }}
                 >
                     <motion.h2 className={styles.whoHeading} variants={fadeUp} custom={0}>
-                        WHO WE ARE
+                        {dict.heading}
                     </motion.h2>
                     <motion.p className={styles.whoTagline} variants={fadeUp} custom={1}>
                         CREATIVE · PRODUCTION · MULTIMEDIA · STORYTELLING
@@ -41,9 +43,9 @@ export default function AboutMission() {
                 >
                     {/* MISSION */}
                     <motion.div className={styles.statementBlock} variants={fadeUp} custom={0}>
-                        <span className={styles.statementLabel}>MISSION</span>
+                        <span className={styles.statementLabel}>{dict.mission.heading}</span>
                         <p className={styles.statementBody}>
-                            Tạo ra các sản phẩm hoạt hình chất lượng, mang đậm bản sắc Việt và có giá trị nghệ thuật, giải trí cao.
+                            {dict.mission.body}
                         </p>
                     </motion.div>
 
@@ -51,9 +53,9 @@ export default function AboutMission() {
 
                     {/* VISION */}
                     <motion.div className={styles.statementBlock} variants={fadeUp} custom={2}>
-                        <span className={styles.statementLabel}>VISION</span>
+                        <span className={styles.statementLabel}>{dict.vision.heading}</span>
                         <p className={styles.statementBody}>
-                            Trở thành studio tiên phong đưa hoạt hình Việt Nam tiếp cận khán giả toàn cầu.
+                            {dict.vision.body}
                         </p>
                     </motion.div>
                 </motion.div>
@@ -68,9 +70,9 @@ export default function AboutMission() {
                 transition={{ duration: 0.6 }}
             >
                 <div className={styles.strengthsInner}>
-                    <span className={styles.strengthsLabel}>STRENGTHS</span>
+                    <span className={styles.strengthsLabel}>{dict.strength.heading}</span>
                     <p className={styles.strengthsBody}>
-                        Là thương hiệu hoạt hình được hàng triệu khán giả biết đến, quy trình tối ưu chi phí. Có kinh nghiêm và nhân sự trong tất cả bộ phận từ âm nhạc, lồng tiếng, SFX, truyền thông,...
+                        {dict.strength.body}
                     </p>
                 </div>
             </motion.section>

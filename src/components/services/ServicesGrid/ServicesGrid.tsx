@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { motion, type Variants } from 'framer-motion';
 import styles from './ServicesGrid.module.css';
+import { useDictionary } from "@/i18n/DictionaryProvider";
 
 const fadeUp: Variants = {
     hidden: { opacity: 0, y: 36 },
@@ -13,100 +14,49 @@ const fadeUp: Variants = {
     }),
 };
 
-/* ─── Data ──────────────────────────────────────────────────────── */
+/* ─── Static config (non-translatable) ──────────────────────────── */
 
-interface ImageBlock {
+interface ImageConfig {
+    key: string;
     kind: 'image';
     src: string;
-    alt: string;
+}
+
+interface TextConfig {
+    key: string;
+    kind: 'text';
+    theme: 'red' | 'dark';
+}
+
+type BlockConfig = ImageConfig | TextConfig;
+
+const BLOCK_CONFIG: BlockConfig[] = [
+    { key: 'short-film',      kind: 'image', src: '/images/projects/ngoc-bao-khi/hero.webp' },
+    { key: 'original-ip',     kind: 'text',  theme: 'red' },
+    { key: 'design-motion',   kind: 'text',  theme: 'dark' },
+    { key: 'animated-series', kind: 'image', src: '/images/services/animated-series.webp' },
+    { key: 'tvc-animation',   kind: 'image', src: '/images/services/tvc-animation.webp' },
+    { key: 'trailer',         kind: 'image', src: '/images/projects/ngoc-bao-khi/background-5.webp' },
+    { key: 'game-interactive',kind: 'text',  theme: 'dark' },
+    { key: 'event-visual',    kind: 'text',  theme: 'red' },
+    { key: 'mv-animation',    kind: 'image', src: '/images/services/mv-animation.webp' },
+    { key: 'social-media-ad', kind: 'image', src: '/images/projects/tet-lien-quan-2026/background-1.webp' },
+];
+
+/* ─── Composed types ─────────────────────────────────────────────── */
+
+interface ImageBlock extends ImageConfig {
     label: string;
     sub: string;
 }
 
-interface TextBlock {
-    kind: 'text';
-    theme: 'red' | 'dark';
+interface TextBlock extends TextConfig {
     heading: string;
     bullets: string[];
-    note?: string[];   // extra lines below a spacer
+    notes?: string[];
 }
 
 type Block = ImageBlock | TextBlock;
-
-const blocks: Block[] = [
-    /* Row 1 – left: short-film image (tall), right: IP text */
-    {
-        kind: 'image',
-        src: '/images/projects/ngoc-bao-khi/hero.webp',
-        alt: 'Short Film / Pilot',
-        label: 'Short Film / Pilot',
-        sub: 'Phim ngắn, tập thử nghiệm gọi vốn hoặc giới thiệu IP.',
-    },
-    {
-        kind: 'text',
-        theme: 'red',
-        heading: 'IP ORIGINAL\nDỰ ÁN GỐC',
-        bullets: ['Series gốc', 'Phim điện ảnh', 'Character IP', 'World Building Project'],
-        note: ['Mở rộng:', '- Truyện tranh', '- Game', '- Merchandising'],
-    },
-    /* Row 2 – left: thiết kế text, right: animated series image */
-    {
-        kind: 'text',
-        theme: 'dark',
-        heading: 'THIẾT KẾ TĨNH\n& MOTION',
-        bullets: ['Key Visual', 'Poster', 'Character Design', 'Concept Art', 'Motion Graphic'],
-    },
-    {
-        kind: 'image',
-        src: '/images/services/animated-series.webp',
-        alt: 'Animated Series / Web Series',
-        label: 'Animated Series / Web Series',
-        sub: 'Phim hoạt hình nhiều tập cho YouTube, OTT hoặc brand series.',
-    },
-    /* Row 3 – left: TVC image, right: trailer image */
-    {
-        kind: 'image',
-        src: '/images/services/tvc-animation.webp',
-        alt: 'TVC Animation',
-        label: 'TVC Animation',
-        sub: 'TVC 2D, 3D hoặc hybrid.',
-    },
-    {
-        kind: 'image',
-        src: '/images/projects/ngoc-bao-khi/background-5.webp',
-        alt: 'Trailer / Teaser Animation',
-        label: 'Trailer / Teaser Animation',
-        sub: 'Trailer phim, trailer game, trailer dự án.',
-    },
-    /* Row 4 – left: game text, right: visual sự kiện text */
-    {
-        kind: 'text',
-        theme: 'dark',
-        heading: 'GAME &\nINTERACTIVE',
-        bullets: ['Game Assets Nhân vật, môi trường, UI animation.', 'Cutscene Game'],
-    },
-    {
-        kind: 'text',
-        theme: 'red',
-        heading: 'VISUAL SỰ KIỆN\n& SÂN KHẤU',
-        bullets: ['Concert Visual', 'LED Background', 'Event Visual', 'Stage Opening Animation'],
-    },
-    /* Row 5 – left: MV image, right: TVC image */
-    {
-        kind: 'image',
-        src: '/images/services/mv-animation.webp',
-        alt: 'MV Animation',
-        label: 'MV Animation',
-        sub: 'MV anime, lyric MV, visual MV.',
-    },
-    {
-        kind: 'image',
-        src: '/images/projects/tet-lien-quan-2026/background-1.webp',
-        alt: 'TVC Animation',
-        label: 'Social Media Ad',
-        sub: 'Video Tiktok, Reels, Facebook, Motion Banner.',
-    },
-];
 
 /* ─── Sub-components ─────────────────────────────────────────────── */
 
@@ -122,7 +72,7 @@ function ImageCard({ block, idx }: { block: ImageBlock; idx: number }) {
         >
             <Image
                 src={block.src}
-                alt={block.alt}
+                alt={block.label}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 style={{ objectFit: 'cover', objectPosition: 'center top' }}
@@ -155,14 +105,10 @@ function TextCard({ block, idx }: { block: TextBlock; idx: number }) {
                 {block.bullets.map((b, i) => (
                     <li key={i} className={styles.bulletItem}>{b}</li>
                 ))}
+                {block.notes && block.notes.map((n, i) => (
+                    <li key={i} className={styles.bulletItem}>{n}</li>
+                ))}
             </ul>
-            {block.note && (
-                <div className={styles.noteBlock}>
-                    {block.note.map((n, i) => (
-                        <p key={i} className={styles.noteLine}>{n}</p>
-                    ))}
-                </div>
-            )}
         </motion.div>
     );
 }
@@ -170,16 +116,22 @@ function TextCard({ block, idx }: { block: TextBlock; idx: number }) {
 /* ─── Main export ─────────────────────────────────────────────────── */
 
 export default function ServicesGrid() {
+    const gridDict = useDictionary().services.grid;
+
+    const blocks = BLOCK_CONFIG.map((config) => ({
+        ...config,
+        ...gridDict[config.key as keyof typeof gridDict],
+    })) as Block[];
+
     return (
         <section className={styles.section}>
             <div className={styles.grid}>
                 {blocks.map((block, idx) =>
                     block.kind === 'image'
-                        ? <ImageCard key={idx} block={block} idx={idx} />
-                        : <TextCard key={idx} block={block} idx={idx} />
+                        ? <ImageCard key={block.key} block={block} idx={idx} />
+                        : <TextCard key={block.key} block={block} idx={idx} />
                 )}
             </div>
         </section>
     );
 }
-

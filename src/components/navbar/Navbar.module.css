@@ -68,6 +68,12 @@
 .mobileMenu {
     display: flex;
     align-items: center;
+    gap: 8px;
+}
+
+/* Desktop nav + switcher wrapper – hidden on mobile */
+.desktopNav {
+    display: none;
 }
 
 /* Dropdown item active/hover overrides */
@@ -154,6 +160,12 @@
 
     .mobileMenu {
         display: none;
+    }
+
+    .desktopNav {
+        display: flex;
+        align-items: center;
+        gap: 32px;
     }
 
     .navLinks {

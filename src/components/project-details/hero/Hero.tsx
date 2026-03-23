@@ -7,6 +7,7 @@ import {motion, type Variants} from 'framer-motion';
 import {SimpleGrid} from '@mantine/core';
 import {type ProjectMetaData, type ProjectSection} from '@/data/project-data';
 import styles from './Hero.module.css';
+import {useDictionary} from "@/i18n/DictionaryProvider";
 
 const fadeUp: Variants = {
     hidden: {opacity: 0, y: 40},
@@ -31,12 +32,23 @@ interface Props {
     project: ProjectMetaData;
 }
 
+type ProjectDetailEntry = {
+    description_1?: string;
+    description_2?: string;
+    labels?: {label: string; value: string}[];
+};
+
 export default function Hero({project}: Props) {
+    const dict = useDictionary().projects.details;
+    const projectDict = (dict as unknown as Record<string, ProjectDetailEntry>)[project.id];
+
     const heroSrc = `/images/projects/${project.id}/hero.webp`;
     const videoSrc = `/videos/projects/${project.id}/hero.webm`;
     const [videoError, setVideoError] = useState(false);
 
-    const stats = [
+    const description1 = projectDict?.description_1 ?? project.description_1;
+    const description2 = projectDict?.description_2 ?? project.description_2;
+    const stats = projectDict?.labels ?? [
         {label: 'NGÀY CÔNG CHIẾU', value: project.firstAired},
         ...(project.customTags ?? []),
     ];
@@ -97,11 +109,11 @@ export default function Hero({project}: Props) {
                     </motion.h1>
 
                     <motion.p className={styles.body} variants={fadeUp} custom={1}>
-                        {project.description_1}
+                        {description1}
                     </motion.p>
 
                     <motion.p className={styles.body} variants={fadeUp} custom={2}>
-                        {project.description_2}
+                        {description2}
                     </motion.p>
 
                     <motion.div variants={fadeUp} custom={3}>

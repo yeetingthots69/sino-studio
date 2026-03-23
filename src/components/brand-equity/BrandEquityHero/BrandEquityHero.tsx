@@ -2,6 +2,7 @@
 
 import { motion, type Variants } from 'framer-motion';
 import styles from './BrandEquityHero.module.css';
+import {useDictionary} from "@/i18n/DictionaryProvider";
 
 const fadeUp: Variants = {
     hidden: { opacity: 0, y: 30 },
@@ -13,6 +14,7 @@ const fadeUp: Variants = {
 };
 
 export default function BrandEquityHero() {
+    const dict = useDictionary().brandEquity.hero;
     return (
         <section className={styles.section}>
             <div className={styles.inner}>
@@ -22,7 +24,7 @@ export default function BrandEquityHero() {
                     animate="visible"
                 >
                     <motion.h1 className={styles.heading} variants={fadeUp} custom={0}>
-                        BRAND EQUITY
+                        {dict.heading}
                     </motion.h1>
                     <motion.div className={styles.bars} variants={fadeUp} custom={1} aria-hidden>
                         <span className={`${styles.bar} ${styles.barShort}`} />
@@ -32,8 +34,7 @@ export default function BrandEquityHero() {
                 </motion.div>
 
                 <motion.p className={styles.sub} variants={fadeUp} custom={2} initial="hidden" animate="visible">
-                    Sino Studio xây dựng hệ thống IP gốc mang đậm bản sắc Việt — từ nhân vật đến vũ trụ sáng tạo,
-                    kết nối với hàng triệu khán giả trên các nền tảng số.
+                    {dict.body}
                 </motion.p>
             </div>
         </section>
