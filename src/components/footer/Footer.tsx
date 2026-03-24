@@ -67,7 +67,7 @@ export default function Footer() {
                         {/*<Text className={styles.contactItem}>phonr number</Text>*/}
                         <Text className={styles.contactItem}>CONTACT@SINOSTUDIO.VN</Text>
                         <Text className={styles.contactItem}>
-                            412 Nguyễn Thị Minh Khai, Phường 5, Quận 3, Hồ Chí Minh 70000
+                            412 Nguyễn Thị Minh Khai, Phường Bàn Cờ, Thành phố Hồ Chí Minh, Việt Nam
                         </Text>
                     </Stack>
 
