@@ -13,7 +13,7 @@ import {useDictionary} from "@/i18n/DictionaryProvider";
 const clients = [
     {name: 'Garena', logo: '/images/clients/garena.webp', width: 550, height: 410},
     {name: 'Alpha Technime', logo: '/images/clients/alpha-technime.webp', width: 450, height: 462},
-    {name: 'W2W', logo: '/images/clients/w2w.webp', width: 228 * 2, height: 91 * 2},
+    // {name: 'W2W', logo: '/images/clients/w2w.webp', width: 228 * 2, height: 91 * 2},
     {name: 'FG Studio', logo: '/images/clients/fg-studio.webp', width: 602, height: 696},
     {name: 'Hobby Horizon', logo: '/images/clients/hobby-horizon.webp', width: 666 * 1.2, height: 374 * 1.2},
     {name: 'Yin Yang Media', logo: '/images/clients/yin-yang-media.webp', width: 300 * 2, height: 300 * 2},

@@ -63,7 +63,7 @@ export async function generateMetadata({params}: LayoutProps): Promise<Metadata>
             type: 'website',
             locale: locale === 'vi' ? 'vi_VN' : 'en_US',
             siteName: SITE_NAME,
-            images: [{url: OG_IMAGES.default, width: 1200, height: 630, alt: SITE_NAME}],
+            images: [{url: OG_IMAGES.favicon, width: 1200, height: 630, alt: SITE_NAME}],
         },
         twitter: {
             card: 'summary_large_image',

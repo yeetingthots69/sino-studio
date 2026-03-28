@@ -20,4 +20,5 @@ export const OG_IMAGES = {
     projects: '/images/og/og-home.png',
     /** Used as fallback when no route-specific OG image exists */
     default: '/sino-studio-full.png',
+    favicon: '/favicon.png'
 } as const;
