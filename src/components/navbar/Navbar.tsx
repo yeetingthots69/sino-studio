@@ -2,7 +2,7 @@
 
 import {useState} from 'react';
 import {motion} from 'framer-motion';
-import {useDisclosure} from '@mantine/hooks';
+import {useDisclosure, useWindowScroll} from '@mantine/hooks';
 import {Menu} from '@mantine/core';
 import styles from './Navbar.module.css';
 import Image from 'next/image';
@@ -22,8 +22,11 @@ const NAV_ROUTES = [
 export default function Navbar() {
     const locale = useLocale();
     const dict = useDictionary();
+    const [scroll] = useWindowScroll();
     const [opened, {open, close}] = useDisclosure(false);
     const [active, setActive] = useState<string | null>(null);
+
+    const scrolled = scroll.y > 60;
 
     const navItems = NAV_ROUTES.map((route) => ({
         label: dict.nav[route.key],
@@ -33,7 +36,7 @@ export default function Navbar() {
     return (
         <>
             <motion.nav
-                className={styles.navbar}
+                className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}
                 initial={{y: -60, opacity: 0}}
                 animate={{y: 0, opacity: 1}}
                 transition={{duration: 0.6, ease: 'easeOut'}}

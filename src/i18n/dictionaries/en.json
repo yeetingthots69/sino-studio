@@ -82,7 +82,8 @@
             "body-2": "Looking to the future, we focus on expanding partnerships, developing strategic film projects, and step by step realizing the goal of bringing Vietnamese animation to the world."
         },
         "mission": {
-            "heading": "WHO WE ARE",
+            "headingMobile": "WHO WE ARE",
+            "headingTabletAndUp": "WHO WE ARE",
             "mission": {
                 "heading": "MISSION",
                 "body": "To create high-quality animation products that carry a distinctly Vietnamese identity with strong artistic and entertainment value."

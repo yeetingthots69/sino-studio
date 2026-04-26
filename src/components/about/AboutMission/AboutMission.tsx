@@ -27,7 +27,7 @@ export default function AboutMission() {
                     viewport={{ once: true, amount: 0.3 }}
                 >
                     <motion.h2 className={styles.whoHeading} variants={fadeUp} custom={0}>
-                        {dict.heading}
+                        {dict.headingMobile}
                     </motion.h2>
                     <motion.p className={styles.whoTagline} variants={fadeUp} custom={1}>
                         CREATIVE · PRODUCTION · MULTIMEDIA · STORYTELLING

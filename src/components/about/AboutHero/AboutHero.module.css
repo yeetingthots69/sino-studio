@@ -50,7 +50,7 @@
 .heading {
     font-family: var(--font-heading);
     font-weight: 900;
-    font-size: clamp(52px, 14vw, 100px);
+    font-size: clamp(52px, 12vw, 100px);
     line-height: 1;
     color: var(--color-white);
     text-transform: uppercase;

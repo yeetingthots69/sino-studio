@@ -82,7 +82,8 @@
             "body-2": "Hướng tới tương lai, chúng tôi tập trung mở rộng hợp tác, phát triển các dự án phim ảnh chiến lược và từng bước hiện thực hóa mục tiêu đưa hoạt hình Việt vươn xa."
         },
         "mission": {
-            "heading": "CHÚNG TÔI LÀ AI",
+            "headingMobile": "VỀ CHÚNG TÔI",
+            "headingTabletAndUp": "CHÚNG TÔI LÀ AI",
             "mission": {
                 "heading": "NHIỆM VỤ",
                 "body": "Tạo ra các sản phẩm hoạt hình chất lượng, mang đậm bản sắc Việt và có giá trị nghệ thuật, giải trí cao."
