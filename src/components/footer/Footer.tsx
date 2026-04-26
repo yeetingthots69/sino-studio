@@ -6,6 +6,7 @@ import {ActionIcon, Anchor, Group, SimpleGrid, Stack, Text} from '@mantine/core'
 import {IconBrandFacebook, IconBrandTiktok, IconBrandYoutube} from '@tabler/icons-react';
 import {useLocale, useDictionary} from '@/i18n/DictionaryProvider';
 import LanguageSwitcher from '@/components/language-switcher/LanguageSwitcher';
+import {useMediaQuery} from "@mantine/hooks";
 
 const NAV_ROUTES = [
     {key: 'projects' as const, label: 'PROJECTS', href: '/projects'},
@@ -36,7 +37,7 @@ export default function Footer() {
 
                 <SimpleGrid
                     className={styles.grid}
-                    cols={{base: 1, sm: 2, lg: 4}}
+                    cols={{base: 1, sm: 4, lg: 4}}
                     spacing={{base: 28, sm: 32, lg: 40}}
                     maw={1400}
                     mx="auto"
@@ -64,7 +65,6 @@ export default function Footer() {
 
                     {/* Contact */}
                     <Stack gap={8}>
-                        {/*<Text className={styles.contactItem}>phonr number</Text>*/}
                         <Text className={styles.contactItem}>CONTACT@SINOSTUDIO.VN</Text>
                         <Text className={styles.contactItem}>
                             412 Nguyễn Thị Minh Khai, Phường Bàn Cờ, Thành phố Hồ Chí Minh, Việt Nam
