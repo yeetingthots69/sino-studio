@@ -1,8 +1,8 @@
 'use client';
 
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {motion} from 'framer-motion';
-import {useDisclosure, useWindowScroll} from '@mantine/hooks';
+import {useDisclosure} from '@mantine/hooks';
 import {Menu} from '@mantine/core';
 import styles from './Navbar.module.css';
 import Image from 'next/image';
@@ -22,11 +22,37 @@ const NAV_ROUTES = [
 export default function Navbar() {
     const locale = useLocale();
     const dict = useDictionary();
-    const [scroll] = useWindowScroll();
     const [opened, {open, close}] = useDisclosure(false);
     const [active, setActive] = useState<string | null>(null);
+    const [scrolled, setScrolled] = useState(false);
+    const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const scrolled = scroll.y > 60;
+    useEffect(() => {
+        const handleScroll = () => {
+            if (idleTimerRef.current) {
+                clearTimeout(idleTimerRef.current);
+            }
+
+            if (window.scrollY > 60) {
+                setScrolled(true);
+                idleTimerRef.current = setTimeout(() => {
+                    setScrolled(false);
+                }, 1000);
+            } else {
+                setScrolled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, {passive: true});
+        handleScroll();
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            if (idleTimerRef.current) {
+                clearTimeout(idleTimerRef.current);
+            }
+        };
+    }, []);
 
     const navItems = NAV_ROUTES.map((route) => ({
         label: dict.nav[route.key],
