@@ -1,0 +1,499 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1790677445153,
+  "projectRoot": "D:\\WORK\\SINO STUDIO\\sino-studio",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "next",
+        "version": "16.1.7",
+        "category": "fullstack"
+      },
+      {
+        "name": "react",
+        "version": "19.2.3",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.3",
+        "category": "frontend"
+      },
+      {
+        "name": "vitest",
+        "version": "4.1.11",
+        "category": "testing"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build",
+    "testCommand": "npm test",
+    "lintCommand": "npm run lint",
+    "devCommand": "npm run dev",
+    "scripts": {
+      "dev": "next dev",
+      "build": "next build",
+      "start": "next start",
+      "lint": "eslint",
+      "ef": "supabase functions deploy --no-verify-jwt --project-id wsgtdbdtuxlfoueviuup",
+      "gen:types": "supabase gen types typescript --project-id wsgtdbdtuxlfoueviuup > src/types/database.types.ts && supazod -i src/types/database.types.ts -o src/schemas/generated/index.ts -s public",
+      "test": "vitest run"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": "type-based"
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "public",
+      "src"
+    ],
+    "gitBranches": {
+      "defaultBranch": "master",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "public": {
+      "path": "public",
+      "purpose": "Public files",
+      "fileCount": 4,
+      "lastAccessed": 1790677444995,
+      "keyFiles": [
+        "favicon.png",
+        "sino-studio-face.png",
+        "sino-studio-full.png",
+        "typo sino-07.png"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 1,
+      "lastAccessed": 1790677444995,
+      "keyFiles": [
+        "proxy.ts"
+      ]
+    },
+    "supabase": {
+      "path": "supabase",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1790677445007,
+      "keyFiles": []
+    },
+    "src\\app": {
+      "path": "src\\app",
+      "purpose": "Application code",
+      "fileCount": 6,
+      "lastAccessed": 1790677445009,
+      "keyFiles": [
+        "favicon.ico",
+        "global-not-found.tsx",
+        "globals.css"
+      ]
+    },
+    "src\\components": {
+      "path": "src\\components",
+      "purpose": "UI components",
+      "fileCount": 0,
+      "lastAccessed": 1790677445009,
+      "keyFiles": []
+    },
+    "src\\data": {
+      "path": "src\\data",
+      "purpose": "Data files",
+      "fileCount": 4,
+      "lastAccessed": 1790677445009,
+      "keyFiles": [
+        "EmailTemplate.tsx",
+        "ip-data.ts",
+        "playlist.ts"
+      ]
+    },
+    "src\\lib": {
+      "path": "src\\lib",
+      "purpose": "Library code",
+      "fileCount": 2,
+      "lastAccessed": 1790677445010,
+      "keyFiles": [
+        "json-ld.ts",
+        "seo.ts"
+      ]
+    },
+    "src\\schemas": {
+      "path": "src\\schemas",
+      "purpose": "Schema definitions",
+      "fileCount": 0,
+      "lastAccessed": 1790677445010,
+      "keyFiles": []
+    },
+    "src\\services": {
+      "path": "src\\services",
+      "purpose": "Business logic services",
+      "fileCount": 1,
+      "lastAccessed": 1790677445011,
+      "keyFiles": [
+        "mailServices.ts"
+      ]
+    },
+    "src\\types": {
+      "path": "src\\types",
+      "purpose": "Type definitions",
+      "fileCount": 2,
+      "lastAccessed": 1790677445011,
+      "keyFiles": [
+        "database.types.ts",
+        "youtube.d.ts"
+      ]
+    },
+    "src\\utils": {
+      "path": "src\\utils",
+      "purpose": "Utility functions",
+      "fileCount": 0,
+      "lastAccessed": 1790677445012,
+      "keyFiles": []
+    },
+    "supabase\\migrations": {
+      "path": "supabase\\migrations",
+      "purpose": "Database migrations",
+      "fileCount": 3,
+      "lastAccessed": 1790677445012,
+      "keyFiles": [
+        "20260927090805_tracker.sql",
+        "20260927090827_tracker_users_self_initplan.sql",
+        "20260927093702_revoke_helper_execute.sql"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "src/app/[locale]/tracker/actions.ts",
+      "accessCount": 8,
+      "lastAccessed": 1790501976483,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/GanttBoard.tsx",
+      "accessCount": 7,
+      "lastAccessed": 1790519391937,
+      "type": "file"
+    },
+    {
+      "path": "src/app/[locale]/layout.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1790515772361,
+      "type": "file"
+    },
+    {
+      "path": "src/app/[locale]/tracker/(app)/layout.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1790517198932,
+      "type": "file"
+    },
+    {
+      "path": "src/components/music-player/MusicPlayer.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1790500544165,
+      "type": "file"
+    },
+    {
+      "path": "src/i18n/dictionaries/en.json",
+      "accessCount": 5,
+      "lastAccessed": 1790519388371,
+      "type": "file"
+    },
+    {
+      "path": "src/i18n/dictionaries/vi.json",
+      "accessCount": 5,
+      "lastAccessed": 1790519390060,
+      "type": "file"
+    },
+    {
+      "path": "src/components/language-switcher/LanguageSwitcher.tsx",
+      "accessCount": 4,
+      "lastAccessed": 1790502119331,
+      "type": "file"
+    },
+    {
+      "path": "src/utils/supabase/proxy.ts",
+      "accessCount": 4,
+      "lastAccessed": 1790517822562,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/useTaskRealtime.ts",
+      "accessCount": 4,
+      "lastAccessed": 1790518655979,
+      "type": "file"
+    },
+    {
+      "path": "CLAUDE.md",
+      "accessCount": 3,
+      "lastAccessed": 1790519444938,
+      "type": "file"
+    },
+    {
+      "path": "C:/Users/admgn/.claude/projects/D--WORK-SINO-STUDIO-sino-studio/memory/MEMORY.md",
+      "accessCount": 3,
+      "lastAccessed": 1790519465724,
+      "type": "file"
+    },
+    {
+      "path": "src/types/database.types.ts",
+      "accessCount": 2,
+      "lastAccessed": 1790500175726,
+      "type": "file"
+    },
+    {
+      "path": "src/app/robots.ts",
+      "accessCount": 2,
+      "lastAccessed": 1790500538566,
+      "type": "file"
+    },
+    {
+      "path": "src/app/[locale]/tracker/(app)/page.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1790500835057,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/TaskBar.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1790501549823,
+      "type": "file"
+    },
+    {
+      "path": "src/app/auth/callback/route.ts",
+      "accessCount": 2,
+      "lastAccessed": 1790501976972,
+      "type": "file"
+    },
+    {
+      "path": "src/proxy.ts",
+      "accessCount": 2,
+      "lastAccessed": 1790517823630,
+      "type": "file"
+    },
+    {
+      "path": "C:/Users/admgn/.claude/projects/D--WORK-SINO-STUDIO-sino-studio/memory/project-context.md",
+      "accessCount": 1,
+      "lastAccessed": 1790486058100,
+      "type": "file"
+    },
+    {
+      "path": "C:/Users/admgn/.claude/projects/D--WORK-SINO-STUDIO-sino-studio/memory/claude-md-stale.md",
+      "accessCount": 1,
+      "lastAccessed": 1790486061940,
+      "type": "file"
+    },
+    {
+      "path": "C:/Users/admgn/.claude/projects/D--WORK-SINO-STUDIO-sino-studio/memory/backend-tracker-decisions.md",
+      "accessCount": 1,
+      "lastAccessed": 1790486633614,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 1,
+      "lastAccessed": 1790498759969,
+      "type": "file"
+    },
+    {
+      "path": "src/utils/supabase/server.ts",
+      "accessCount": 1,
+      "lastAccessed": 1790498763773,
+      "type": "file"
+    },
+    {
+      "path": "src/utils/supabase/client.ts",
+      "accessCount": 1,
+      "lastAccessed": 1790498764577,
+      "type": "file"
+    },
+    {
+      "path": "src/app/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1790498765926,
+      "type": "file"
+    },
+    {
+      "path": "supabase/migrations/20260927090805_tracker.sql",
+      "accessCount": 1,
+      "lastAccessed": 1790500268413,
+      "type": "file"
+    },
+    {
+      "path": "supabase/migrations/20260927090827_tracker_users_self_initplan.sql",
+      "accessCount": 1,
+      "lastAccessed": 1790500269609,
+      "type": "file"
+    },
+    {
+      "path": "src/app/[locale]/tracker/login/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1790500523457,
+      "type": "file"
+    },
+    {
+      "path": "src/app/[locale]/tracker/login/login.module.css",
+      "accessCount": 1,
+      "lastAccessed": 1790500524595,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/NotAuthorized.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1790500527796,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/NotAuthorized.module.css",
+      "accessCount": 1,
+      "lastAccessed": 1790500528861,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/ProjectSwitcher.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1790500831700,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/TrackerShell/TrackerShell.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1790500832939,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/TrackerShell/TrackerShell.module.css",
+      "accessCount": 1,
+      "lastAccessed": 1790500833996,
+      "type": "file"
+    },
+    {
+      "path": "src/app/[locale]/tracker/(app)/projects/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1790500932050,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/ProjectsTable/ProjectsTable.module.css",
+      "accessCount": 1,
+      "lastAccessed": 1790500933143,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/ProjectsTable/ProjectsTable.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1790500934662,
+      "type": "file"
+    },
+    {
+      "path": "src/app/[locale]/tracker/(app)/staff/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1790501035480,
+      "type": "file"
+    },
+    {
+      "path": "src/app/[locale]/tracker/(app)/work-types/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1790501036566,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/StaffTable/StaffTable.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1790501037780,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/WorkTypesTable/WorkTypesTable.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1790501038846,
+      "type": "file"
+    },
+    {
+      "path": "C:/Users/admgn/AppData/Local/Temp/claude/D--WORK-SINO-STUDIO-sino-studio/e15e6542-ed03-46a3-b6aa-6f21cfcd8d84/scratchpad/dict.js",
+      "accessCount": 1,
+      "lastAccessed": 1790501039765,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/AddTaskButton.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1790501235050,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/Legend.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1790501236208,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/MonthNav.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1790501237268,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/TaskPanel.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1790501257055,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/GanttBoard.module.css",
+      "accessCount": 1,
+      "lastAccessed": 1790501276646,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/dragMath.ts",
+      "accessCount": 1,
+      "lastAccessed": 1790501532841,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/__tests__/dragMath.test.ts",
+      "accessCount": 1,
+      "lastAccessed": 1790501533935,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/useRefreshScheduler.ts",
+      "accessCount": 1,
+      "lastAccessed": 1790501534943,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

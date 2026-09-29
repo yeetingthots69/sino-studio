@@ -1,6 +1,6 @@
 import type {Metadata, Viewport} from 'next';
 import {Montserrat} from 'next/font/google';
-import {MantineProvider, createTheme, ColorSchemeScript} from '@mantine/core';
+import {MantineProvider, createTheme} from '@mantine/core';
 import Script from 'next/script';
 import '@mantine/core/styles.css';
 import '../globals.css';
@@ -89,9 +89,8 @@ export default async function LocaleLayout({children, params}: LayoutProps) {
     const dictionary = await getDictionary(locale as Locale);
 
     return (
-        <html lang={locale} suppressHydrationWarning className={montserrat.variable}>
+        <html lang={locale} suppressHydrationWarning className={montserrat.variable} data-scroll-behavior="smooth" data-mantine-color-scheme="dark">
         <head>
-            <ColorSchemeScript defaultColorScheme="dark"/>
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
@@ -103,7 +102,7 @@ export default async function LocaleLayout({children, params}: LayoutProps) {
             />
         </head>
         <body>
-        <MantineProvider theme={theme} defaultColorScheme="dark">
+        <MantineProvider theme={theme} defaultColorScheme="dark" forceColorScheme="dark">
             <I18nProvider locale={locale as Locale} dictionary={dictionary}>
                 {children}
             </I18nProvider>

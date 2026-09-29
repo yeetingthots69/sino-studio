@@ -1,0 +1,118 @@
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 56px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: var(--color-dark);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+}
+
+.left {
+    flex: 1 1 auto;
+}
+
+.right {
+    flex-shrink: 0;
+}
+
+.burger {
+    display: none;
+    flex-shrink: 0;
+}
+
+.logo {
+    display: flex;
+    flex-shrink: 0;
+}
+
+.nav {
+    display: flex;
+    gap: 16px;
+}
+
+.navLink {
+    color: var(--color-white);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 4px 0;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+}
+
+.navLink:hover,
+.active {
+    border-bottom-color: var(--color-red);
+}
+
+.user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.userName {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+}
+
+.signOut {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--color-white);
+    padding: 4px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.signOut:hover {
+    border-color: var(--color-red);
+}
+
+.main {
+    padding: 16px;
+}
+
+@media (max-width: 1023px) {
+    .nav,
+    .userName {
+        display: none;
+    }
+
+    .burger {
+        display: block;
+    }
+}
+
+/* Phones: 375px must fit burger 34 + switcher 120 | EN/VI ~80 + sign-out ~86 (+ 8px gaps, 12px padding) */
+@media (max-width: 479px) {
+    .header {
+        padding: 0 12px;
+        gap: 8px;
+    }
+
+    .group {
+        gap: 8px;
+    }
+
+    .logo,
+    .user {
+        display: none;
+    }
+}

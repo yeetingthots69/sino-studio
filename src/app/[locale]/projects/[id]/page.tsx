@@ -5,8 +5,6 @@ import ProjectShowcasePage from '@/components/project-details/ProjectShowcasePag
 import {SITE_NAME} from '@/lib/seo';
 import {creativeWorkJsonLd} from '@/lib/json-ld';
 
-export const dynamicParams = false;
-
 interface Props {
     params: Promise<{locale: string; id: string}>;
 }
@@ -18,7 +16,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({params}: Props): Promise<Metadata> {
     const {locale, id} = await params;
     const project = PROJECTS[id];
-    if (!project) return {};
+    if (!project) return {title: {absolute: `404 | ${SITE_NAME}`}, robots: {index: false}};
 
     const description = project.description_1.trim().slice(0, 160);
 

@@ -3,10 +3,10 @@
 import styles from './Footer.module.css';
 import Image from 'next/image';
 import {ActionIcon, Anchor, Group, SimpleGrid, Stack, Text} from '@mantine/core';
-import {IconBrandFacebook, IconBrandTiktok, IconBrandYoutube} from '@tabler/icons-react';
+import Link from 'next/link';
+import {IconBrandFacebook, IconBrandTiktok, IconBrandYoutube, IconLock} from '@tabler/icons-react';
 import {useLocale, useDictionary} from '@/i18n/DictionaryProvider';
 import LanguageSwitcher from '@/components/language-switcher/LanguageSwitcher';
-import {useMediaQuery} from "@mantine/hooks";
 
 const NAV_ROUTES = [
     {key: 'projects' as const, label: 'PROJECTS', href: '/projects'},
@@ -96,6 +96,10 @@ export default function Footer() {
 
                 <div className={styles.bottomBar}>
                     <p>{dict.footer.copyright}</p>
+                    <Link href={`/${locale}/tracker`} prefetch={false} rel="nofollow" className={styles.staffLink}>
+                        <IconLock size={12} aria-hidden="true"/>
+                        {dict.footer.staffPortal}
+                    </Link>
                     <LanguageSwitcher variant="footer" />
                 </div>
             </div>

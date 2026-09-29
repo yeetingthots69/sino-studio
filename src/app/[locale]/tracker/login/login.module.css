@@ -1,0 +1,55 @@
+.page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    background: var(--color-black);
+}
+
+.card {
+    width: 100%;
+    max-width: 400px;
+    padding: 40px 24px;
+    background: var(--color-dark);
+    border-top: 3px solid var(--color-red);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    text-align: center;
+}
+
+.title {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.error {
+    color: var(--color-red);
+    font-size: 0.9rem;
+}
+
+.button {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border: 1px solid var(--color-white);
+    background: transparent;
+    color: var(--color-white);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.button:hover,
+.button:focus-visible {
+    background: var(--color-white);
+    color: var(--color-black);
+}

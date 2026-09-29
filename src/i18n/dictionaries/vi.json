@@ -38,14 +38,18 @@
         "brandEquity": "Nội Tại",
         "services": "Dịch Vụ",
         "contactUs": "Liên Hệ",
-        "copyright": "TẤT CẢ SẢN PHẨM TRÊN WEBSITE ĐỀU THUỘC QUYỀN SỞ HỮU BỞI SINO STUDIO ©"
+        "copyright": "TẤT CẢ SẢN PHẨM TRÊN WEBSITE ĐỀU THUỘC QUYỀN SỞ HỮU BỞI SINO STUDIO ©",
+        "staffPortal": "Cổng nội bộ"
     },
     "common": {
         "learnMore": "TÌM HIỂU THÊM",
         "explore": "KHÁM PHÁ",
         "backToProjects": "← Quay lại Dự Án",
         "projectNotFound": "Không Tìm Thấy Dự Án",
-        "projectNotFoundDescription": "Dự án bạn đang tìm kiếm không tồn tại hoặc chưa được thêm vào."
+        "projectNotFoundDescription": "Dự án bạn đang tìm kiếm không tồn tại hoặc chưa được thêm vào.",
+        "pageNotFound": "Không tìm thấy trang",
+        "pageNotFoundDescription": "Trang bạn tìm không tồn tại hoặc đã bị di chuyển.",
+        "backHome": "Về trang chủ"
     },
     "landing": {
         "whoWeAre": {
@@ -378,6 +382,104 @@
                     }
                 ]
             }
+        }
+    },
+    "tracker": {
+        "board": {
+            "kicker": "Lịch sản xuất",
+            "title": "Lịch phân công Animator",
+            "hint": "Kéo thanh công việc để dời ngày, kéo hai mép để đổi độ dài, chọn một ô để đổi loại việc và tiến độ.",
+            "prevMonth": "Tháng trước",
+            "nextMonth": "Tháng sau",
+            "month": "Tháng {m}/{y}",
+            "stt": "STT",
+            "staff": "NHÂN SỰ",
+            "strengths": "ĐIỂM MẠNH",
+            "done": "Hoàn thành",
+            "addTask": "Thêm công việc cho {name}",
+            "barLabel": "{name} – {label}, ngày {s} đến {e}",
+            "panel": {
+                "title": "CHI TIẾT CÔNG VIỆC",
+                "name": "Tên cắt / công việc",
+                "type": "Loại công việc",
+                "progress": "Tiến độ",
+                "start": "Ngày bắt đầu",
+                "end": "Ngày kết thúc",
+                "assignee": "Nhân sự phụ trách",
+                "delete": "Xoá công việc",
+                "confirmDelete": "Xoá công việc này? Không thể hoàn tác.",
+                "empty": "Chọn một công việc trên lịch để xem chi tiết.",
+                "days": "{n} ngày",
+                "summary": "ngày {s} – {e}"
+            }
+        },
+        "auth": {
+            "title": "Theo dõi sản xuất",
+            "signInWithGoogle": "Đăng nhập bằng Google",
+            "signOut": "Đăng xuất",
+            "notAuthorized": {
+                "title": "Không có quyền truy cập",
+                "body": "Tài khoản này chưa được cấp quyền truy cập tracker. Hãy nhờ quản trị viên thêm bạn."
+            },
+            "errorDomain": "Vui lòng đăng nhập bằng tài khoản @sinostudio.vn.",
+            "errorAuth": "Đăng nhập thất bại. Vui lòng thử lại."
+        },
+        "common": {
+            "save": "Lưu",
+            "cancel": "Hủy",
+            "edit": "Sửa",
+            "archive": "Lưu trữ",
+            "unarchive": "Bỏ lưu trữ",
+            "showArchived": "Hiện mục đã lưu trữ",
+            "error": {
+                "generic": "Đã có lỗi xảy ra. Vui lòng thử lại.",
+                "notFound": "Không tìm thấy mục này. Có thể nó đã bị xóa.",
+                "network": "Lỗi kết nối — vui lòng thử lại."
+            }
+        },
+        "projects": {
+            "title": "Dự án",
+            "newProject": "Dự án mới",
+            "editProject": "Sửa dự án",
+            "name": "Tên",
+            "color": "Màu",
+            "created": "Ngày tạo",
+            "actions": "Thao tác",
+            "open": "Mở",
+            "archived": "Đã lưu trữ",
+            "empty": "Chưa có dự án nào."
+        },
+        "shell": {
+            "projects": "Dự án",
+            "staff": "Nhân sự",
+            "workTypes": "Loại công việc",
+            "signOut": "Đăng xuất",
+            "selectProject": "Chọn dự án",
+            "menu": "Menu"
+        },
+        "staff": {
+            "title": "Nhân sự",
+            "newStaff": "Thêm nhân sự",
+            "editStaff": "Sửa nhân sự",
+            "order": "STT",
+            "name": "NHÂN SỰ",
+            "strengths": "ĐIỂM MẠNH",
+            "actions": "Thao tác",
+            "archived": "Đã lưu trữ",
+            "empty": "Chưa có nhân sự nào."
+        },
+        "workTypes": {
+            "title": "Loại công việc",
+            "newWorkType": "Thêm loại công việc",
+            "editWorkType": "Sửa loại công việc",
+            "color": "Màu",
+            "code": "Mã",
+            "label": "Tên",
+            "order": "Thứ tự",
+            "actions": "Thao tác",
+            "archived": "Đã lưu trữ",
+            "empty": "Chưa có loại công việc nào.",
+            "errorDuplicate": "Mã này đã được sử dụng."
         }
     }
 }

@@ -1,0 +1,7 @@
+{
+  "tool_name": "mcp__chrome-devtools__evaluate_script",
+  "tool_input_preview": "{\"pageId\":13,\"function\":\"async () => { const sleep=ms=>new Promise(r=>setTimeout(r,ms)); const set=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set; window.__req.length=0; const...",
+  "error": "Error: Cannot read properties of undefined (reading 'focus')\npptr:evaluateHandle;performEvaluation%20(file%3A%2F%2F%2FC%3A%2FUsers%2Fadmgn%2FAppData%2FLocal%2Fnpm-cache%2F_npx%2F15c61037b1978c83%2Fnode_modules%2Fchrome-devtools-mcp%2Fbuild%2Fsrc%2Ftools%2Fscript.js%3A182%3A69):1:441",
+  "timestamp": "2026-09-27T13:56:08.983Z",
+  "retry_count": 1
+}

@@ -2,6 +2,7 @@
 
 import {useState, useRef, useEffect, useCallback, useMemo} from 'react';
 import Image from 'next/image';
+import {usePathname} from 'next/navigation';
 import {Slider} from '@mantine/core';
 import {
     IconPlayerPlay,
@@ -41,6 +42,7 @@ export default function MusicPlayer() {
         [], // shuffle once on mount
     );
 
+    const pathname = usePathname();
     const audioRef = useRef<HTMLAudioElement>(null);
 
     const [trackIdx, setTrackIdx] = useState(0);
@@ -132,6 +134,8 @@ export default function MusicPlayer() {
     }, []);
 
     const toggleMute = useCallback(() => setMuted((m) => !m), []);
+
+    if (/^\/(en|vi)\/tracker(\/|$)/.test(pathname)) return null;
 
     /* ── Render ── */
     return (

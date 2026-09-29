@@ -1,11 +1,10 @@
 import {NextRequest, NextResponse} from 'next/server';
+import {DEFAULT_LOCALE, LOCALES, isValidLocale, type Locale} from '@/i18n/config';
+import {updateSession} from '@/utils/supabase/proxy';
 
-const LOCALES = ['en', 'vi'];
-const DEFAULT_LOCALE = 'en';
-
-function getLocale(request: NextRequest): string {
+function getLocale(request: NextRequest): Locale {
     const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
-    if (cookieLocale && LOCALES.includes(cookieLocale)) {
+    if (cookieLocale && isValidLocale(cookieLocale)) {
         return cookieLocale;
     }
 
@@ -20,18 +19,15 @@ function getLocale(request: NextRequest): string {
     return DEFAULT_LOCALE;
 }
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     const {pathname} = request.nextUrl;
 
-    const pathnameHasLocale = LOCALES.some(
+    const pathLocale = LOCALES.find(
         locale => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
     );
 
-    if (pathnameHasLocale) {
-        const response = NextResponse.next();
-        const locale = pathname.split('/')[1];
-        response.cookies.set('NEXT_LOCALE', locale, {path: '/'});
-        return response;
+    if (pathLocale) {
+        return updateSession(request, pathLocale);
     }
 
     const locale = getLocale(request);
@@ -39,12 +35,12 @@ export function proxy(request: NextRequest) {
     url.pathname = `/${locale}${pathname}`;
 
     const response = NextResponse.redirect(url);
-    response.cookies.set('NEXT_LOCALE', locale, {path: '/'});
+    if (request.cookies.get('NEXT_LOCALE')?.value !== locale) response.cookies.set('NEXT_LOCALE', locale, {path: '/'});
     return response;
 }
 
 export const config = {
     matcher: [
-        '/((?!_next|images|videos|music|fonts|favicon\\.ico|sino-studio.*\\.png|.*\\.svg|.*\\.ico|api|robots\\.txt|sitemap\\.xml).*)',
+        '/((?!_next|images|videos|music|fonts|favicon\.ico|sino-studio.*\.png|.*\.svg|.*\.ico|api|auth/|robots\.txt|sitemap\.xml).*)',
     ],
 };

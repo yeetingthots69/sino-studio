@@ -9,6 +9,10 @@ interface Props {
     variant?: 'navbar' | 'footer';
 }
 
+function setLocaleCookie(locale: Locale) {
+    document.cookie = `NEXT_LOCALE=${locale};path=/;max-age=${60 * 60 * 24 * 365}`;
+}
+
 export default function LanguageSwitcher({variant = 'navbar'}: Props) {
     const locale = useLocale();
     const pathname = usePathname();
@@ -18,8 +22,8 @@ export default function LanguageSwitcher({variant = 'navbar'}: Props) {
         if (target === locale) return;
 
         const newPath = pathname.replace(/^\/(en|vi)/, `/${target}`);
-        document.cookie = `NEXT_LOCALE=${target};path=/;max-age=${60 * 60 * 24 * 365}`;
-        router.push(newPath);
+        setLocaleCookie(target);
+        router.push(newPath + window.location.search);
     }
 
     return (

@@ -38,14 +38,18 @@
         "brandEquity": "Brand Equity",
         "services": "Services",
         "contactUs": "Contact Us",
-        "copyright": "ALL INTELLECTUAL PROPERTIES ON THIS WEBSITE ARE OWNED BY SINO STUDIO ©"
+        "copyright": "ALL INTELLECTUAL PROPERTIES ON THIS WEBSITE ARE OWNED BY SINO STUDIO ©",
+        "staffPortal": "Staff portal"
     },
     "common": {
         "learnMore": "LEARN MORE",
         "explore": "EXPLORE",
         "backToProjects": "← Back to Projects",
         "projectNotFound": "Project Not Found",
-        "projectNotFoundDescription": "The project you're looking for doesn't exist or hasn't been added yet."
+        "projectNotFoundDescription": "The project you're looking for doesn't exist or hasn't been added yet.",
+        "pageNotFound": "Page Not Found",
+        "pageNotFoundDescription": "The page you're looking for doesn't exist or has been moved.",
+        "backHome": "Back to Home"
     },
     "landing": {
         "whoWeAre": {
@@ -325,6 +329,104 @@
                     { "label": "RELEASE DATE", "value": "MARCH 14, 2026" }
                 ]
             }
+        }
+    },
+    "tracker": {
+        "board": {
+            "kicker": "Production schedule",
+            "title": "Animator assignments",
+            "hint": "Drag a task bar to move it, drag its edges to change the length, select a bar to change its type and progress.",
+            "prevMonth": "Previous month",
+            "nextMonth": "Next month",
+            "month": "{m}/{y}",
+            "stt": "No.",
+            "staff": "STAFF",
+            "strengths": "STRENGTHS",
+            "done": "Done",
+            "addTask": "Add task for {name}",
+            "barLabel": "{name} – {label}, day {s} to {e}",
+            "panel": {
+                "title": "TASK DETAILS",
+                "name": "Cut / task name",
+                "type": "Work type",
+                "progress": "Progress",
+                "start": "Start date",
+                "end": "End date",
+                "assignee": "Assignee",
+                "delete": "Delete task",
+                "confirmDelete": "Delete this task? This cannot be undone.",
+                "empty": "Select a task on the board to see its details.",
+                "days": "{n} days",
+                "summary": "day {s} – {e}"
+            }
+        },
+        "auth": {
+            "title": "Production Tracker",
+            "signInWithGoogle": "Sign in with Google",
+            "signOut": "Sign out",
+            "notAuthorized": {
+                "title": "Not authorized",
+                "body": "This account does not have access to the tracker. Ask an admin to add you."
+            },
+            "errorDomain": "Please sign in with your @sinostudio.vn account.",
+            "errorAuth": "Sign-in failed. Please try again."
+        },
+        "common": {
+            "save": "Save",
+            "cancel": "Cancel",
+            "edit": "Edit",
+            "archive": "Archive",
+            "unarchive": "Unarchive",
+            "showArchived": "Show archived",
+            "error": {
+                "generic": "Something went wrong. Please try again.",
+                "notFound": "Item not found. It may have been removed.",
+                "network": "Connection problem — please try again."
+            }
+        },
+        "projects": {
+            "title": "Projects",
+            "newProject": "New project",
+            "editProject": "Edit project",
+            "name": "Name",
+            "color": "Color",
+            "created": "Created",
+            "actions": "Actions",
+            "open": "Open",
+            "archived": "Archived",
+            "empty": "No projects yet."
+        },
+        "shell": {
+            "projects": "Projects",
+            "staff": "Staff",
+            "workTypes": "Work types",
+            "signOut": "Sign out",
+            "selectProject": "Select project",
+            "menu": "Menu"
+        },
+        "staff": {
+            "title": "Staff",
+            "newStaff": "New staff member",
+            "editStaff": "Edit staff member",
+            "order": "No.",
+            "name": "Staff",
+            "strengths": "Strengths",
+            "actions": "Actions",
+            "archived": "Archived",
+            "empty": "No staff yet."
+        },
+        "workTypes": {
+            "title": "Work types",
+            "newWorkType": "New work type",
+            "editWorkType": "Edit work type",
+            "color": "Color",
+            "code": "Code",
+            "label": "Label",
+            "order": "Order",
+            "actions": "Actions",
+            "archived": "Archived",
+            "empty": "No work types yet.",
+            "errorDuplicate": "This code is already in use."
         }
     }
 }
