@@ -1,10 +1,11 @@
 'use client';
 
-import type {RefObject} from 'react';
+import type {CSSProperties, RefObject} from 'react';
 import {useDictionary} from '@/i18n/DictionaryProvider';
 import {clampToMonth} from '../dates';
 import type {DragBaseline} from './dragMath';
 import {DAY_W, DONE_COLOR, fill, type Task, type WorkType} from './GanttBoard';
+import {cssColor} from './presence';
 import {useBarDrag} from './useBarDrag';
 import styles from './GanttBoard.module.css';
 
@@ -19,11 +20,15 @@ interface Props {
     settle: () => void;
     onSelect: () => void;
     onCommit: (patch: DragBaseline, baseline: number) => void;
+    /** Stable setter for the dragged task id (presence). */
+    onDrag: (id: string | null) => void;
+    /** Another tab editing this task (presence). */
+    editor?: {name: string; color: string};
 }
 
-export default function TaskBar({task, cutCode, workType, month, lane, selected, draggingRef, settle, onSelect, onCommit}: Props) {
+export default function TaskBar({task, cutCode, workType, month, lane, selected, draggingRef, settle, onSelect, onCommit, onDrag, editor}: Props) {
     const t = useDictionary().tracker.board;
-    const {preview, handlers} = useBarDrag({task, draggingRef, settle, onCommit});
+    const {preview, handlers} = useBarDrag({task, draggingRef, settle, onCommit, onDrag});
     const done = task.progress === 100;
     const color = done ? DONE_COLOR : (workType?.color ?? '#888888');
     const code = workType?.code ?? '';
@@ -32,7 +37,7 @@ export default function TaskBar({task, cutCode, workType, month, lane, selected,
     return (
         <button
             type="button"
-            className={`${styles.bar} ${selected ? styles.selected : ''} ${preview ? styles.dragging : ''}`}
+            className={`${styles.bar} ${selected ? styles.selected : ''} ${preview ? styles.dragging : ''} ${editor ? styles.editing : ''}`}
             onClick={onSelect}
             {...handlers}
             aria-pressed={selected}
@@ -53,6 +58,7 @@ export default function TaskBar({task, cutCode, workType, month, lane, selected,
                 borderBottomLeftRadius: clippedStart ? 0 : undefined,
                 borderTopRightRadius: clippedEnd ? 0 : undefined,
                 borderBottomRightRadius: clippedEnd ? 0 : undefined,
+                ...(editor ? {'--presence': cssColor(editor.color)} as CSSProperties : {}),
             }}
         >
             <span className={styles.progress} style={{width: `${task.progress}%`, background: color + 'aa'}}/>
@@ -62,6 +68,7 @@ export default function TaskBar({task, cutCode, workType, month, lane, selected,
             </span>
             {/* edges clipped by the month bound are not handles */}
             {!clippedStart && <span className={`${styles.handle} ${styles.handleStart}`} data-edge="resize-start" aria-hidden/>}
+            {editor && <span className={styles.editorChip} aria-hidden>{editor.name}</span>}
             {!clippedEnd && <span className={`${styles.handle} ${styles.handleEnd}`} data-edge="resize-end" aria-hidden/>}
         </button>
     );

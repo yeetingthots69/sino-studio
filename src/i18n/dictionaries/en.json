@@ -417,6 +417,9 @@
             "orderGeneric": "Can't schedule: this breaks the cut's stage order",
             "duplicateStage": "This cut already has a task of this work type",
             "dismiss": "Dismiss",
+            "presence": {
+                "label": "Also on this board"
+            },
             "invalidCut": "Cut codes use letters, digits and symbols only (max 20).",
             "create": {
                 "title": "New task",

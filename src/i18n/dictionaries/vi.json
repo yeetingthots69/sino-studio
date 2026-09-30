@@ -470,6 +470,9 @@
             "orderGeneric": "Không thể xếp: sai thứ tự công đoạn của cut",
             "duplicateStage": "Cut này đã có công việc thuộc loại này",
             "dismiss": "Đóng",
+            "presence": {
+                "label": "Cũng đang xem bảng này"
+            },
             "invalidCut": "Mã cut chỉ gồm chữ, số và ký hiệu (tối đa 20).",
             "create": {
                 "title": "Công việc mới",

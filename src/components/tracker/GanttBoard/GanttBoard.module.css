@@ -404,3 +404,55 @@
     align-items: center;
     gap: 12px;
 }
+
+/* Presence (v2.1): other people on this board. Overlays never take pointer events. */
+.presence {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+/* another tab is editing this bar: its colour outline + name chip */
+.bar.editing {
+    outline: 2px solid var(--presence);
+    outline-offset: 1px;
+}
+
+.editorChip {
+    position: absolute;
+    top: 2px;
+    right: 10px;
+    max-width: 50%;
+    padding: 0 4px;
+    border-radius: 3px;
+    background: var(--presence);
+    font-size: 10px;
+    line-height: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+}
+
+/* another person's hovered cell */
+.liveCell {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border: 2px solid var(--presence);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.liveTag {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 0 4px;
+    background: var(--presence);
+    color: var(--color-white);
+    font-size: 10px;
+    line-height: 14px;
+    white-space: nowrap;
+    pointer-events: none;
+}

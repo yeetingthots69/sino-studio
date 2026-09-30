@@ -1,8 +1,8 @@
 'use client';
 
-import {useEffect, useRef, useState, useSyncExternalStore, type PointerEvent, type ReactNode} from 'react';
+import {useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type PointerEvent, type ReactNode} from 'react';
 import Link from 'next/link';
-import {ActionIcon, CloseButton, MultiSelect, Text, UnstyledButton} from '@mantine/core';
+import {ActionIcon, Avatar, CloseButton, MultiSelect, Text, UnstyledButton} from '@mantine/core';
 import {IconArrowsSort, IconEye, IconEyeOff, IconSortAscendingLetters, IconSortDescendingLetters} from '@tabler/icons-react';
 import {useDictionary} from '@/i18n/DictionaryProvider';
 import {createTask, deleteTask, updateTask, type ActionResult, type TaskPatch as ActionTaskPatch} from '@/app/[locale]/tracker/actions';
@@ -20,6 +20,8 @@ import TaskBar from './TaskBar';
 import TaskPanel from './TaskPanel';
 import {createCommitChain, planCommit} from './taskSync';
 import {createTaskStore, NEXT_SORT, orderConflictText} from './boardHelpers';
+import {cssColor} from './presence';
+import {useBoardPresence} from './useBoardPresence';
 import {useBoardPrefs} from './useBoardPrefs';
 import {useDragCreate} from './useDragCreate';
 import {useRefreshScheduler} from './useRefreshScheduler';
@@ -95,6 +97,28 @@ export default function GanttBoard(props: Props) {
         () => store.apply({kind: 'refreshStart'}),
         isRealtimeBusy,
     );
+    // presence `editing`: the dragged bar, else the selected task while its panel has unsaved changes
+    const [dragId, setDragId] = useState<string | null>(null);
+    const [panelIsDirty, setPanelIsDirty] = useState(false);
+    // TaskPanel writes this ref; each write also mirrors into state (the scheduler keeps reading panelDirty)
+    const [panelDirtyRef] = useState(() => ({
+        get current() {
+            return panelDirty.current;
+        },
+        set current(v: boolean) {
+            panelDirty.current = v;
+            setPanelIsDirty(v);
+        },
+    }));
+    const presence = useBoardPresence({
+        projectId: project.id,
+        month,
+        editing: dragId ?? (panelIsDirty ? selectedId : null),
+        days,
+        dayWidth: DAY_W,
+        draggingRef: dragging,
+    });
+
     // refreshed props → snapshot (the mount rows are already the initial state)
     const [mountTasks] = useState(tasks);
     useEffect(() => {
@@ -308,6 +332,15 @@ export default function GanttBoard(props: Props) {
                     <div className={styles.topBar}>
                         <MonthNav month={month}/>
                         <Legend workTypes={workTypes}/>
+                        {presence.people.length > 0 && (
+                            <Avatar.Group className={styles.presence} aria-label={t.presence.label}>
+                                {presence.people.map((p) => {
+                                    const away = p.months.filter((m) => m !== month).map((m) => fill(t.month, {m: Number(m.slice(5)), y: m.slice(0, 4)}));
+                                    const title = away.length ? `${p.name} · ${away.join(', ')}` : p.name;
+                                    return <Avatar key={p.email} src={p.avatar} alt={p.name} name={p.name} color={p.color} size={28} radius="xl" title={title}/>;
+                                })}
+                            </Avatar.Group>
+                        )}
                     </div>
                     {notice && (
                         <div className={styles.notice} role="alert">
@@ -412,6 +445,11 @@ export default function GanttBoard(props: Props) {
                                             className={`${styles.track} ${active ? styles.trackActive : ''}`}
                                             style={{height, gridRow: row, gridColumn: `${lead + 1} / span ${days}`}}
                                             {...(active ? {...drag.trackHandlers, onPointerDown: (e: PointerEvent<HTMLElement>) => drag.onPointerDown(e, s.id)} : {})}
+                                            onPointerMove={(e) => {
+                                                if (active) drag.trackHandlers.onPointerMove(e);
+                                                presence.hover(e, s.id);
+                                            }}
+                                            onPointerLeave={presence.leave}
                                         >
                                             {rowTasks.map((task) => (
                                                 <TaskBar
@@ -426,7 +464,14 @@ export default function GanttBoard(props: Props) {
                                                     settle={settle}
                                                     onSelect={() => setSelectedId(task.id)}
                                                     onCommit={(patch, baseline) => update(task, patch, patch, baseline)}
+                                                    onDrag={setDragId}
+                                                    editor={presence.editors.get(task.id)}
                                                 />
+                                            ))}
+                                            {presence.cells.filter((c) => c.staffId === s.id && c.day < days).map((c) => (
+                                                <div key={c.key} className={styles.liveCell} style={{left: c.day * DAY_W, width: DAY_W, '--presence': cssColor(c.color)} as CSSProperties} aria-hidden>
+                                                    <span className={styles.liveTag}>{c.name}</span>
+                                                </div>
                                             ))}
                                             {draft?.staffId === s.id && (
                                                 <CreateTaskPopover
@@ -464,7 +509,7 @@ export default function GanttBoard(props: Props) {
                         ? stages.filter((x) => x.cut_id === selected.cut_id && x.id !== selected.id).map((x) => x.work_type_id)
                         : [])}
                     projectLinks={sanitizeLinks(project.links)}
-                    panelDirtyRef={panelDirty}
+                    panelDirtyRef={panelDirtyRef}
                     settle={settle}
                     onUpdate={(patch, display, baseline) => selected && update(selected, patch, display, baseline)}
                     onDelete={(baseline) => selected && remove(selected, baseline)}

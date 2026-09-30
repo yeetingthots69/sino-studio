@@ -201,15 +201,15 @@
       "type": "file"
     },
     {
-      "path": "src/components/tracker/GanttBoard/TaskPanel.tsx",
-      "accessCount": 20,
-      "lastAccessed": 1790755075299,
+      "path": "src/components/tracker/GanttBoard/GanttBoard.tsx",
+      "accessCount": 28,
+      "lastAccessed": 1790763852897,
       "type": "file"
     },
     {
-      "path": "src/components/tracker/GanttBoard/GanttBoard.tsx",
-      "accessCount": 20,
-      "lastAccessed": 1790755560631,
+      "path": "src/components/tracker/GanttBoard/TaskPanel.tsx",
+      "accessCount": 21,
+      "lastAccessed": 1790763861565,
       "type": "file"
     },
     {
@@ -222,6 +222,12 @@
       "path": "src/i18n/dictionaries/vi.json",
       "accessCount": 13,
       "lastAccessed": 1790755076402,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/useTaskRealtime.ts",
+      "accessCount": 10,
+      "lastAccessed": 1790763853456,
       "type": "file"
     },
     {
@@ -243,21 +249,15 @@
       "type": "file"
     },
     {
-      "path": "src/components/tracker/GanttBoard/useTaskRealtime.ts",
+      "path": "src/app/[locale]/tracker/(app)/layout.tsx",
       "accessCount": 7,
-      "lastAccessed": 1790753732661,
+      "lastAccessed": 1790763461468,
       "type": "file"
     },
     {
       "path": "src/app/[locale]/layout.tsx",
       "accessCount": 6,
       "lastAccessed": 1790515772361,
-      "type": "file"
-    },
-    {
-      "path": "src/app/[locale]/tracker/(app)/layout.tsx",
-      "accessCount": 6,
-      "lastAccessed": 1790517198932,
       "type": "file"
     },
     {
@@ -273,6 +273,18 @@
       "type": "file"
     },
     {
+      "path": "src/components/tracker/GanttBoard/useRefreshScheduler.ts",
+      "accessCount": 6,
+      "lastAccessed": 1790763854022,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/dragMath.ts",
+      "accessCount": 6,
+      "lastAccessed": 1790763854535,
+      "type": "file"
+    },
+    {
       "path": "src/components/language-switcher/LanguageSwitcher.tsx",
       "accessCount": 4,
       "lastAccessed": 1790502119331,
@@ -285,21 +297,9 @@
       "type": "file"
     },
     {
-      "path": "src/components/tracker/GanttBoard/dragMath.ts",
-      "accessCount": 4,
-      "lastAccessed": 1790752378187,
-      "type": "file"
-    },
-    {
       "path": "src/components/tracker/GanttBoard/__tests__/dragMath.test.ts",
       "accessCount": 4,
       "lastAccessed": 1790752393048,
-      "type": "file"
-    },
-    {
-      "path": "src/components/tracker/GanttBoard/useRefreshScheduler.ts",
-      "accessCount": 4,
-      "lastAccessed": 1790753789528,
       "type": "file"
     },
     {
@@ -310,14 +310,26 @@
     },
     {
       "path": "src/components/tracker/GanttBoard/TaskBar.tsx",
-      "accessCount": 3,
-      "lastAccessed": 1790747620790,
+      "accessCount": 4,
+      "lastAccessed": 1790763858330,
       "type": "file"
     },
     {
       "path": "src/app/robots.ts",
       "accessCount": 3,
       "lastAccessed": 1790753383452,
+      "type": "file"
+    },
+    {
+      "path": "supabase/migrations/20260927090805_tracker.sql",
+      "accessCount": 3,
+      "lastAccessed": 1790763489266,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/GanttBoard.module.css",
+      "accessCount": 3,
+      "lastAccessed": 1790764169408,
       "type": "file"
     },
     {
@@ -369,9 +381,9 @@
       "type": "file"
     },
     {
-      "path": "supabase/migrations/20260927090805_tracker.sql",
+      "path": "src/utils/supabase/client.ts",
       "accessCount": 2,
-      "lastAccessed": 1790749424324,
+      "lastAccessed": 1790763457943,
       "type": "file"
     },
     {
@@ -396,12 +408,6 @@
       "path": "src/utils/supabase/server.ts",
       "accessCount": 1,
       "lastAccessed": 1790498763773,
-      "type": "file"
-    },
-    {
-      "path": "src/utils/supabase/client.ts",
-      "accessCount": 1,
-      "lastAccessed": 1790498764577,
       "type": "file"
     },
     {
@@ -486,12 +492,6 @@
       "path": "C:/Users/admgn/AppData/Local/Temp/claude/D--WORK-SINO-STUDIO-sino-studio/e15e6542-ed03-46a3-b6aa-6f21cfcd8d84/scratchpad/dict.js",
       "accessCount": 1,
       "lastAccessed": 1790501039765,
-      "type": "file"
-    },
-    {
-      "path": "src/components/tracker/GanttBoard/GanttBoard.module.css",
-      "accessCount": 1,
-      "lastAccessed": 1790501276646,
       "type": "file"
     }
   ],

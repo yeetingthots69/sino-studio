@@ -86,7 +86,7 @@ values ('someone@sinostudio.vn', 'manager', 'Someone');  -- email must be lowerc
 
 **RLS** — every tracker table is `authenticated`-only; policies call `public.is_tracker_user()` (SECURITY INVOKER, checks the JWT email against `tracker_users`; EXECUTE revoked from `anon`/`public`). `tracker_users` has a self-row select policy that must not call the helper (recursion). `tracker_notice_queue` has a deny-all select policy and no grants. Keep `get_advisors` (security) empty after schema changes.
 
-**Realtime** — the `supabase_realtime` publication holds `tracker_tasks`, `tracker_projects`, `tracker_staff`, `tracker_cuts`, `tracker_work_types`, `tracker_strengths`, `tracker_staff_strengths`, `tracker_pay_adjustments`, `tracker_shares`. `GanttBoard/useTaskRealtime.ts` authorizes the socket (`realtime.setAuth(session.access_token)`) before joining, subscribes without a filter (DELETE events can't be filtered), and feeds payloads to `taskSync`. Other tables (projects, work types, staff, strengths, shares, cuts…) use `useRealtimeRefresh` / `RealtimeRefresh` (any event → scheduled `router.refresh()`; `useRealtimeBusy` defers refresh while a form/edit is busy).
+**Realtime** — the `supabase_realtime` publication holds `tracker_tasks`, `tracker_projects`, `tracker_staff`, `tracker_cuts`, `tracker_work_types`, `tracker_strengths`, `tracker_staff_strengths`, `tracker_pay_adjustments`, `tracker_shares`. `GanttBoard/useTaskRealtime.ts` authorizes the socket (`realtime.setAuth(session.access_token)`) before joining, subscribes without a filter (DELETE events can't be filtered), and feeds payloads to `taskSync`. Other tables (projects, work types, staff, strengths, shares, cuts…) use `useRealtimeRefresh` / `RealtimeRefresh` (any event → scheduled `router.refresh()`; `useRealtimeBusy` defers refresh while a form/edit is busy). Board presence (`GanttBoard/useBoardPresence.ts`, pure helpers in `presence.ts`) uses one **private** channel `tracker-board-<projectId>` (the only private channel; authorized by the `tracker_board_read`/`tracker_board_write` policies on `realtime.messages`): presence payload `{email, name, avatar, month, editing}` (avatar stack, editing outline) plus `cell` broadcasts (live hovered cells). Quota gate: `cell` is sent only while another email is present, the channel is `joined`, the tab is visible and the pointer is mouse/pen (250 ms trailing throttle). Test override for the single-account E2E: `localStorage['tracker.presence.selfPeer'] = '1'` makes own other tabs count as peers.
 
 **Client sync** — `GanttBoard/taskSync.ts` is the single source of truth for board tasks: a synchronous store; `planCommit` runs inside the commit chain (`createCommitChain`), never before it; `refreshStart` must be called before every board refresh; conflicts are decided by `version` (stale writes are refused by the DB version check; foreign changes after baseline are tracked by version).
 
@@ -104,7 +104,7 @@ select cron.schedule('tracker-mail', '*/5 * * * *', $$ select net.http_post(url 
 
 "Gửi lỗi" (failed sends) query: `select * from tracker_email_log where status <> 'accepted' and (attempts >= 5 or created_at < now() - interval '23 hours')`.
 
-**Migrations (v2)** — `20260930065620_tracker_v2`, `20260930065653_tracker_v2_notice_queue_policy`, `20260930070707_tracker_v2_hardening`, `20260930072525_tracker_v2_shares_grant`, `20260930073842_tracker_v2_shares_token` (v1: `20260927090805_tracker`, `20260927090827_tracker_users_self_initplan`, `20260927093702_revoke_helper_execute`).
+**Migrations (v2)** — `20260930065620_tracker_v2`, `20260930065653_tracker_v2_notice_queue_policy`, `20260930070707_tracker_v2_hardening`, `20260930072525_tracker_v2_shares_grant`, `20260930073842_tracker_v2_shares_token`; v2.1: `20260930102651_tracker_board_presence` (v1: `20260927090805_tracker`, `20260927090827_tracker_users_self_initplan`, `20260927093702_revoke_helper_execute`).
 
 **404s** — `app/global-not-found.tsx` (enabled by `experimental.globalNotFound`, needed because the root layout is `[locale]`) handles unmatched URLs; `[locale]/not-found.tsx` handles `notFound()` inside localized pages.
 
@@ -114,7 +114,7 @@ select cron.schedule('tracker-mail', '*/5 * * * *', $$ select net.http_post(url 
 1. Supabase MCP `generate_typescript_types` → write to `src/types/database.types.ts`
 2. `npx supazod -i src/types/database.types.ts -o src/schemas/generated/index.ts -s public` (Zod schemas used by the actions)
 
-**Tests** — `npm test` (Vitest) covers the proxy/session logic and the pure tracker modules: `dates`, `cuts`, `pipeline`, `pay`, `earnings`, `errors`, `ics`, `links`, `staffView`, `useRealtimeRefresh`, `GanttBoard/taskSync` + `dragMath` + `boardHelpers`, `lib/tracker/mailPlan` + `shareShape`, `services/trackerMail`.
+**Tests** — `npm test` (Vitest) covers the proxy/session logic and the pure tracker modules: `dates`, `cuts`, `pipeline`, `pay`, `earnings`, `errors`, `ics`, `links`, `staffView`, `useRealtimeRefresh`, `GanttBoard/taskSync` + `dragMath` + `boardHelpers` + `presence`, `lib/tracker/mailPlan` + `shareShape`, `services/trackerMail`.
 
 **Next agent rules** — the `nextjs-agent-rules` block at the end of this file is auto-added by `next dev`; it is kept on purpose, do not remove it.
 

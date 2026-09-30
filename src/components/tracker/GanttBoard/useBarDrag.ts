@@ -10,13 +10,15 @@ interface Options {
     settle: () => void;
     /** `baseline` = the task's confirmed version at pointerdown (taskSync). */
     onCommit: (patch: DragBaseline, baseline: number) => void;
+    /** Dragged task id, null when the drag ends (board presence `editing`); must be stable. */
+    onDrag?: (id: string | null) => void;
 }
 
 /**
  * Pointer drag for a task bar. Handles carry `data-edge="resize-start|resize-end"`; anything else moves.
  * The commit is the day delta applied to the stored dates captured at pointerdown.
  */
-export function useBarDrag({task, draggingRef, settle, onCommit}: Options) {
+export function useBarDrag({task, draggingRef, settle, onCommit, onDrag}: Options) {
     const [preview, setPreview] = useState<DragBaseline | null>(null);
     const drag = useRef<{mode: DragMode; base: DragBaseline; version: number; startX: number; delta: number} | null>(null);
 
@@ -24,14 +26,16 @@ export function useBarDrag({task, draggingRef, settle, onCommit}: Options) {
     useEffect(() => () => {
         if (drag.current) {
             draggingRef.current = false;
+            onDrag?.(null);
             settle();
         }
-    }, [draggingRef, settle]);
+    }, [draggingRef, settle, onDrag]);
 
     const end = () => {
         drag.current = null;
         setPreview(null);
         draggingRef.current = false;
+        onDrag?.(null);
         settle();
     };
 
@@ -47,6 +51,7 @@ export function useBarDrag({task, draggingRef, settle, onCommit}: Options) {
             delta: 0,
         };
         draggingRef.current = true;
+        onDrag?.(task.id);
     };
 
     const onPointerMove = (e: PointerEvent<HTMLElement>) => {

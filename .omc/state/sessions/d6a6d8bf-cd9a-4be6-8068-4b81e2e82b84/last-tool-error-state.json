@@ -1,7 +1,7 @@
 {
-  "tool_name": "mcp__chrome-devtools__evaluate_script",
-  "tool_input_preview": "{\"pageId\":2,\"function\":\"async () => { await new Promise(r=>setTimeout(r,800)); [...document.querySelectorAll('button')].filter(e=>e.textContent.includes('E2E B')&&e.textContent.length<90).pop().click(...",
-  "error": "Error: Cannot read properties of null (reading 'focus')\npptr:evaluateHandle;performEvaluation%20(file%3A%2F%2F%2FC%3A%2FUsers%2Fadmgn%2FAppData%2FLocal%2Fnpm-cache%2F_npx%2F15c61037b1978c83%2Fnode_modules%2Fchrome-devtools-mcp%2Fbuild%2Fsrc%2Ftools%2Fscript.js%3A182%3A69):1:299",
-  "timestamp": "2026-09-30T08:48:19.590Z",
+  "tool_name": "mcp__chrome-devtools__emulate",
+  "tool_input_preview": "{\"pageId\":7,\"networkConditions\":\"No emulation\"}",
+  "error": "Input validation error: Invalid arguments for tool emulate: networkConditions: Invalid option: expected one of \"Offline\"|\"Slow 3G\"|\"Fast 3G\"|\"Slow 4G\"|\"Fast 4G\"",
+  "timestamp": "2026-09-30T11:39:40.587Z",
   "retry_count": 1
 }
