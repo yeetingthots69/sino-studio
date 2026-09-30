@@ -1,0 +1,29 @@
+.page {
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+    background: var(--color-dark);
+    color: var(--color-white);
+}
+
+.header {
+    margin-bottom: 16px;
+}
+
+.kicker,
+.hint {
+    margin: 0;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.title {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 26px;
+    margin: 4px 0;
+}
+
+@media (min-width: 1024px) {
+    .page {
+        padding: 32px 40px 64px;
+    }
+}

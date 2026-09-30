@@ -1,0 +1,25 @@
+.tabs {
+    display: inline-flex;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.tab {
+    padding: 6px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+}
+
+.tab + .tab {
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.tab:hover {
+    color: var(--color-white);
+}
+
+.active {
+    color: var(--color-white);
+    background: rgba(232, 25, 44, 0.16);
+}

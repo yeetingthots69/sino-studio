@@ -1,0 +1,28 @@
+.buttons {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+}
+
+.code {
+    width: 110px;
+}
+
+.color {
+    width: 140px;
+}
+
+.pct {
+    width: 110px;
+}
+
+.lock {
+    display: inline-flex;
+    width: 28px;
+    justify-content: center;
+    opacity: 0.6;
+}
+
+.iconWrap {
+    display: inline-flex;
+}

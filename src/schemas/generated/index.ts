@@ -19,11 +19,314 @@ export const jsonSchema: z.ZodSchema<Json> = z.lazy(() =>
     .nullable(),
 );
 
+export const publicTrackerAdjustmentBatchesRowSchema = z.object({
+  created_at: z.string(),
+  created_by: z.string(),
+  id: z.string(),
+  project_id: z.string(),
+  reason: z.string(),
+});
+
+export const publicTrackerAdjustmentBatchesInsertSchema = z.object({
+  created_at: z.string().optional(),
+  created_by: z.string(),
+  id: z.string(),
+  project_id: z.string(),
+  reason: z.string(),
+});
+
+export const publicTrackerAdjustmentBatchesUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  created_by: z.string().optional(),
+  id: z.string().optional(),
+  project_id: z.string().optional(),
+  reason: z.string().optional(),
+});
+
+export const publicTrackerAdjustmentBatchesRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("tracker_adjustment_batches_project_id_fkey"),
+    columns: z.tuple([z.literal("project_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_projects"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
+export const publicTrackerAuditLogRowSchema = z.object({
+  action: z.string(),
+  actor: z.string().nullable(),
+  at: z.string(),
+  id: z.number(),
+  new: jsonSchema.nullable(),
+  old: jsonSchema.nullable(),
+  row_id: z.string(),
+  table_name: z.string(),
+});
+
+export const publicTrackerAuditLogInsertSchema = z.object({
+  action: z.string(),
+  actor: z.string().optional().nullable(),
+  at: z.string().optional(),
+  id: z.never().optional(),
+  new: jsonSchema.optional().nullable(),
+  old: jsonSchema.optional().nullable(),
+  row_id: z.string(),
+  table_name: z.string(),
+});
+
+export const publicTrackerAuditLogUpdateSchema = z.object({
+  action: z.string().optional(),
+  actor: z.string().optional().nullable(),
+  at: z.string().optional(),
+  id: z.never().optional(),
+  new: jsonSchema.optional().nullable(),
+  old: jsonSchema.optional().nullable(),
+  row_id: z.string().optional(),
+  table_name: z.string().optional(),
+});
+
+export const publicTrackerCutsRowSchema = z.object({
+  budget: z.number(),
+  code: z.string(),
+  created_at: z.string(),
+  id: z.string(),
+  links: jsonSchema,
+  project_id: z.string(),
+  updated_at: z.string(),
+});
+
+export const publicTrackerCutsInsertSchema = z.object({
+  budget: z.number().optional(),
+  code: z.string(),
+  created_at: z.string().optional(),
+  id: z.string().optional(),
+  links: jsonSchema.optional(),
+  project_id: z.string(),
+  updated_at: z.string().optional(),
+});
+
+export const publicTrackerCutsUpdateSchema = z.object({
+  budget: z.number().optional(),
+  code: z.string().optional(),
+  created_at: z.string().optional(),
+  id: z.string().optional(),
+  links: jsonSchema.optional(),
+  project_id: z.string().optional(),
+  updated_at: z.string().optional(),
+});
+
+export const publicTrackerCutsRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("tracker_cuts_project_id_fkey"),
+    columns: z.tuple([z.literal("project_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_projects"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
+export const publicTrackerEmailLogRowSchema = z.object({
+  attempts: z.number(),
+  claim_token: z.string().nullable(),
+  claimed_until: z.string().nullable(),
+  created_at: z.string(),
+  created_by: z.string().nullable(),
+  cut_id: z.string().nullable(),
+  error: z.string().nullable(),
+  id: z.string(),
+  idempotency_key: z.string(),
+  kind: z.string(),
+  payload: jsonSchema,
+  ref_date: z.string().nullable(),
+  resend_id: z.string().nullable(),
+  staff_id: z.string().nullable(),
+  status: z.string(),
+  subject: z.string(),
+  task_id: z.string().nullable(),
+  to_email: z.string(),
+});
+
+export const publicTrackerEmailLogInsertSchema = z.object({
+  attempts: z.number().optional(),
+  claim_token: z.string().optional().nullable(),
+  claimed_until: z.string().optional().nullable(),
+  created_at: z.string().optional(),
+  created_by: z.string().optional().nullable(),
+  cut_id: z.string().optional().nullable(),
+  error: z.string().optional().nullable(),
+  id: z.string().optional(),
+  idempotency_key: z.string(),
+  kind: z.string(),
+  payload: jsonSchema,
+  ref_date: z.string().optional().nullable(),
+  resend_id: z.string().optional().nullable(),
+  staff_id: z.string().optional().nullable(),
+  status: z.string(),
+  subject: z.string(),
+  task_id: z.string().optional().nullable(),
+  to_email: z.string(),
+});
+
+export const publicTrackerEmailLogUpdateSchema = z.object({
+  attempts: z.number().optional(),
+  claim_token: z.string().optional().nullable(),
+  claimed_until: z.string().optional().nullable(),
+  created_at: z.string().optional(),
+  created_by: z.string().optional().nullable(),
+  cut_id: z.string().optional().nullable(),
+  error: z.string().optional().nullable(),
+  id: z.string().optional(),
+  idempotency_key: z.string().optional(),
+  kind: z.string().optional(),
+  payload: jsonSchema.optional(),
+  ref_date: z.string().optional().nullable(),
+  resend_id: z.string().optional().nullable(),
+  staff_id: z.string().optional().nullable(),
+  status: z.string().optional(),
+  subject: z.string().optional(),
+  task_id: z.string().optional().nullable(),
+  to_email: z.string().optional(),
+});
+
+export const publicTrackerEmailLogRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("tracker_email_log_staff_id_fkey"),
+    columns: z.tuple([z.literal("staff_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_staff"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
+export const publicTrackerNoticeQueueRowSchema = z.object({
+  claimed_until: z.string().nullable(),
+  cycle_id: z.string(),
+  due_at: z.string(),
+  first_change_at: z.string(),
+  generation: z.number(),
+  staff_id: z.string(),
+  task_ids: z.array(z.string()),
+});
+
+export const publicTrackerNoticeQueueInsertSchema = z.object({
+  claimed_until: z.string().optional().nullable(),
+  cycle_id: z.string().optional(),
+  due_at: z.string(),
+  first_change_at: z.string().optional(),
+  generation: z.number().optional(),
+  staff_id: z.string(),
+  task_ids: z.array(z.string()).optional(),
+});
+
+export const publicTrackerNoticeQueueUpdateSchema = z.object({
+  claimed_until: z.string().optional().nullable(),
+  cycle_id: z.string().optional(),
+  due_at: z.string().optional(),
+  first_change_at: z.string().optional(),
+  generation: z.number().optional(),
+  staff_id: z.string().optional(),
+  task_ids: z.array(z.string()).optional(),
+});
+
+export const publicTrackerNoticeQueueRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("tracker_notice_queue_staff_id_fkey"),
+    columns: z.tuple([z.literal("staff_id")]),
+    isOneToOne: z.literal(true),
+    referencedRelation: z.literal("tracker_staff"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
+export const publicTrackerPayAdjustmentsRowSchema = z.object({
+  amount: z.number(),
+  batch_id: z.string(),
+  created_at: z.string(),
+  created_by: z.string(),
+  cut_id: z.string(),
+  id: z.string(),
+  project_id: z.string(),
+  reason: z.string(),
+  reverses_id: z.string().nullable(),
+  staff_id: z.string(),
+  work_type_id: z.string(),
+});
+
+export const publicTrackerPayAdjustmentsInsertSchema = z.object({
+  amount: z.number(),
+  batch_id: z.string(),
+  created_at: z.string().optional(),
+  created_by: z.string(),
+  cut_id: z.string(),
+  id: z.string().optional(),
+  project_id: z.string(),
+  reason: z.string(),
+  reverses_id: z.string().optional().nullable(),
+  staff_id: z.string(),
+  work_type_id: z.string(),
+});
+
+export const publicTrackerPayAdjustmentsUpdateSchema = z.object({
+  amount: z.number().optional(),
+  batch_id: z.string().optional(),
+  created_at: z.string().optional(),
+  created_by: z.string().optional(),
+  cut_id: z.string().optional(),
+  id: z.string().optional(),
+  project_id: z.string().optional(),
+  reason: z.string().optional(),
+  reverses_id: z.string().optional().nullable(),
+  staff_id: z.string().optional(),
+  work_type_id: z.string().optional(),
+});
+
+export const publicTrackerPayAdjustmentsRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("tracker_pay_adjustments_batch_id_fkey"),
+    columns: z.tuple([z.literal("batch_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_adjustment_batches"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+  z.object({
+    foreignKeyName: z.literal("tracker_pay_adjustments_cut_id_project_id_fkey"),
+    columns: z.tuple([z.literal("cut_id"), z.literal("project_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_cuts"),
+    referencedColumns: z.tuple([z.literal("id"), z.literal("project_id")]),
+  }),
+  z.object({
+    foreignKeyName: z.literal("tracker_pay_adjustments_reverses_id_fkey"),
+    columns: z.tuple([z.literal("reverses_id")]),
+    isOneToOne: z.literal(true),
+    referencedRelation: z.literal("tracker_pay_adjustments"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+  z.object({
+    foreignKeyName: z.literal("tracker_pay_adjustments_staff_id_fkey"),
+    columns: z.tuple([z.literal("staff_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_staff"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+  z.object({
+    foreignKeyName: z.literal(
+      "tracker_pay_adjustments_work_type_id_project_id_fkey",
+    ),
+    columns: z.tuple([z.literal("work_type_id"), z.literal("project_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_work_types"),
+    referencedColumns: z.tuple([z.literal("id"), z.literal("project_id")]),
+  }),
+]);
+
 export const publicTrackerProjectsRowSchema = z.object({
   archived_at: z.string().nullable(),
   color: z.string(),
   created_at: z.string(),
   id: z.string(),
+  links: jsonSchema,
   name: z.string(),
   updated_at: z.string(),
 });
@@ -33,6 +336,7 @@ export const publicTrackerProjectsInsertSchema = z.object({
   color: z.string().optional(),
   created_at: z.string().optional(),
   id: z.string().optional(),
+  links: jsonSchema.optional(),
   name: z.string(),
   updated_at: z.string().optional(),
 });
@@ -42,77 +346,187 @@ export const publicTrackerProjectsUpdateSchema = z.object({
   color: z.string().optional(),
   created_at: z.string().optional(),
   id: z.string().optional(),
+  links: jsonSchema.optional(),
   name: z.string().optional(),
   updated_at: z.string().optional(),
 });
 
+export const publicTrackerSharesRowSchema = z.object({
+  created_at: z.string(),
+  created_by: z.string(),
+  id: z.string(),
+  label: z.string().nullable(),
+  project_id: z.string(),
+  revoked_at: z.string().nullable(),
+  staff_ids: z.array(z.string()),
+  token: z.string(),
+});
+
+export const publicTrackerSharesInsertSchema = z.object({
+  created_at: z.string().optional(),
+  created_by: z.string(),
+  id: z.string().optional(),
+  label: z.string().optional().nullable(),
+  project_id: z.string(),
+  revoked_at: z.string().optional().nullable(),
+  staff_ids: z.array(z.string()),
+  token: z.string().optional(),
+});
+
+export const publicTrackerSharesUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  created_by: z.string().optional(),
+  id: z.string().optional(),
+  label: z.string().optional().nullable(),
+  project_id: z.string().optional(),
+  revoked_at: z.string().optional().nullable(),
+  staff_ids: z.array(z.string()).optional(),
+  token: z.string().optional(),
+});
+
+export const publicTrackerSharesRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("tracker_shares_project_id_fkey"),
+    columns: z.tuple([z.literal("project_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_projects"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
 export const publicTrackerStaffRowSchema = z.object({
   archived_at: z.string().nullable(),
   created_at: z.string(),
+  email: z.string().nullable(),
   id: z.string(),
   name: z.string(),
   sort_order: z.number(),
-  strengths: z.string(),
 });
 
 export const publicTrackerStaffInsertSchema = z.object({
   archived_at: z.string().optional().nullable(),
   created_at: z.string().optional(),
+  email: z.string().optional().nullable(),
   id: z.string().optional(),
   name: z.string(),
   sort_order: z.number().optional(),
-  strengths: z.string().optional(),
 });
 
 export const publicTrackerStaffUpdateSchema = z.object({
   archived_at: z.string().optional().nullable(),
   created_at: z.string().optional(),
+  email: z.string().optional().nullable(),
   id: z.string().optional(),
   name: z.string().optional(),
   sort_order: z.number().optional(),
-  strengths: z.string().optional(),
+});
+
+export const publicTrackerStaffStrengthsRowSchema = z.object({
+  staff_id: z.string(),
+  strength_id: z.string(),
+});
+
+export const publicTrackerStaffStrengthsInsertSchema = z.object({
+  staff_id: z.string(),
+  strength_id: z.string(),
+});
+
+export const publicTrackerStaffStrengthsUpdateSchema = z.object({
+  staff_id: z.string().optional(),
+  strength_id: z.string().optional(),
+});
+
+export const publicTrackerStaffStrengthsRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("tracker_staff_strengths_staff_id_fkey"),
+    columns: z.tuple([z.literal("staff_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_staff"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+  z.object({
+    foreignKeyName: z.literal("tracker_staff_strengths_strength_id_fkey"),
+    columns: z.tuple([z.literal("strength_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_strengths"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
+export const publicTrackerStrengthsRowSchema = z.object({
+  all_rounder: z.boolean(),
+  id: z.string(),
+  label: z.string(),
+  sort_order: z.number(),
+});
+
+export const publicTrackerStrengthsInsertSchema = z.object({
+  all_rounder: z.boolean().optional(),
+  id: z.string().optional(),
+  label: z.string(),
+  sort_order: z.number().optional(),
+});
+
+export const publicTrackerStrengthsUpdateSchema = z.object({
+  all_rounder: z.boolean().optional(),
+  id: z.string().optional(),
+  label: z.string().optional(),
+  sort_order: z.number().optional(),
 });
 
 export const publicTrackerTasksRowSchema = z.object({
   created_at: z.string(),
+  cut_id: z.string(),
   end_date: z.string(),
   id: z.string(),
-  name: z.string(),
+  links: jsonSchema,
   progress: z.number(),
   project_id: z.string(),
   staff_id: z.string(),
   start_date: z.string(),
   updated_at: z.string(),
+  version: z.number(),
   work_type_id: z.string(),
 });
 
 export const publicTrackerTasksInsertSchema = z.object({
   created_at: z.string().optional(),
+  cut_id: z.string(),
   end_date: z.string(),
   id: z.string().optional(),
-  name: z.string(),
+  links: jsonSchema.optional(),
   progress: z.number().optional(),
   project_id: z.string(),
   staff_id: z.string(),
   start_date: z.string(),
   updated_at: z.string().optional(),
+  version: z.number().optional(),
   work_type_id: z.string(),
 });
 
 export const publicTrackerTasksUpdateSchema = z.object({
   created_at: z.string().optional(),
+  cut_id: z.string().optional(),
   end_date: z.string().optional(),
   id: z.string().optional(),
-  name: z.string().optional(),
+  links: jsonSchema.optional(),
   progress: z.number().optional(),
   project_id: z.string().optional(),
   staff_id: z.string().optional(),
   start_date: z.string().optional(),
   updated_at: z.string().optional(),
+  version: z.number().optional(),
   work_type_id: z.string().optional(),
 });
 
 export const publicTrackerTasksRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("tracker_tasks_cut_fk"),
+    columns: z.tuple([z.literal("cut_id"), z.literal("project_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_cuts"),
+    referencedColumns: z.tuple([z.literal("id"), z.literal("project_id")]),
+  }),
   z.object({
     foreignKeyName: z.literal("tracker_tasks_project_id_fkey"),
     columns: z.tuple([z.literal("project_id")]),
@@ -128,11 +542,11 @@ export const publicTrackerTasksRelationshipsSchema = z.tuple([
     referencedColumns: z.tuple([z.literal("id")]),
   }),
   z.object({
-    foreignKeyName: z.literal("tracker_tasks_work_type_id_fkey"),
-    columns: z.tuple([z.literal("work_type_id")]),
+    foreignKeyName: z.literal("tracker_tasks_type_fk"),
+    columns: z.tuple([z.literal("work_type_id"), z.literal("project_id")]),
     isOneToOne: z.literal(false),
     referencedRelation: z.literal("tracker_work_types"),
-    referencedColumns: z.tuple([z.literal("id")]),
+    referencedColumns: z.tuple([z.literal("id"), z.literal("project_id")]),
   }),
 ]);
 
@@ -158,32 +572,187 @@ export const publicTrackerUsersUpdateSchema = z.object({
 });
 
 export const publicTrackerWorkTypesRowSchema = z.object({
-  archived_at: z.string().nullable(),
   code: z.string(),
   color: z.string(),
+  created_at: z.string(),
   id: z.string(),
   label: z.string(),
+  pay_pct: z.number(),
+  project_id: z.string(),
   sort_order: z.number(),
+  updated_at: z.string(),
 });
 
 export const publicTrackerWorkTypesInsertSchema = z.object({
-  archived_at: z.string().optional().nullable(),
   code: z.string(),
   color: z.string(),
+  created_at: z.string().optional(),
   id: z.string().optional(),
   label: z.string(),
+  pay_pct: z.number().optional(),
+  project_id: z.string(),
   sort_order: z.number().optional(),
+  updated_at: z.string().optional(),
 });
 
 export const publicTrackerWorkTypesUpdateSchema = z.object({
-  archived_at: z.string().optional().nullable(),
   code: z.string().optional(),
   color: z.string().optional(),
+  created_at: z.string().optional(),
   id: z.string().optional(),
   label: z.string().optional(),
+  pay_pct: z.number().optional(),
+  project_id: z.string().optional(),
   sort_order: z.number().optional(),
+  updated_at: z.string().optional(),
 });
+
+export const publicTrackerWorkTypesRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("tracker_work_types_project_id_fkey"),
+    columns: z.tuple([z.literal("project_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_projects"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
 
 export const publicIsTrackerUserArgsSchema = z.never();
 
 export const publicIsTrackerUserReturnsSchema = z.boolean();
+
+export const publicTrackerAddAdjustmentsArgsSchema = z.object({
+  p_batch: z.string(),
+  p_entries: jsonSchema,
+  p_project: z.string(),
+  p_reason: z.string(),
+});
+
+export const publicTrackerAddAdjustmentsReturnsSchema = z.array(
+  z.object({
+    amount: z.number(),
+    batch_id: z.string(),
+    created_at: z.string(),
+    created_by: z.string(),
+    cut_id: z.string(),
+    id: z.string(),
+    project_id: z.string(),
+    reason: z.string(),
+    reverses_id: z.string().nullable(),
+    staff_id: z.string(),
+    work_type_id: z.string(),
+  }),
+);
+
+export const publicTrackerClaimEmailsArgsSchema = z.object({
+  p_lease: z.string(),
+  p_limit: z.number(),
+});
+
+export const publicTrackerClaimEmailsReturnsSchema = z.array(
+  z.object({
+    attempts: z.number(),
+    claim_token: z.string().nullable(),
+    claimed_until: z.string().nullable(),
+    created_at: z.string(),
+    created_by: z.string().nullable(),
+    cut_id: z.string().nullable(),
+    error: z.string().nullable(),
+    id: z.string(),
+    idempotency_key: z.string(),
+    kind: z.string(),
+    payload: jsonSchema,
+    ref_date: z.string().nullable(),
+    resend_id: z.string().nullable(),
+    staff_id: z.string().nullable(),
+    status: z.string(),
+    subject: z.string(),
+    task_id: z.string().nullable(),
+    to_email: z.string(),
+  }),
+);
+
+export const publicTrackerClaimNoticesArgsSchema = z.object({
+  p_lease: z.string(),
+  p_limit: z.number(),
+});
+
+export const publicTrackerClaimNoticesReturnsSchema = z.array(
+  z.object({
+    claimed_until: z.string().nullable(),
+    cycle_id: z.string(),
+    due_at: z.string(),
+    first_change_at: z.string(),
+    generation: z.number(),
+    staff_id: z.string(),
+    task_ids: z.array(z.string()),
+  }),
+);
+
+export const publicTrackerCreateProjectArgsSchema = z.object({
+  p_color: z.string(),
+  p_name: z.string(),
+  p_types: jsonSchema,
+});
+
+export const publicTrackerCreateProjectReturnsSchema = z.object({
+  archived_at: z.string().nullable(),
+  color: z.string(),
+  created_at: z.string(),
+  id: z.string(),
+  links: jsonSchema,
+  name: z.string(),
+  updated_at: z.string(),
+});
+
+export const publicTrackerCreateTaskArgsSchema = z.object({
+  p_budget: z.number().optional(),
+  p_cut_code: z.string(),
+  p_end: z.string(),
+  p_project: z.string(),
+  p_staff: z.string(),
+  p_start: z.string(),
+  p_type: z.string(),
+});
+
+export const publicTrackerCreateTaskReturnsSchema = jsonSchema;
+
+export const publicTrackerEnsureCutArgsSchema = z.object({
+  p_code: z.string(),
+  p_project: z.string(),
+});
+
+export const publicTrackerEnsureCutReturnsSchema = z.object({
+  budget: z.number(),
+  code: z.string(),
+  created_at: z.string(),
+  id: z.string(),
+  links: jsonSchema,
+  project_id: z.string(),
+  updated_at: z.string(),
+});
+
+export const publicTrackerNormalizeCutArgsSchema = z.object({
+  raw: z.string(),
+});
+
+export const publicTrackerNormalizeCutReturnsSchema = z.string();
+
+export const publicTrackerSaveWorkTypesArgsSchema = z.object({
+  p_project: z.string(),
+  p_types: jsonSchema,
+});
+
+export const publicTrackerSaveWorkTypesReturnsSchema = z.array(
+  z.object({
+    code: z.string(),
+    color: z.string(),
+    created_at: z.string(),
+    id: z.string(),
+    label: z.string(),
+    pay_pct: z.number(),
+    project_id: z.string(),
+    sort_order: z.number(),
+    updated_at: z.string(),
+  }),
+);

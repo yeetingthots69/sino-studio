@@ -1,0 +1,516 @@
+/* Cuts view (plan §3.5, owner look N1: check badge, partial fill, badge in cell, comfortable density) */
+.page {
+    --line: rgba(255, 255, 255, 0.1);
+    --line-2: rgba(255, 255, 255, 0.18);
+    --surface: var(--color-dark);
+    --surface-2: #1a1a1a;
+    --dim: rgba(255, 255, 255, 0.45);
+    padding: 24px 16px;
+}
+
+.intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.title {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 28px;
+    margin: 4px 0;
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-bottom: 12px;
+}
+
+.toolbarEnd {
+    margin-left: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.scroll {
+    overflow: auto;
+    max-height: calc(100vh - 240px);
+    border: 1px solid var(--line);
+    background: var(--surface);
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    min-width: 760px;
+}
+
+.table th,
+.table td {
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    text-align: left;
+}
+
+.table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    padding: 10px 8px;
+    background: var(--surface-2);
+    font-weight: 500;
+}
+
+.table td {
+    padding: 6px 4px;
+}
+
+.sticky {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    width: 150px;
+    min-width: 150px;
+    background: var(--surface-2);
+    border-right: 1px solid var(--line-2);
+}
+
+.table thead th.sticky {
+    z-index: 4;
+}
+
+.table tbody th.sticky,
+.table tfoot th.sticky {
+    padding: 8px;
+}
+
+.typeHead {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.swatch {
+    width: 10px;
+    height: 10px;
+    flex: none;
+}
+
+.typeHead b {
+    font-family: var(--font-heading), sans-serif;
+}
+
+.typeLabel,
+.sub {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+}
+
+.pct {
+    margin-left: auto;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.cutHead {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cutCode {
+    font-family: var(--font-heading), sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.cutHead > :last-child {
+    margin-left: auto;
+}
+
+/* cells */
+.slot {
+    position: relative;
+}
+
+.cell {
+    --c: #888;
+    --p: 0%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: 100%;
+    min-width: 200px;
+    min-height: 84px;
+    padding: 8px;
+    text-align: left;
+    color: var(--color-white);
+    font: inherit;
+    border: 1px solid color-mix(in srgb, var(--c) 45%, transparent);
+    background: color-mix(in srgb, var(--c) 16%, var(--surface));
+}
+
+button.cell {
+    cursor: pointer;
+}
+
+button.cell:hover {
+    border-color: var(--c);
+}
+
+button.cell:focus-visible {
+    outline: 2px solid var(--c);
+    outline-offset: 2px;
+}
+
+.done {
+    background: color-mix(in srgb, var(--c) 34%, var(--surface));
+}
+
+.progress {
+    background: linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--c) 34%, var(--surface)) var(--p),
+        color-mix(in srgb, var(--c) 7%, var(--surface)) var(--p)
+    );
+}
+
+.empty {
+    background: transparent;
+    border: 1px dashed var(--line-2);
+    color: var(--dim);
+}
+
+.cellHead {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.code {
+    color: var(--c);
+}
+
+.empty .code {
+    color: var(--dim);
+}
+
+.check {
+    margin-left: auto;
+    background: var(--c);
+    color: var(--color-black);
+    font-size: 10px;
+    padding: 1px 5px;
+    font-weight: 700;
+}
+
+.badge {
+    align-self: flex-start;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1px 6px;
+    font-size: 12px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 8px;
+    font-size: 12px;
+}
+
+.who {
+    font-weight: 600;
+}
+
+.when {
+    color: rgba(255, 255, 255, 0.6);
+    font-variant-numeric: tabular-nums;
+}
+
+.progressText {
+    margin-left: auto;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.adjFlag {
+    font-size: 11px;
+    color: #f5a524;
+}
+
+.adjButton {
+    align-self: flex-start;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: 11px;
+    color: #f5a524;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.wait {
+    font-size: 11px;
+    color: var(--dim);
+    font-style: italic;
+}
+
+.dash {
+    font-size: 16px;
+}
+
+.plus {
+    position: absolute;
+    right: 8px;
+    bottom: 6px;
+}
+
+/* selection mode */
+/* checkbox bottom-right: the top-right corner holds the done badge */
+.selectOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding: 8px;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+/* keep cell text clear of the checkbox (progress %, badges) */
+.selecting .cell {
+    padding-right: 36px;
+}
+
+.selected .selectOverlay {
+    background: transparent;
+    outline: 2px solid var(--color-red);
+    outline-offset: -2px;
+}
+
+/* footer */
+.table tfoot th,
+.table tfoot td {
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+    background: var(--surface-2);
+    padding: 10px 8px;
+    border-bottom: 0;
+    border-top: 1px solid var(--line-2);
+}
+
+.table tfoot th.sticky {
+    z-index: 3;
+}
+
+.money {
+    display: block;
+    font-weight: 600;
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+}
+
+/* drawer */
+.drawerBody {
+    display: grid;
+    gap: 20px;
+}
+
+.formula {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    padding: 10px 12px;
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+}
+
+.formula b {
+    font-size: 17px;
+}
+
+.sectionTitle {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0 0 8px;
+}
+
+.people {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 13px;
+}
+
+.people th,
+.people td {
+    padding: 6px 4px;
+    border-bottom: 1px solid var(--line);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.people th:first-child,
+.people td:first-child {
+    text-align: left;
+}
+
+.people thead th {
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+    font-size: 11px;
+}
+
+.list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+}
+
+.list li {
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    padding: 8px 10px;
+    display: grid;
+    gap: 4px;
+    font-size: 13px;
+}
+
+.reversed {
+    opacity: 0.55;
+}
+
+.reversed .amount {
+    text-decoration: line-through;
+}
+
+.row {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+.row > button:last-child {
+    margin-left: auto;
+}
+
+.amount {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.plusAmount {
+    color: var(--mantine-color-green-5);
+}
+
+.minusAmount {
+    color: var(--mantine-color-red-5);
+}
+
+.meta {
+    font-size: 11px;
+    color: var(--dim);
+}
+
+.tag {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border: 1px solid var(--line-2);
+    padding: 0 4px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.form {
+    display: grid;
+    gap: 10px;
+}
+
+/* bulk modal */
+.fieldset {
+    display: grid;
+    gap: 10px;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+}
+
+/* flex-wrap: every control keeps its natural width (the sign toggle is never clipped) at 390 px and 1600 px */
+.bulkRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.colStage {
+    flex: 0 0 110px;
+}
+
+.colPerson {
+    flex: 1 1 180px;
+    min-width: 0;
+}
+
+.colSign {
+    flex: none;
+}
+
+.colAmount {
+    flex: 1 1 140px;
+    min-width: 120px;
+}
+
+.colReason {
+    flex: 2 1 200px;
+    min-width: 0;
+}
+
+.stageTag {
+    font-weight: 700;
+    font-family: var(--font-heading), sans-serif;
+    padding-top: 8px;
+}
+
+.applyAll {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 8px;
+    padding: 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+}
+
+.preview {
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+}

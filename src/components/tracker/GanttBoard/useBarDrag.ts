@@ -8,7 +8,8 @@ interface Options {
     task: Task;
     draggingRef: RefObject<boolean>;
     settle: () => void;
-    onCommit: (patch: DragBaseline) => void;
+    /** `baseline` = the task's confirmed version at pointerdown (taskSync). */
+    onCommit: (patch: DragBaseline, baseline: number) => void;
 }
 
 /**
@@ -17,9 +18,9 @@ interface Options {
  */
 export function useBarDrag({task, draggingRef, settle, onCommit}: Options) {
     const [preview, setPreview] = useState<DragBaseline | null>(null);
-    const drag = useRef<{mode: DragMode; base: DragBaseline; startX: number; delta: number} | null>(null);
+    const drag = useRef<{mode: DragMode; base: DragBaseline; version: number; startX: number; delta: number} | null>(null);
 
-    // the bar can remount mid-drag (tmp- id swapped for the real one): release the busy flag
+    // unmounted mid-drag (task deleted / left the month): release the busy flag
     useEffect(() => () => {
         if (drag.current) {
             draggingRef.current = false;
@@ -41,6 +42,7 @@ export function useBarDrag({task, draggingRef, settle, onCommit}: Options) {
         drag.current = {
             mode: edge ?? 'move',
             base: {start_date: task.start_date, end_date: task.end_date},
+            version: task.version,
             startX: e.clientX,
             delta: 0,
         };
@@ -61,7 +63,7 @@ export function useBarDrag({task, draggingRef, settle, onCommit}: Options) {
         if (!d) return;
         // cleared before capture is released so the lostpointercapture that follows is a no-op
         drag.current = null;
-        if (d.delta !== 0) onCommit(applyDrag(d.base, d.mode, d.delta));
+        if (d.delta !== 0) onCommit(applyDrag(d.base, d.mode, d.delta), d.version);
         end();
     };
 

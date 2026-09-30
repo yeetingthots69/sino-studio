@@ -10,6 +10,7 @@ import styles from './GanttBoard.module.css';
 
 interface Props {
     task: Task;
+    cutCode: string;
     workType: WorkType | undefined;
     month: string;
     lane: number;
@@ -17,30 +18,27 @@ interface Props {
     draggingRef: RefObject<boolean>;
     settle: () => void;
     onSelect: () => void;
-    onCommit: (patch: DragBaseline) => void;
+    onCommit: (patch: DragBaseline, baseline: number) => void;
 }
 
-export default function TaskBar({task, workType, month, lane, selected, draggingRef, settle, onSelect, onCommit}: Props) {
+export default function TaskBar({task, cutCode, workType, month, lane, selected, draggingRef, settle, onSelect, onCommit}: Props) {
     const t = useDictionary().tracker.board;
     const {preview, handlers} = useBarDrag({task, draggingRef, settle, onCommit});
     const done = task.progress === 100;
     const color = done ? DONE_COLOR : (workType?.color ?? '#888888');
-    const label = done ? t.done : (workType?.code ?? '');
+    const code = workType?.code ?? '';
     const {colStart, colEnd, clippedStart, clippedEnd} = clampToMonth(preview ?? task, month);
-    // optimistic create still in flight: not selectable or draggable until the real id lands
-    const pendingCreate = task.id.startsWith('tmp-');
 
     return (
         <button
             type="button"
             className={`${styles.bar} ${selected ? styles.selected : ''} ${preview ? styles.dragging : ''}`}
-            disabled={pendingCreate}
             onClick={onSelect}
-            {...(pendingCreate ? {} : handlers)}
+            {...handlers}
             aria-pressed={selected}
             aria-label={fill(t.barLabel, {
-                name: task.name,
-                label,
+                name: cutCode,
+                label: done ? `${code}, ${t.done}` : code,
                 s: Number(task.start_date.slice(8)),
                 e: Number(task.end_date.slice(8)),
             })}
@@ -60,11 +58,11 @@ export default function TaskBar({task, workType, month, lane, selected, dragging
             <span className={styles.progress} style={{width: `${task.progress}%`, background: color + 'aa'}}/>
             <span className={styles.barText}>
                 <span className={styles.grip} aria-hidden>⋮⋮</span>
-                <b>{task.name}</b> {label}
+                <b>{cutCode}</b> · {code}
             </span>
             {/* edges clipped by the month bound are not handles */}
-            {!pendingCreate && !clippedStart && <span className={`${styles.handle} ${styles.handleStart}`} data-edge="resize-start" aria-hidden/>}
-            {!pendingCreate && !clippedEnd && <span className={`${styles.handle} ${styles.handleEnd}`} data-edge="resize-end" aria-hidden/>}
+            {!clippedStart && <span className={`${styles.handle} ${styles.handleStart}`} data-edge="resize-start" aria-hidden/>}
+            {!clippedEnd && <span className={`${styles.handle} ${styles.handleEnd}`} data-edge="resize-end" aria-hidden/>}
         </button>
     );
 }

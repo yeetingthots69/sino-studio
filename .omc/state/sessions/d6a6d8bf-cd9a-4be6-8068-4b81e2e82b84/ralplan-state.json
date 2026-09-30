@@ -1,0 +1,11 @@
+{
+  "active": false,
+  "current_phase": "approved-handoff-orchestrate",
+  "plan_path": ".omc/plans/tracker-v2.md",
+  "_meta": {
+    "mode": "ralplan",
+    "sessionId": "d6a6d8bf-cd9a-4be6-8068-4b81e2e82b84",
+    "updatedAt": "2026-09-30T06:50:19.074Z",
+    "updatedBy": "state_write_tool"
+  }
+}

@@ -36,6 +36,9 @@ describe('dates', () => {
         expect(isValidMonth('abc')).toBe(false);
         expect(isValidMonth('2026-13')).toBe(false);
         expect(isValidMonth('2026-09')).toBe(true);
+        expect(isValidMonth('1999-12')).toBe(false);
+        expect(isValidMonth('2100-01')).toBe(false);
+        expect(isValidMonth('2099-12')).toBe(true);
         expect(defaultMonth(new Date('2026-10-01T00:30:00Z'))).toBe('2026-10');
     });
 });

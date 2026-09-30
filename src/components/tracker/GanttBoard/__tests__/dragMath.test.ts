@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {applyDrag, deltaFromPointer} from '../dragMath';
+import {applyDrag, dayIndexFromX, deltaFromPointer} from '../dragMath';
 
 describe('dragMath', () => {
     it('move shifts both dates across a month boundary', () => {
@@ -24,5 +24,15 @@ describe('dragMath', () => {
         expect(deltaFromPointer(100, 120, 40)).toBe(1);
         expect(deltaFromPointer(100, 79, 40)).toBe(-1);
         expect(deltaFromPointer(100, 81, 40)).toBe(0);
+    });
+
+    it('dayIndexFromX floors and clamps to the month', () => {
+        expect(dayIndexFromX(0, 32, 30)).toBe(0);
+        expect(dayIndexFromX(31.9, 32, 30)).toBe(0);
+        expect(dayIndexFromX(32, 32, 30)).toBe(1);
+        expect(dayIndexFromX(-5, 32, 30)).toBe(0);
+        expect(dayIndexFromX(32 * 40, 32, 30)).toBe(29);
+        expect(dayIndexFromX(100, 0, 30)).toBe(0);
+        expect(dayIndexFromX(100, 32, 0)).toBe(0);
     });
 });

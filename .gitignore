@@ -42,3 +42,4 @@ next-env.d.ts
 
 .mcp.json
 .omc/**/*.png
+.omc/e2e/**

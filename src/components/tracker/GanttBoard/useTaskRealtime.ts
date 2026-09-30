@@ -3,26 +3,25 @@
 import {useEffect, useRef} from 'react';
 import {getBrowserClient} from '@/utils/supabase/client';
 import type {Tables} from '@/types/database.types';
-import type {RealtimeChange} from './realtimeReducer';
 
-type Task = Tables<'tracker_tasks'>;
+export type RowChange<T> = {type: 'upsert'; row: T} | {type: 'delete'; id: string};
+
+interface Handlers {
+    onTask: (change: RowChange<Tables<'tracker_tasks'>>) => void;
+    onCut: (change: RowChange<Tables<'tracker_cuts'>>) => void;
+    /** Debounced server refresh: every SUBSCRIBED after the first (events may have been missed) and unusable payloads. */
+    onResync: () => void;
+}
 
 /**
- * Streams tracker_tasks changes to `onChange` (the board applies them locally, no RSC refresh).
+ * Streams tracker_tasks and tracker_cuts changes on one channel (the board applies them locally, no RSC refresh).
  * No `filter`: DELETE events cannot be filtered; the board ignores other projects' rows.
- * `onResync` (a debounced server refresh) runs on every SUBSCRIBED after the first (events may have
- * been missed) and whenever a payload is unusable (auth error / empty record).
  */
-export function useTaskRealtime(
-    projectId: string,
-    month: string,
-    onChange: (change: RealtimeChange) => void,
-    onResync: () => void,
-) {
+export function useTaskRealtime(projectId: string, month: string, handlers: Handlers) {
     // latest callbacks without resubscribing on every render
-    const handlers = useRef({onChange, onResync});
+    const handlersRef = useRef(handlers);
     useEffect(() => {
-        handlers.current = {onChange, onResync};
+        handlersRef.current = handlers;
     });
 
     useEffect(() => {
@@ -30,6 +29,17 @@ export function useTaskRealtime(
         let cancelled = false;
         let channel: ReturnType<typeof client.channel> | null = null;
         let hadFirstSubscribe = false;
+
+        // default replica identity: DELETE `old` carries only the primary key
+        const toChange = <T extends {id: string}>(payload: {eventType: string; new: object; old: object; errors?: unknown[] | null}, required: keyof T): RowChange<T> | null => {
+            if (payload.errors?.length) return null;
+            if (payload.eventType === 'DELETE') {
+                const id = (payload.old as Partial<T>).id;
+                return id ? {type: 'delete', id} : null;
+            }
+            const row = payload.new as Partial<T>;
+            return row.id && row[required] ? {type: 'upsert', row: row as T} : null;
+        };
 
         void (async () => {
             // Authorize the socket with the user JWT before joining: an anonymous join gets `record: {}`
@@ -42,20 +52,18 @@ export function useTaskRealtime(
             channel = client
                 .channel(`tracker-tasks-${projectId}-${month}-${crypto.randomUUID()}`)
                 .on('postgres_changes', {event: '*', schema: 'public', table: 'tracker_tasks'}, (payload) => {
-                    const {onChange: apply, onResync: resync} = handlers.current;
-                    if (payload.errors?.length) return resync();
-                    if (payload.eventType === 'DELETE') {
-                        // default replica identity: `old` carries only the primary key
-                        const id = (payload.old as Partial<Task>).id;
-                        return id ? apply({type: 'DELETE', oldId: id}) : resync();
-                    }
-                    const row = payload.new as Partial<Task>;
-                    if (!row.id || !row.project_id) return resync();
-                    apply({type: payload.eventType, newRow: row as Task});
+                    const change = toChange<Tables<'tracker_tasks'>>(payload, 'project_id');
+                    if (change) handlersRef.current.onTask(change);
+                    else handlersRef.current.onResync();
+                })
+                .on('postgres_changes', {event: '*', schema: 'public', table: 'tracker_cuts'}, (payload) => {
+                    const change = toChange<Tables<'tracker_cuts'>>(payload, 'project_id');
+                    if (change) handlersRef.current.onCut(change);
+                    else handlersRef.current.onResync();
                 })
                 .subscribe((status) => {
                     if (status !== 'SUBSCRIBED') return;
-                    if (hadFirstSubscribe) handlers.current.onResync();
+                    if (hadFirstSubscribe) handlersRef.current.onResync();
                     hadFirstSubscribe = true;
                 });
         })();

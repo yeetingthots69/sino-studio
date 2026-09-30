@@ -1,0 +1,111 @@
+.page {
+    padding: 24px 16px;
+    max-width: 1024px;
+    margin: 0 auto;
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.monthFilter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.monthLabel {
+    min-width: 96px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.right {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.strong {
+    font-weight: 700;
+}
+
+.sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: inherit;
+}
+
+.link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+.archived {
+    opacity: 0.55;
+}
+
+.breakdown {
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+}
+
+.plus {
+    color: var(--mantine-color-green-5);
+}
+
+.minus {
+    color: var(--mantine-color-red-5);
+}
+
+.struck {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.back {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+}
+
+.back:hover {
+    color: var(--color-white);
+}
+
+.totals {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+@media (min-width: 768px) {
+    .totals {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.stat {
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    vertical-align: middle;
+}

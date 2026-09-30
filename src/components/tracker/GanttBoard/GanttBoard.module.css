@@ -3,6 +3,11 @@
 }
 
 .intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
     margin-bottom: 20px;
 }
 
@@ -156,10 +161,29 @@
 
 .stickyStrengths {
     left: 208px;
+}
+
+/* last sticky column (strengths, or the name column when strengths are hidden) */
+.stickyLast {
     border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.sortButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font: inherit;
+    color: inherit;
+}
+
+.strengthFilter {
+    flex: 1;
+    min-width: 0;
+}
+
 .name {
+    color: inherit;
+    text-decoration: none;
     font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -177,7 +201,24 @@
     font-size: 13px;
 }
 
-/* One per staff row, spanning every day column; bars are absolutely positioned inside */
+.name:hover {
+    text-decoration: underline;
+}
+
+.notice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 0 16px 12px;
+    padding: 8px 12px;
+    border: 1px solid var(--color-red);
+    background: rgba(232, 25, 44, 0.12);
+    font-size: 14px;
+}
+
+/* One per staff row, spanning every day column; bars are absolutely positioned inside.
+   Default touch-action: a swipe on the track stays a scroll (create is tap-only on touch). */
 .track {
     position: relative;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -186,6 +227,27 @@
         transparent 0 39px,
         rgba(255, 255, 255, 0.06) 39px 40px
     );
+}
+
+.trackActive {
+    cursor: cell;
+}
+
+/* create draft: the dragged day range, also the popover anchor */
+.ghost {
+    position: absolute;
+    top: 4px;
+    height: 32px;
+    border: 1px dashed var(--color-white);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+}
+
+.createForm {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .bar {
@@ -292,6 +354,11 @@
     font-size: 14px;
 }
 
+.typeChip:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
 .typeChipActive {
     border-color: var(--color-red);
     background: rgba(232, 25, 44, 0.12);
@@ -329,4 +396,11 @@
         max-height: 100%;
         overflow-y: auto;
     }
+}
+
+.headerActions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
 }

@@ -1,0 +1,34 @@
+.editor,
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.row {
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+}
+
+.label {
+    flex: 0 0 38%;
+    min-width: 0;
+}
+
+.url {
+    flex: 1;
+    min-width: 0;
+}
+
+.item {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    min-width: 0;
+}
+
+.open {
+    min-width: 0;
+    max-width: 100%;
+}

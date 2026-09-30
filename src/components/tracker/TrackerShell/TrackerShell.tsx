@@ -27,7 +27,7 @@ export default function TrackerShell({user, projects, locale, children}: Props) 
     const nav = [
         {href: `${base}/projects`, label: t.projects},
         {href: `${base}/staff`, label: t.staff},
-        {href: `${base}/work-types`, label: t.workTypes},
+        {href: `${base}/people`, label: t.earnings},
     ];
 
     return (

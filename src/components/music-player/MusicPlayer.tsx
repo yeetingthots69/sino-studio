@@ -135,7 +135,7 @@ export default function MusicPlayer() {
 
     const toggleMute = useCallback(() => setMuted((m) => !m), []);
 
-    if (/^\/(en|vi)\/tracker(\/|$)/.test(pathname)) return null;
+    if (/^\/(en|vi)\/(tracker|share)(\/|$)/.test(pathname)) return null;
 
     /* ── Render ── */
     return (

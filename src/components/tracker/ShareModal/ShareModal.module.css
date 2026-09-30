@@ -1,0 +1,13 @@
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.share {
+    padding: 10px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}

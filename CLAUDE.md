@@ -60,13 +60,15 @@ An internal production tracker lives under `/tracker` (Supabase backend, access 
 
 ## Tracker (internal)
 
-Gantt-style production tracker for managers. Not linked from the public site, `noindex`, disallowed in `robots.ts`, not in the sitemap.
+Gantt-style production tracker for managers (v2: cuts, pay, earnings, sharing, email). Not linked from the public site, `noindex`, disallowed in `robots.ts`, not in the sitemap (the public share page is token-gated).
 
 **Routes**
 - `/[locale]/tracker` — redirects to the newest non-archived project, else to `projects`
 - `/[locale]/tracker/login` — Google sign-in (`?error=domain` / `?error=auth` show a message)
-- `/[locale]/tracker/(app)/[projectId]` — Gantt board for one project
-- `/[locale]/tracker/(app)/projects`, `staff`, `work-types` — CRUD tables (archive instead of delete)
+- `/[locale]/tracker/(app)/[projectId]` — board with tabs Lịch (Gantt) | Cut | Nhân sự; `[projectId]/cuts` (cuts grid, pay, bulk), `[projectId]/people` + `/people/[staffId]` (project-scope earnings / profile)
+- `/[locale]/tracker/(app)/people` + `/people/[staffId]` — studio-scope earnings / profile (archived projects included)
+- `/[locale]/tracker/(app)/projects`, `staff` — CRUD tables (archive instead of delete). The work-types page is gone: types are per project, edited in the project modal (`WorkTypesEditor`); defaults in `src/components/tracker/defaults.ts`
+- Public (no login): `/[locale]/share/[token]` (read-only `ScheduleGrid`, 60 s refresh), `/api/tracker/ics/[token]/[staffId]`, `/api/tracker/share/[token]/png`; worker `POST /api/tracker/cron` (Bearer `CRON_SECRET`)
 - `/auth/callback` — OAuth code exchange (outside `[locale]`); only a `next` matching `/(en|vi)/tracker...` is honoured
 
 The `(app)` layout renders `TrackerShell` (header, project switcher, nav) and shows `NotAuthorized` when the signed-in user is not on the allow-list. Server actions live in `src/app/[locale]/tracker/actions.ts` (Zod-validated, return `ActionResult`); components in `src/components/tracker/`.
@@ -78,13 +80,31 @@ insert into public.tracker_users (email, role, display_name)
 values ('someone@sinostudio.vn', 'manager', 'Someone');  -- email must be lowercase; role: admin | manager
 ```
 
-**Tables** (`supabase/migrations/`) — `tracker_users` (allow-list), `tracker_projects`, `tracker_staff`, `tracker_work_types`, `tracker_tasks` (project/staff/work type FKs, `start_date`..`end_date`, `progress` 0–100). Projects, staff and work types are soft-archived via `archived_at`.
+**Tables** (`supabase/migrations/`) — `tracker_users` (allow-list), `tracker_projects`, `tracker_staff` (+ `email`), `tracker_cuts`, `tracker_work_types` (per project; `pay_pct`, `sort_order` sparse 10/20/30), `tracker_tasks` (`cut_id`, `version`, `links`; no name; `start_date`..`end_date`, `progress` 0–100), `tracker_strengths` + `tracker_staff_strengths`, `tracker_adjustment_batches` + `tracker_pay_adjustments` (append-only; corrections are reversals), `tracker_audit_log` (trigger-written), `tracker_shares` (DB-generated `token`; revoke is final), `tracker_notice_queue`, `tracker_email_log`. Projects and staff are soft-archived via `archived_at`; work types are deleted (only while unused).
 
-**RLS** — every tracker table is `authenticated`-only; policies call `public.is_tracker_user()` (SECURITY INVOKER, checks the JWT email against `tracker_users`; EXECUTE revoked from `anon`/`public`). `tracker_users` has a self-row select policy that must not call the helper (recursion). Keep `get_advisors` (security) empty after schema changes.
+**DB rules (authoritative, enforced in SQL; the client only mirrors them)** — every rule trigger/RPC takes the per-project advisory lock; pipeline order trigger (strict before/after per cut, checked on every edit); one task per cut + type; pay % total = 100 per project (deferred trigger, ≥ 1 type); a used type cannot be deleted or reordered; `project_id` is immutable on tasks/types/cuts. Error keys raised from SQL (`order_conflict`, `type_in_use`, `pct_total`, `adjustment_invalid`, `project_immutable`, `share_revoked`) are mapped to messages in `src/components/tracker/errors.ts`. RPCs (SECURITY INVOKER, authenticated): `tracker_create_project`, `tracker_save_work_types`, `tracker_create_task`, `tracker_ensure_cut`, `tracker_add_adjustments` (`op_id`/batch id makes retries safe). Service-role only (EXECUTE revoked from authenticated): `tracker_claim_notices`, `tracker_claim_emails`.
 
-**Realtime** — `tracker_tasks` is in the `supabase_realtime` publication. `GanttBoard/useTaskRealtime.ts` authorizes the socket (`realtime.setAuth(session.access_token)`) before joining, subscribes without a filter (DELETE events can't be filtered), and applies payloads straight into client state via `realtimeReducer.ts` — no `router.refresh()` except on reconnect or an unusable payload.
+**RLS** — every tracker table is `authenticated`-only; policies call `public.is_tracker_user()` (SECURITY INVOKER, checks the JWT email against `tracker_users`; EXECUTE revoked from `anon`/`public`). `tracker_users` has a self-row select policy that must not call the helper (recursion). `tracker_notice_queue` has a deny-all select policy and no grants. Keep `get_advisors` (security) empty after schema changes.
+
+**Realtime** — the `supabase_realtime` publication holds `tracker_tasks`, `tracker_projects`, `tracker_staff`, `tracker_cuts`, `tracker_work_types`, `tracker_strengths`, `tracker_staff_strengths`, `tracker_pay_adjustments`, `tracker_shares`. `GanttBoard/useTaskRealtime.ts` authorizes the socket (`realtime.setAuth(session.access_token)`) before joining, subscribes without a filter (DELETE events can't be filtered), and feeds payloads to `taskSync`. Other tables (projects, work types, staff, strengths, shares, cuts…) use `useRealtimeRefresh` / `RealtimeRefresh` (any event → scheduled `router.refresh()`; `useRealtimeBusy` defers refresh while a form/edit is busy).
+
+**Client sync** — `GanttBoard/taskSync.ts` is the single source of truth for board tasks: a synchronous store; `planCommit` runs inside the commit chain (`createCommitChain`), never before it; `refreshStart` must be called before every board refresh; conflicts are decided by `version` (stale writes are refused by the DB version check; foreign changes after baseline are tracked by version).
 
 **Server actions** — all data actions go through `writeRow` in `tracker/actions.ts`: `getUser()` guard (retried once on network errors; never `getClaims`), zod validation, `.select().single()`, never throw. Task actions pass `{revalidate: 'none'}` (the board applies the returned row itself); project/staff/work-type actions call `refresh()`. The proxy skips `getUser` on server-action POSTs because each action authenticates itself. The proxy only sets `NEXT_LOCALE` when it changes — a `Set-Cookie` on an action response invalidates the client router cache.
+
+**Pay** — computed only in `src/components/tracker/pay.ts` (effective months via `earnings.ts`); never re-derive amounts elsewhere. Project-wide queries page with the keyset helper `Earnings/keyset.ts` (PostgREST `max_rows` is 1000).
+
+**Admin client** — `src/utils/supabase/admin.ts` (service role, `SUPABASE_SECRET_KEY`) is used only by `src/lib/tracker/shareData.ts` (public share DTOs) and the cron route.
+
+**Email** — `src/services/trackerMail.ts` (Resend), templates in `src/components/tracker/emails/`. Outbox-first: a row in `tracker_email_log` (payload persisted before the first attempt), then the worker `POST /api/tracker/cron` claims and delivers (`tracker_claim_notices` digests, reminder enqueue, `tracker_claim_emails` deliver/retry, max 5 attempts). Sender `tracker@web.sinostudio.vn` (verified Resend domain; `TRACKER_MAIL_FROM`, same fallback in code). Env: `TRACKER_MAIL_FROM`, `CRON_SECRET`, `SUPABASE_SECRET_KEY`, `RESEND_API_KEY`. The pg_cron job is scheduled after deploy (secret in Vault as `cron_secret`, same value as `CRON_SECRET`), via `execute_sql`, not a migration:
+
+```sql
+select cron.schedule('tracker-mail', '*/5 * * * *', $$ select net.http_post(url := 'https://sinostudio.vn/api/tracker/cron', headers := jsonb_build_object('Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'cron_secret')), timeout_milliseconds := 60000) $$);
+```
+
+"Gửi lỗi" (failed sends) query: `select * from tracker_email_log where status <> 'accepted' and (attempts >= 5 or created_at < now() - interval '23 hours')`.
+
+**Migrations (v2)** — `20260930065620_tracker_v2`, `20260930065653_tracker_v2_notice_queue_policy`, `20260930070707_tracker_v2_hardening`, `20260930072525_tracker_v2_shares_grant`, `20260930073842_tracker_v2_shares_token` (v1: `20260927090805_tracker`, `20260927090827_tracker_users_self_initplan`, `20260927093702_revoke_helper_execute`).
 
 **404s** — `app/global-not-found.tsx` (enabled by `experimental.globalNotFound`, needed because the root layout is `[locale]`) handles unmatched URLs; `[locale]/not-found.tsx` handles `notFound()` inside localized pages.
 
@@ -94,9 +114,17 @@ values ('someone@sinostudio.vn', 'manager', 'Someone');  -- email must be lowerc
 1. Supabase MCP `generate_typescript_types` → write to `src/types/database.types.ts`
 2. `npx supazod -i src/types/database.types.ts -o src/schemas/generated/index.ts -s public` (Zod schemas used by the actions)
 
-**Tests** — `npm test` (Vitest) covers the proxy/session logic and tracker date helpers.
+**Tests** — `npm test` (Vitest) covers the proxy/session logic and the pure tracker modules: `dates`, `cuts`, `pipeline`, `pay`, `earnings`, `errors`, `ics`, `links`, `staffView`, `useRealtimeRefresh`, `GanttBoard/taskSync` + `dragMath` + `boardHelpers`, `lib/tracker/mailPlan` + `shareShape`, `services/trackerMail`.
 
 **Next agent rules** — the `nextjs-agent-rules` block at the end of this file is auto-added by `next dev`; it is kept on purpose, do not remove it.
+
+## Claude Working Patterns
+
+- **HTML artifacts are the owner-facing view layer, never the record.** Plans, backlogs, changelogs and any briefs for subagents or review tools stay markdown (agents grep, diff and read them; HTML costs tokens and wrecks diffs). Publish a private HTML artifact (load `artifact-design` first) only when the owner is the reader:
+  1. **Plan approval** — for plans over ~300 lines, after the review round: decisions table, owner-decision list, phase/wave diagram, collapsible sections. Generated from the `.md`; edits go to the `.md` and the page is regenerated.
+  2. **Owner decisions** — when 3+ decisions are pending, or one needs comparing options side by side, build an interactive decision page ending in a "Copy answers" button that exports plain text to paste back, instead of long question rounds. Record the answers in the `.md` plan.
+  3. **Review findings and E2E reports** — findings sorted by severity with the verified verdict (confirmed / rejected + evidence) per row; E2E runs with pass/fail per acceptance criterion and screenshots.
+  4. **UI tuning** — ONLY when the task is UI work (motion, spacing, visual parameters) or a UI design has multiple candidate options to choose between; never for non-UI tasks. A throwaway prototype with sliders/toggles and a "Copy values" export; apply the exported values in code. The prototype never ships.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

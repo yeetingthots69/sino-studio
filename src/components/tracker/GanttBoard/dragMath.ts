@@ -25,3 +25,9 @@ export function applyDrag(base: DragBaseline, mode: DragMode, deltaDays: number)
 export function deltaFromPointer(startX: number, currentX: number, dayWidth: number): number {
     return Math.round((currentX - startX) / dayWidth) || 0; // normalize -0
 }
+
+/** Day column under a pointer offset inside the track: floor, clamped to 0..days-1. */
+export function dayIndexFromX(offsetX: number, dayWidth: number, days: number): number {
+    if (days <= 0 || dayWidth <= 0) return 0;
+    return Math.min(days - 1, Math.max(0, Math.floor(offsetX / dayWidth)));
+}

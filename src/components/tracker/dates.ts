@@ -28,7 +28,8 @@ export function monthRange(m: string): {start: ISODate; end: ISODate; days: numb
 }
 
 export function isValidMonth(m: unknown): m is string {
-    return typeof m === 'string' && /^\d{4}-(0[1-9]|1[0-2])$/.test(m);
+    // years 2000–2099 only (bounds public ?m= inputs)
+    return typeof m === 'string' && /^20\d{2}-(0[1-9]|1[0-2])$/.test(m);
 }
 
 export function defaultMonth(now = new Date()): string {
@@ -76,4 +77,12 @@ export function assignLanes<T extends {start_date: ISODate; end_date: ISODate}>(
         lanes.set(t, lane);
     }
     return lanes;
+}
+
+/** Today's date and hour in Asia/Ho_Chi_Minh (ICT). */
+export function nowICT(now = new Date()): {today: ISODate; hour: number} {
+    const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Ho_Chi_Minh', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23',
+    }).formatToParts(now).map((x) => [x.type, x.value]));
+    return {today: `${p.year}-${p.month}-${p.day}`, hour: Number(p.hour)};
 }

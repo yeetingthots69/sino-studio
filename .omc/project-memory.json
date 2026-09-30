@@ -196,14 +196,56 @@
   "hotPaths": [
     {
       "path": "src/app/[locale]/tracker/actions.ts",
-      "accessCount": 8,
-      "lastAccessed": 1790501976483,
+      "accessCount": 39,
+      "lastAccessed": 1790755053321,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/TaskPanel.tsx",
+      "accessCount": 20,
+      "lastAccessed": 1790755075299,
       "type": "file"
     },
     {
       "path": "src/components/tracker/GanttBoard/GanttBoard.tsx",
+      "accessCount": 20,
+      "lastAccessed": 1790755560631,
+      "type": "file"
+    },
+    {
+      "path": "src/i18n/dictionaries/en.json",
+      "accessCount": 13,
+      "lastAccessed": 1790755075864,
+      "type": "file"
+    },
+    {
+      "path": "src/i18n/dictionaries/vi.json",
+      "accessCount": 13,
+      "lastAccessed": 1790755076402,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/ProjectsTable/ProjectsTable.tsx",
+      "accessCount": 9,
+      "lastAccessed": 1790753856817,
+      "type": "file"
+    },
+    {
+      "path": "CLAUDE.md",
+      "accessCount": 9,
+      "lastAccessed": 1790761999618,
+      "type": "file"
+    },
+    {
+      "path": "src/components/music-player/MusicPlayer.tsx",
       "accessCount": 7,
-      "lastAccessed": 1790519391937,
+      "lastAccessed": 1790753384080,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/useTaskRealtime.ts",
+      "accessCount": 7,
+      "lastAccessed": 1790753732661,
       "type": "file"
     },
     {
@@ -219,21 +261,15 @@
       "type": "file"
     },
     {
-      "path": "src/components/music-player/MusicPlayer.tsx",
-      "accessCount": 5,
-      "lastAccessed": 1790500544165,
+      "path": "C:/Users/admgn/.claude/projects/D--WORK-SINO-STUDIO-sino-studio/memory/MEMORY.md",
+      "accessCount": 6,
+      "lastAccessed": 1790749935034,
       "type": "file"
     },
     {
-      "path": "src/i18n/dictionaries/en.json",
-      "accessCount": 5,
-      "lastAccessed": 1790519388371,
-      "type": "file"
-    },
-    {
-      "path": "src/i18n/dictionaries/vi.json",
-      "accessCount": 5,
-      "lastAccessed": 1790519390060,
+      "path": "src/components/tracker/StaffTable/StaffTable.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1790757562678,
       "type": "file"
     },
     {
@@ -249,45 +285,45 @@
       "type": "file"
     },
     {
-      "path": "src/components/tracker/GanttBoard/useTaskRealtime.ts",
+      "path": "src/components/tracker/GanttBoard/dragMath.ts",
       "accessCount": 4,
-      "lastAccessed": 1790518655979,
+      "lastAccessed": 1790752378187,
       "type": "file"
     },
     {
-      "path": "CLAUDE.md",
-      "accessCount": 3,
-      "lastAccessed": 1790519444938,
+      "path": "src/components/tracker/GanttBoard/__tests__/dragMath.test.ts",
+      "accessCount": 4,
+      "lastAccessed": 1790752393048,
       "type": "file"
     },
     {
-      "path": "C:/Users/admgn/.claude/projects/D--WORK-SINO-STUDIO-sino-studio/memory/MEMORY.md",
-      "accessCount": 3,
-      "lastAccessed": 1790519465724,
+      "path": "src/components/tracker/GanttBoard/useRefreshScheduler.ts",
+      "accessCount": 4,
+      "lastAccessed": 1790753789528,
       "type": "file"
     },
     {
       "path": "src/types/database.types.ts",
-      "accessCount": 2,
-      "lastAccessed": 1790500175726,
+      "accessCount": 4,
+      "lastAccessed": 1790755254735,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/TaskBar.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1790747620790,
       "type": "file"
     },
     {
       "path": "src/app/robots.ts",
-      "accessCount": 2,
-      "lastAccessed": 1790500538566,
+      "accessCount": 3,
+      "lastAccessed": 1790753383452,
       "type": "file"
     },
     {
       "path": "src/app/[locale]/tracker/(app)/page.tsx",
       "accessCount": 2,
       "lastAccessed": 1790500835057,
-      "type": "file"
-    },
-    {
-      "path": "src/components/tracker/GanttBoard/TaskBar.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1790501549823,
       "type": "file"
     },
     {
@@ -300,6 +336,42 @@
       "path": "src/proxy.ts",
       "accessCount": 2,
       "lastAccessed": 1790517823630,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 2,
+      "lastAccessed": 1790747616727,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/AddTaskButton.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1790747622210,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/MonthNav.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1790747625609,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/Legend.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1790747626069,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/WorkTypesTable/WorkTypesTable.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1790747629810,
+      "type": "file"
+    },
+    {
+      "path": "supabase/migrations/20260927090805_tracker.sql",
+      "accessCount": 2,
+      "lastAccessed": 1790749424324,
       "type": "file"
     },
     {
@@ -321,12 +393,6 @@
       "type": "file"
     },
     {
-      "path": "package.json",
-      "accessCount": 1,
-      "lastAccessed": 1790498759969,
-      "type": "file"
-    },
-    {
       "path": "src/utils/supabase/server.ts",
       "accessCount": 1,
       "lastAccessed": 1790498763773,
@@ -342,12 +408,6 @@
       "path": "src/app/page.tsx",
       "accessCount": 1,
       "lastAccessed": 1790498765926,
-      "type": "file"
-    },
-    {
-      "path": "supabase/migrations/20260927090805_tracker.sql",
-      "accessCount": 1,
-      "lastAccessed": 1790500268413,
       "type": "file"
     },
     {
@@ -411,12 +471,6 @@
       "type": "file"
     },
     {
-      "path": "src/components/tracker/ProjectsTable/ProjectsTable.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1790500934662,
-      "type": "file"
-    },
-    {
       "path": "src/app/[locale]/tracker/(app)/staff/page.tsx",
       "accessCount": 1,
       "lastAccessed": 1790501035480,
@@ -429,69 +483,15 @@
       "type": "file"
     },
     {
-      "path": "src/components/tracker/StaffTable/StaffTable.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1790501037780,
-      "type": "file"
-    },
-    {
-      "path": "src/components/tracker/WorkTypesTable/WorkTypesTable.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1790501038846,
-      "type": "file"
-    },
-    {
       "path": "C:/Users/admgn/AppData/Local/Temp/claude/D--WORK-SINO-STUDIO-sino-studio/e15e6542-ed03-46a3-b6aa-6f21cfcd8d84/scratchpad/dict.js",
       "accessCount": 1,
       "lastAccessed": 1790501039765,
       "type": "file"
     },
     {
-      "path": "src/components/tracker/GanttBoard/AddTaskButton.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1790501235050,
-      "type": "file"
-    },
-    {
-      "path": "src/components/tracker/GanttBoard/Legend.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1790501236208,
-      "type": "file"
-    },
-    {
-      "path": "src/components/tracker/GanttBoard/MonthNav.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1790501237268,
-      "type": "file"
-    },
-    {
-      "path": "src/components/tracker/GanttBoard/TaskPanel.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1790501257055,
-      "type": "file"
-    },
-    {
       "path": "src/components/tracker/GanttBoard/GanttBoard.module.css",
       "accessCount": 1,
       "lastAccessed": 1790501276646,
-      "type": "file"
-    },
-    {
-      "path": "src/components/tracker/GanttBoard/dragMath.ts",
-      "accessCount": 1,
-      "lastAccessed": 1790501532841,
-      "type": "file"
-    },
-    {
-      "path": "src/components/tracker/GanttBoard/__tests__/dragMath.test.ts",
-      "accessCount": 1,
-      "lastAccessed": 1790501533935,
-      "type": "file"
-    },
-    {
-      "path": "src/components/tracker/GanttBoard/useRefreshScheduler.ts",
-      "accessCount": 1,
-      "lastAccessed": 1790501534943,
       "type": "file"
     }
   ],
