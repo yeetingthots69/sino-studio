@@ -13,7 +13,7 @@ const tasks = [
     task('t2', 'p1', 'c1', 'GE', 's2', 40, '2026-10-10'),
     task('t3', 'p2', 'c2', 'LO', 's1', 100, '2026-10-02'),
 ];
-const cuts = [{id: 'c1', budget: 1_000_000}, {id: 'c2', budget: 2_000_000}];
+const cuts = [{id: 'c1', budget: 1_000_000, pay_split: null}, {id: 'c2', budget: 2_000_000, pay_split: null}];
 const types = [{id: 'LO', pay_pct: 30}, {id: 'GE', pay_pct: 70}];
 
 describe('effectiveMonths', () => {

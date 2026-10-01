@@ -1,7 +1,7 @@
 {
-  "tool_name": "mcp__chrome-devtools__emulate",
-  "tool_input_preview": "{\"pageId\":7,\"networkConditions\":\"No emulation\"}",
-  "error": "Input validation error: Invalid arguments for tool emulate: networkConditions: Invalid option: expected one of \"Offline\"|\"Slow 3G\"|\"Fast 3G\"|\"Slow 4G\"|\"Fast 4G\"",
-  "timestamp": "2026-09-30T11:39:40.587Z",
+  "tool_name": "mcp__chrome-devtools__list_pages",
+  "tool_input_preview": "{}",
+  "error": "Could not connect to Chrome. Check if Chrome is running.\nCause: Failed to fetch browser webSocket URL from http://127.0.0.1:9222/json/version: fetch failed",
+  "timestamp": "2026-10-01T03:25:44.040Z",
   "retry_count": 1
 }

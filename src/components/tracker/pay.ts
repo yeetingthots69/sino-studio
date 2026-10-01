@@ -15,6 +15,20 @@ export function pctTotalOk(pcts: number[]): boolean {
     return pcts.length >= 1 && pcts.reduce((s, p) => s + pctHundredths(p), 0) === 10000;
 }
 
+/** The cut's own split ({work_type_id: pct}, total 100, checked in SQL), or null = the project's default type %. */
+export function cutSplit(cut: Pick<Tables<'tracker_cuts'>, 'pay_split'>): Record<string, number> | null {
+    return (cut.pay_split as Record<string, number> | null) ?? null;
+}
+
+/** Pay % of one stage: the cut's split when set (types it omits get 0), else the type's default. */
+export function stagePct(
+    cut: Pick<Tables<'tracker_cuts'>, 'pay_split'>,
+    type: Pick<Tables<'tracker_work_types'>, 'id' | 'pay_pct'>,
+): number {
+    const split = cutSplit(cut);
+    return split ? split[type.id] ?? 0 : type.pay_pct;
+}
+
 export type PayLine = {
     task_id: string;
     project_id: string;
@@ -31,22 +45,22 @@ type PayTask = Pick<Tables<'tracker_tasks'>, 'id' | 'project_id' | 'cut_id' | 'w
 /** One line per task whose cut and type are known; earned = progress 100. Month filtering (by end_date) is the caller's. */
 export function payLines(
     tasks: PayTask[],
-    cuts: Pick<Tables<'tracker_cuts'>, 'id' | 'budget'>[],
+    cuts: Pick<Tables<'tracker_cuts'>, 'id' | 'budget' | 'pay_split'>[],
     types: Pick<Tables<'tracker_work_types'>, 'id' | 'pay_pct'>[],
 ): PayLine[] {
-    const budget = new Map(cuts.map((c) => [c.id, c.budget]));
-    const pct = new Map(types.map((t) => [t.id, t.pay_pct]));
+    const cutById = new Map(cuts.map((c) => [c.id, c]));
+    const typeById = new Map(types.map((t) => [t.id, t]));
     return tasks.flatMap((t) => {
-        const b = budget.get(t.cut_id);
-        const p = pct.get(t.work_type_id);
-        if (b === undefined || p === undefined) return [];
+        const cut = cutById.get(t.cut_id);
+        const type = typeById.get(t.work_type_id);
+        if (!cut || !type) return [];
         return [{
             task_id: t.id,
             project_id: t.project_id,
             cut_id: t.cut_id,
             work_type_id: t.work_type_id,
             staff_id: t.staff_id,
-            amount: stagePay(b, p),
+            amount: stagePay(cut.budget, stagePct(cut, type)),
             earned: t.progress === 100,
             end_date: String(t.end_date).slice(0, 10),
         }];

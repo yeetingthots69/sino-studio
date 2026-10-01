@@ -10,7 +10,7 @@ import {cleanLinks, sanitizeLinks, type Link} from '../links';
 import type {Json} from '@/types/database.types';
 import {formatVnd} from '../earnings';
 import {useRealtimeBusy} from '../useRealtimeRefresh';
-import type {PayLine} from '../pay';
+import {stagePct, type PayLine} from '../pay';
 import {ddmm} from '../GanttBoard/boardHelpers';
 import {amountOk, auditChanges, formatAmountInput, parseAmount, stagePeople} from './cutsViewHelpers';
 import type {Adjustment, AuditRow, Cut, Staff, Task, WorkType} from './CutsView';
@@ -24,6 +24,8 @@ interface Props {
     initialOpId: string;
     cut?: Cut;
     workType?: WorkType;
+    /** Every type of the project (pay split audit rows). */
+    workTypes: WorkType[];
     task?: Task;
     line?: PayLine;
     /** This stage's adjustments (any order). */
@@ -47,7 +49,7 @@ const MIN_REASON = 3;
 
 /** Stage drawer (plan §3.5): pay formula, people, adjustments + add / undo, audit. */
 export default function CutDrawer(props: Props) {
-    const {opened, onClose, projectId, initialOpId, cut, workType, task, line, adjustments, allAdjustments, staff, cutStaffIds, audit, projectLinks} = props;
+    const {opened, onClose, projectId, initialOpId, cut, workType, workTypes, task, line, adjustments, allAdjustments, staff, cutStaffIds, audit, projectLinks} = props;
     const {cuts: t, common, links: tl, mail: tm} = useDictionary().tracker;
     const staffById = new Map(staff.map((s) => [s.id, s]));
     const name = (id: string | null | undefined) => (id && staffById.get(id)?.name) || t.unknownStaff;
@@ -144,13 +146,17 @@ export default function CutDrawer(props: Props) {
 
     const fieldLabel = (f: string) => (t.auditFields as Record<string, string>)[f] ?? f;
     const fmt = (field: string, v: Json | undefined) => {
+        if (field === 'pay_split' && v === null) return t.splitDefault;
         if (v === undefined || v === null) return '—';
         if (field === 'budget' && typeof v === 'number') return formatVnd(v);
         if (field === 'pay_pct') return `${v}%`;
+        if (field === 'pay_split' && typeof v === 'object' && !Array.isArray(v)) {
+            return workTypes.map((w) => `${w.code} ${stagePct({pay_split: v}, w)}%`).join(' · ');
+        }
         if (Array.isArray(v)) return String(v.length);
         return typeof v === 'object' ? JSON.stringify(v) : String(v);
     };
-    const pct = `${workType.pay_pct}%`;
+    const pct = `${stagePct(cut, workType)}%`;
 
     return (
         <Drawer

@@ -92,6 +92,7 @@ export const publicTrackerCutsRowSchema = z.object({
   created_at: z.string(),
   id: z.string(),
   links: jsonSchema,
+  pay_split: jsonSchema.nullable(),
   project_id: z.string(),
   updated_at: z.string(),
 });
@@ -102,6 +103,7 @@ export const publicTrackerCutsInsertSchema = z.object({
   created_at: z.string().optional(),
   id: z.string().optional(),
   links: jsonSchema.optional(),
+  pay_split: jsonSchema.optional().nullable(),
   project_id: z.string(),
   updated_at: z.string().optional(),
 });
@@ -112,6 +114,7 @@ export const publicTrackerCutsUpdateSchema = z.object({
   created_at: z.string().optional(),
   id: z.string().optional(),
   links: jsonSchema.optional(),
+  pay_split: jsonSchema.optional().nullable(),
   project_id: z.string().optional(),
   updated_at: z.string().optional(),
 });
@@ -728,6 +731,7 @@ export const publicTrackerEnsureCutReturnsSchema = z.object({
   created_at: z.string(),
   id: z.string(),
   links: jsonSchema,
+  pay_split: jsonSchema.nullable(),
   project_id: z.string(),
   updated_at: z.string(),
 });

@@ -189,6 +189,8 @@ type WorkType = Tables<'tracker_work_types'>;
 
 const hundredths = (p: number) => Math.round(p * 100);
 const unique = (xs: unknown[]) => new Set(xs).size === xs.length;
+const payPct = z.number().min(0).max(100).refine((p) => Math.abs(p * 100 - hundredths(p)) < 1e-6);
+const pctSum = (pcts: number[]) => pcts.reduce((sum, p) => sum + hundredths(p), 0) === 10000;
 
 const saveWorkTypesSchema = z.object({
     project_id: z.uuid(),
@@ -197,11 +199,11 @@ const saveWorkTypesSchema = z.object({
         code: z.string().trim().min(1).max(20),
         label: z.string().trim().min(1).max(80),
         color: hexColor,
-        pay_pct: z.number().min(0).max(100).refine((p) => Math.abs(p * 100 - hundredths(p)) < 1e-6),
+        pay_pct: payPct,
         sort_order: z.number().int(),
     })).min(1),
 }).refine(({types}) =>
-    types.reduce((sum, t) => sum + hundredths(t.pay_pct), 0) === 10000
+    pctSum(types.map((t) => t.pay_pct))
     && unique(types.map((t) => t.code))
     && unique(types.map((t) => t.sort_order))
     && unique(types.flatMap((t) => (t.id ? [t.id] : []))));
@@ -312,8 +314,14 @@ const createCutsSchema = z.object({
 
 const updateCutSchema = z.object({
     id: z.uuid(),
-    patch: publicTrackerCutsInsertSchema.pick({budget: true, links: true, code: true})
-        .extend({budget: money, links, code: cutCode}).partial().refine(nonEmpty),
+    patch: publicTrackerCutsInsertSchema.pick({budget: true, links: true, code: true, pay_split: true})
+        .extend({
+            budget: money,
+            links,
+            code: cutCode,
+            // {work_type_id: pct} totalling 100 (keys checked against the project in SQL); null = project default
+            pay_split: z.record(z.uuid(), payPct).refine((s) => pctSum(Object.values(s))).nullable(),
+        }).partial().refine(nonEmpty),
 });
 
 export async function createCuts(
@@ -328,7 +336,7 @@ export async function createCuts(
 }
 
 export async function updateCut(
-    input: {id: string; patch: {budget?: number; links?: Link[]; code?: string}},
+    input: {id: string; patch: {budget?: number; links?: Link[]; code?: string; pay_split?: Record<string, number> | null}},
 ): Promise<ActionResult<Cut>> {
     return writeRow(input, updateCutSchema, (supabase, {id, patch}) =>
         supabase.from('tracker_cuts').update(patch).eq('id', id).select().single());

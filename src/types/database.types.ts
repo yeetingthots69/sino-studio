@@ -86,6 +86,7 @@ export type Database = {
           created_at: string
           id: string
           links: Json
+          pay_split: Json | null
           project_id: string
           updated_at: string
         }
@@ -95,6 +96,7 @@ export type Database = {
           created_at?: string
           id?: string
           links?: Json
+          pay_split?: Json | null
           project_id: string
           updated_at?: string
         }
@@ -104,6 +106,7 @@ export type Database = {
           created_at?: string
           id?: string
           links?: Json
+          pay_split?: Json | null
           project_id?: string
           updated_at?: string
         }
@@ -710,6 +713,7 @@ export type Database = {
           created_at: string
           id: string
           links: Json
+          pay_split: Json | null
           project_id: string
           updated_at: string
         }
