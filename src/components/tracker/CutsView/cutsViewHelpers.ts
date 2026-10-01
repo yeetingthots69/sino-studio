@@ -80,3 +80,18 @@ export const formatAmountInput = (raw: string) => {
     const n = parseAmount(raw);
     return n === null ? raw : groupVi.format(n);
 };
+
+/**
+ * Preset → split draft, by position: value i goes to the i-th type (types in sort order).
+ * `missing` = ids of types past the preset's end (set to 0, the user fills them); `extra` = preset values with no type.
+ */
+export function presetToDraft(
+    pcts: number[],
+    types: {id: string}[],
+): {draft: Record<string, number>; missing: string[]; extra: number[]} {
+    return {
+        draft: Object.fromEntries(types.map((t, i) => [t.id, pcts[i] ?? 0])),
+        missing: types.slice(pcts.length).map((t) => t.id),
+        extra: pcts.slice(types.length),
+    };
+}

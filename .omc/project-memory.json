@@ -197,8 +197,8 @@
   "hotPaths": [
     {
       "path": "src/app/[locale]/tracker/actions.ts",
-      "accessCount": 46,
-      "lastAccessed": 1790825552130,
+      "accessCount": 48,
+      "lastAccessed": 1790832549057,
       "type": "file"
     },
     {
@@ -226,6 +226,12 @@
       "type": "file"
     },
     {
+      "path": "src/types/database.types.ts",
+      "accessCount": 13,
+      "lastAccessed": 1790832548453,
+      "type": "file"
+    },
+    {
       "path": "src/components/tracker/ProjectsTable/ProjectsTable.tsx",
       "accessCount": 11,
       "lastAccessed": 1790825554808,
@@ -241,12 +247,6 @@
       "path": "CLAUDE.md",
       "accessCount": 9,
       "lastAccessed": 1790761999618,
-      "type": "file"
-    },
-    {
-      "path": "src/types/database.types.ts",
-      "accessCount": 9,
-      "lastAccessed": 1790824916475,
       "type": "file"
     },
     {

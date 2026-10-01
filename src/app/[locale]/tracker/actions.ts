@@ -314,15 +314,23 @@ const createCutsSchema = z.object({
 
 const updateCutSchema = z.object({
     id: z.uuid(),
-    patch: publicTrackerCutsInsertSchema.pick({budget: true, links: true, code: true, pay_split: true})
-        .extend({
-            budget: money,
-            links,
-            code: cutCode,
-            // {work_type_id: pct} totalling 100 (keys checked against the project in SQL); null = project default
-            pay_split: z.record(z.uuid(), payPct).refine((s) => pctSum(Object.values(s))).nullable(),
-        }).partial().refine(nonEmpty),
+    patch: publicTrackerCutsInsertSchema.pick({budget: true, links: true, code: true})
+        .extend({budget: money, links, code: cutCode}).partial().refine(nonEmpty),
 });
+
+const setCutSplitsSchema = z.object({
+    project_id: z.uuid(),
+    cut_ids: z.array(z.uuid()).min(1).max(5000),
+    // {work_type_id: pct} totalling 100 (keys checked against the project in SQL); null = project default
+    pay_split: z.record(z.uuid(), payPct).refine((s) => pctSum(Object.values(s))).nullable(),
+});
+
+const payPresetSchema = z.object({
+    name: z.string().trim().min(1).max(60),
+    // by work-type position; codes are display only
+    pcts: z.array(payPct).min(1).max(50).refine(pctSum),
+    codes: z.array(z.string().trim().min(1).max(20)).max(50),
+}).refine((d) => d.codes.length === d.pcts.length);
 
 export async function createCuts(
     input: {project_id: string; from: number; to: number; budget?: number},
@@ -336,10 +344,32 @@ export async function createCuts(
 }
 
 export async function updateCut(
-    input: {id: string; patch: {budget?: number; links?: Link[]; code?: string; pay_split?: Record<string, number> | null}},
+    input: {id: string; patch: {budget?: number; links?: Link[]; code?: string}},
 ): Promise<ActionResult<Cut>> {
     return writeRow(input, updateCutSchema, (supabase, {id, patch}) =>
         supabase.from('tracker_cuts').update(patch).eq('id', id).select().single());
+}
+
+/** One pay split (null = project default) for many cuts at once; all or nothing. */
+export async function setCutSplits(
+    input: {project_id: string; cut_ids: string[]; pay_split: Record<string, number> | null},
+): Promise<ActionResult<Cut[]>> {
+    return writeRow(input, setCutSplitsSchema, (supabase, {project_id, cut_ids, pay_split}) =>
+        supabase.rpc('tracker_set_cut_splits', {p_project: project_id, p_cuts: cut_ids, p_split: pay_split}));
+}
+
+/* ── Pay presets (studio-wide, by work-type position) ─────────── */
+
+export async function createPayPreset(
+    input: {name: string; pcts: number[]; codes: string[]},
+): Promise<ActionResult<Tables<'tracker_pay_presets'>>> {
+    return writeRow(input, payPresetSchema, (supabase, d) =>
+        supabase.from('tracker_pay_presets').insert(d).select().single());
+}
+
+export async function deletePayPreset(input: {id: string}): Promise<ActionResult<{id: string}>> {
+    return writeRow(input, idSchema, (supabase, {id}) =>
+        supabase.from('tracker_pay_presets').delete().eq('id', id).select('id').single());
 }
 
 export async function deleteCut(input: {id: string}): Promise<ActionResult<{id: string}>> {

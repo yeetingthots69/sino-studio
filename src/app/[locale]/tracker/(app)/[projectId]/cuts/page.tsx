@@ -24,7 +24,7 @@ export default async function CutsPage({params, searchParams}: Props) {
     if (!z.uuid().safeParse(projectId).success) notFound();
 
     const supabase = await createClient();
-    const [project, workTypes, cuts, tasks, staff, adjustments, audit] = await Promise.all([
+    const [project, workTypes, cuts, tasks, staff, adjustments, audit, presets] = await Promise.all([
         supabase.from('tracker_projects').select('*').eq('id', projectId).is('archived_at', null).maybeSingle().then(must),
         supabase.from('tracker_work_types').select('*').eq('project_id', projectId).order('sort_order').then(must),
         selectAll(() => supabase.from('tracker_cuts').select('*').eq('project_id', projectId)),
@@ -43,6 +43,7 @@ export default async function CutsPage({params, searchParams}: Props) {
             .order('at', {ascending: false})
             .limit(200)
             .then(must),
+        supabase.from('tracker_pay_presets').select('*').order('name').then(must),
     ]);
     if (!project) notFound();
 
@@ -58,6 +59,7 @@ export default async function CutsPage({params, searchParams}: Props) {
                 staff={staff}
                 adjustments={adjustments}
                 audit={audit}
+                presets={presets}
             />
         </>
     );

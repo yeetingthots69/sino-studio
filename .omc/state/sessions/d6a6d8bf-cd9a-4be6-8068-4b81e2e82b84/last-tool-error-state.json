@@ -2,6 +2,6 @@
   "tool_name": "mcp__chrome-devtools__list_pages",
   "tool_input_preview": "{}",
   "error": "Could not connect to Chrome. Check if Chrome is running.\nCause: Failed to fetch browser webSocket URL from http://127.0.0.1:9222/json/version: fetch failed",
-  "timestamp": "2026-10-01T03:25:44.040Z",
+  "timestamp": "2026-10-01T05:43:46.751Z",
   "retry_count": 1
 }

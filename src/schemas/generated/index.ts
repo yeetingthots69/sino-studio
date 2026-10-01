@@ -324,6 +324,30 @@ export const publicTrackerPayAdjustmentsRelationshipsSchema = z.tuple([
   }),
 ]);
 
+export const publicTrackerPayPresetsRowSchema = z.object({
+  codes: z.array(z.string()),
+  created_at: z.string(),
+  id: z.string(),
+  name: z.string(),
+  pcts: z.array(z.number()),
+});
+
+export const publicTrackerPayPresetsInsertSchema = z.object({
+  codes: z.array(z.string()),
+  created_at: z.string().optional(),
+  id: z.string().optional(),
+  name: z.string(),
+  pcts: z.array(z.number()),
+});
+
+export const publicTrackerPayPresetsUpdateSchema = z.object({
+  codes: z.array(z.string()).optional(),
+  created_at: z.string().optional(),
+  id: z.string().optional(),
+  name: z.string().optional(),
+  pcts: z.array(z.number()).optional(),
+});
+
 export const publicTrackerProjectsRowSchema = z.object({
   archived_at: z.string().nullable(),
   color: z.string(),
@@ -757,6 +781,25 @@ export const publicTrackerSaveWorkTypesReturnsSchema = z.array(
     pay_pct: z.number(),
     project_id: z.string(),
     sort_order: z.number(),
+    updated_at: z.string(),
+  }),
+);
+
+export const publicTrackerSetCutSplitsArgsSchema = z.object({
+  p_cuts: z.array(z.string()),
+  p_project: z.string(),
+  p_split: jsonSchema,
+});
+
+export const publicTrackerSetCutSplitsReturnsSchema = z.array(
+  z.object({
+    budget: z.number(),
+    code: z.string(),
+    created_at: z.string(),
+    id: z.string(),
+    links: jsonSchema,
+    pay_split: jsonSchema.nullable(),
+    project_id: z.string(),
     updated_at: z.string(),
   }),
 );

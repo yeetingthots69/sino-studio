@@ -2,7 +2,7 @@
 
 import {useState, type CSSProperties} from 'react';
 import {useRouter} from 'next/navigation';
-import {ActionIcon, Button, Checkbox, CloseButton, NumberInput, Popover, Text} from '@mantine/core';
+import {ActionIcon, Button, Checkbox, CloseButton, NumberInput, Text} from '@mantine/core';
 import {IconPlus, IconTrash} from '@tabler/icons-react';
 import {useDictionary} from '@/i18n/DictionaryProvider';
 import {createTask, deleteCut, updateCut, type ActionResult} from '@/app/[locale]/tracker/actions';
@@ -10,7 +10,7 @@ import type {Tables} from '@/types/database.types';
 import {compareCutCodes} from '../cuts';
 import {formatVnd} from '../earnings';
 import {sanitizeLinks} from '../links';
-import {cutSplit, payLines, pctHundredths, pctTotalOk, stagePct} from '../pay';
+import {cutSplit, payLines, stagePct} from '../pay';
 import {useRealtimeBusy} from '../useRealtimeRefresh';
 import ProjectViewTabs from '../ProjectViewTabs/ProjectViewTabs';
 import CreateTaskPopover, {type CreateInput} from '../GanttBoard/CreateTaskPopover';
@@ -19,6 +19,7 @@ import {fill} from '../GanttBoard/GanttBoard';
 import AddCutsModal from './AddCutsModal';
 import BulkModal, {type BulkStage} from './BulkModal';
 import CutDrawer from './CutDrawer';
+import SplitModal, {type PayPreset} from './SplitModal';
 import {cellState, waitingFor} from './cutsViewHelpers';
 import styles from './CutsView.module.css';
 
@@ -44,13 +45,15 @@ interface Props {
     adjustments: Adjustment[];
     /** Latest audit rows of the project's cuts and types, newest first. */
     audit: AuditRow[];
+    /** Studio-wide pay split presets, by name. */
+    presets: PayPreset[];
 }
 
 export const stageKey = (cutId: string, typeId: string) => `${cutId}:${typeId}`;
 
 const todayICT = () => new Intl.DateTimeFormat('en-CA', {timeZone: 'Asia/Ho_Chi_Minh'}).format(new Date());
 
-export default function CutsView({project, month, workTypes, cuts, tasks, staff, adjustments, audit}: Props) {
+export default function CutsView({project, month, workTypes, cuts, tasks, staff, adjustments, audit, presets}: Props) {
     const {cuts: t, board, common} = useDictionary().tracker;
     const router = useRouter();
     // success notices are neutral (role=status), errors red (role=alert)
@@ -63,6 +66,8 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
     const [bulk, setBulk] = useState<{opId: string; keys: string[]} | null>(null);
     const [addOpen, setAddOpen] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+    const [split, setSplit] = useState<{opId: string; cutIds: string[]} | null>(null);
+    const openSplit = (cutIds: string[]) => setSplit({opId: crypto.randomUUID(), cutIds});
 
     const cutList = [...cuts].sort((a, b) => compareCutCodes(a.code, b.code));
     const cutById = new Map(cuts.map((c) => [c.id, c]));
@@ -191,6 +196,7 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                     ) : (
                         <>
                             <Button variant="default" onClick={() => setAddOpen(true)}>{t.addCuts}</Button>
+                            <Button variant="default" disabled={cutList.length === 0} onClick={() => openSplit([])}>{t.splitBulk}</Button>
                             <Button
                                 variant="default"
                                 disabled={cutList.length === 0}
@@ -254,7 +260,17 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                                                 ))}
                                             </div>
                                             <BudgetInput cut={cut} label={fill(t.budgetLabel, {code: cut.code})} onError={(r) => setNotice(errorText(r))}/>
-                                            <SplitInput cut={cut} workTypes={workTypes} onError={(r) => setNotice(errorText(r))}/>
+                                            <Button
+                                                mt={4}
+                                                size="compact-xs"
+                                                variant={cutSplit(cut) ? 'light' : 'subtle'}
+                                                color={cutSplit(cut) ? undefined : 'gray'}
+                                                title={cutSplit(cut) ? t.splitCustom : t.splitDefault}
+                                                aria-label={fill(t.splitLabel, {code: cut.code})}
+                                                onClick={() => openSplit([cut.id])}
+                                            >
+                                                {workTypes.map((w) => stagePct(cut, w)).join(' · ')}%
+                                            </Button>
                                         </th>
                                         {workTypes.map((w, i) => {
                                             const key = stageKey(cut.id, w.id);
@@ -414,6 +430,22 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                 />
             )}
 
+            {split && (
+                <SplitModal
+                    key={split.opId}
+                    projectId={project.id}
+                    cuts={cutList}
+                    workTypes={workTypes}
+                    presets={presets}
+                    initialCutIds={split.cutIds}
+                    onClose={() => setSplit(null)}
+                    onDone={(text) => {
+                        setSplit(null);
+                        setNotice(text, true);
+                    }}
+                />
+            )}
+
             <AddCutsModal
                 opened={addOpen}
                 projectId={project.id}
@@ -424,74 +456,6 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                 }}
             />
         </section>
-    );
-}
-
-/** Sticky-column pay split: the cut's % per type (own split or the project default); a popover edits or resets it. */
-function SplitInput({cut, workTypes, onError}: {cut: Cut; workTypes: WorkType[]; onError: (r: {error: string}) => void}) {
-    const {cuts: t, common} = useDictionary().tracker;
-    const [draft, setDraft] = useState<Record<string, number | string> | null>(null);
-    const [busy, setBusy] = useState(false);
-    useRealtimeBusy(draft !== null);
-    const custom = cutSplit(cut) !== null;
-    const pcts = workTypes.map((w) => stagePct(cut, w));
-    const values = workTypes.map((w, i) => (draft ? Number(draft[w.id]) || 0 : pcts[i]));
-    const ok = pctTotalOk(values);
-    const total = values.reduce((s, p) => s + pctHundredths(p), 0) / 100;
-    const save = async (split: Record<string, number> | null) => {
-        setBusy(true);
-        const r = await updateCut({id: cut.id, patch: {pay_split: split}}).catch(() => ({ok: false, error: 'network'}) as const);
-        setBusy(false);
-        if (r.ok) setDraft(null);
-        else onError(r);
-    };
-    return (
-        <Popover opened={draft !== null} onChange={(o) => !o && !busy && setDraft(null)} position="bottom-start" width={240} trapFocus withArrow shadow="md">
-            <Popover.Target>
-                <Button
-                    mt={4}
-                    size="compact-xs"
-                    variant={custom ? 'light' : 'subtle'}
-                    color={custom ? undefined : 'gray'}
-                    title={custom ? t.splitCustom : t.splitDefault}
-                    aria-label={fill(t.splitLabel, {code: cut.code})}
-                    onClick={() => setDraft(Object.fromEntries(workTypes.map((w, i) => [w.id, pcts[i]])))}
-                >
-                    {pcts.join(' · ')}%
-                </Button>
-            </Popover.Target>
-            <Popover.Dropdown>
-                <form
-                    className={styles.form}
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        if (ok) void save(Object.fromEntries(workTypes.map((w, i) => [w.id, values[i]])));
-                    }}
-                >
-                    <Text size="sm" fw={600}>{fill(t.splitLabel, {code: cut.code})}</Text>
-                    {workTypes.map((w) => (
-                        <NumberInput
-                            key={w.id}
-                            size="xs"
-                            label={`${w.code} · ${w.label}`}
-                            min={0}
-                            max={100}
-                            decimalScale={2}
-                            suffix="%"
-                            value={draft?.[w.id] ?? 0}
-                            onChange={(v) => setDraft((d) => d && {...d, [w.id]: v})}
-                        />
-                    ))}
-                    <Text size="sm" c={ok ? 'dimmed' : 'red'}>{t.total}: {total}%{!ok && ` · ${t.splitTotal}`}</Text>
-                    <div className={styles.row}>
-                        <Button type="submit" size="compact-sm" disabled={!ok} loading={busy}>{common.save}</Button>
-                        {custom && (
-                            <Button size="compact-sm" variant="default" disabled={busy} onClick={() => void save(null)}>{t.splitReset}</Button>
-                        )}
-                    </div>
-                </form>
-            </Popover.Dropdown>
-        </Popover>
     );
 }
 

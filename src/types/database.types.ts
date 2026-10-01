@@ -307,6 +307,30 @@ export type Database = {
           },
         ]
       }
+      tracker_pay_presets: {
+        Row: {
+          codes: string[]
+          created_at: string
+          id: string
+          name: string
+          pcts: number[]
+        }
+        Insert: {
+          codes: string[]
+          created_at?: string
+          id?: string
+          name: string
+          pcts: number[]
+        }
+        Update: {
+          codes?: string[]
+          created_at?: string
+          id?: string
+          name?: string
+          pcts?: number[]
+        }
+        Relationships: []
+      }
       tracker_projects: {
         Row: {
           archived_at: string | null
@@ -741,6 +765,25 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "tracker_work_types"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      tracker_set_cut_splits: {
+        Args: { p_cuts: string[]; p_project: string; p_split: Json }
+        Returns: {
+          budget: number
+          code: string
+          created_at: string
+          id: string
+          links: Json
+          pay_split: Json | null
+          project_id: string
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "tracker_cuts"
           isOneToOne: false
           isSetofReturn: true
         }

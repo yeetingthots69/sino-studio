@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'vitest';
 import type {PayLine} from '../../pay';
-import {amountOk, auditChanges, cellState, formatAmountInput, netByStaff, parseAmount, stagePeople, waitingFor} from '../cutsViewHelpers';
+import {amountOk, auditChanges, cellState, formatAmountInput, netByStaff, parseAmount, presetToDraft, stagePeople, waitingFor} from '../cutsViewHelpers';
 
 const types = [{code: 'LO'}, {code: 'GE'}, {code: 'DO'}];
 
@@ -75,5 +75,18 @@ describe('cutsViewHelpers', () => {
         expect(amountOk(null)).toBe(false);
         expect(formatAmountInput('200000')).toBe('200.000');
         expect(formatAmountInput('abc')).toBe('abc');
+    });
+});
+
+describe('presetToDraft', () => {
+    const types = [{id: 'a'}, {id: 'b'}, {id: 'c'}];
+    it('maps by position when the counts match', () => {
+        expect(presetToDraft([30, 30, 40], types)).toEqual({draft: {a: 30, b: 30, c: 40}, missing: [], extra: []});
+    });
+    it('fills missing types with 0 and flags them', () => {
+        expect(presetToDraft([50, 50], types)).toEqual({draft: {a: 50, b: 50, c: 0}, missing: ['c'], extra: []});
+    });
+    it('returns values past the last type as extra', () => {
+        expect(presetToDraft([30, 30, 30, 10], types)).toEqual({draft: {a: 30, b: 30, c: 30}, missing: [], extra: [10]});
     });
 });
