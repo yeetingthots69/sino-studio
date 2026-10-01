@@ -588,6 +588,7 @@
             "noRoom": "No free position here. Move an unlocked row first.",
             "total": "Total",
             "totalHint": "Pay % must add up to exactly 100.",
+            "defaultHint": "These % are the default split for every cut. A cut can override them on the Cuts page.",
             "error": {
                 "pctTotal": "Pay % must add up to exactly 100.",
                 "inUse": "A work type with tasks cannot be deleted or moved.",

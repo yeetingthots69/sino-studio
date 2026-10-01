@@ -197,8 +197,8 @@
   "hotPaths": [
     {
       "path": "src/app/[locale]/tracker/actions.ts",
-      "accessCount": 45,
-      "lastAccessed": 1790824947885,
+      "accessCount": 46,
+      "lastAccessed": 1790825552130,
       "type": "file"
     },
     {
@@ -226,15 +226,15 @@
       "type": "file"
     },
     {
-      "path": "src/components/tracker/GanttBoard/useTaskRealtime.ts",
-      "accessCount": 10,
-      "lastAccessed": 1790763853456,
+      "path": "src/components/tracker/ProjectsTable/ProjectsTable.tsx",
+      "accessCount": 11,
+      "lastAccessed": 1790825554808,
       "type": "file"
     },
     {
-      "path": "src/components/tracker/ProjectsTable/ProjectsTable.tsx",
-      "accessCount": 9,
-      "lastAccessed": 1790753856817,
+      "path": "src/components/tracker/GanttBoard/useTaskRealtime.ts",
+      "accessCount": 10,
+      "lastAccessed": 1790763853456,
       "type": "file"
     },
     {

@@ -641,6 +641,7 @@
             "noRoom": "Không còn chỗ trống ở đây. Hãy di chuyển một dòng chưa khóa trước.",
             "total": "Tổng",
             "totalHint": "Tổng % thù lao phải đúng bằng 100.",
+            "defaultHint": "Các % này là tỉ lệ mặc định cho mọi cut. Từng cut có thể đặt tỉ lệ riêng ở trang Cut.",
             "error": {
                 "pctTotal": "Tổng % thù lao phải đúng bằng 100.",
                 "inUse": "Loại công việc đã có công việc thì không thể xóa hoặc đổi thứ tự.",

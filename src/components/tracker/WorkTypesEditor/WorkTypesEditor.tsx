@@ -145,6 +145,7 @@ export default function WorkTypesEditor({value, onChange}: {value: EditorType[];
                     {t.total}: {total}%{!ok && ` · ${t.totalHint}`}
                 </Text>
             </Group>
+            <Text size="xs" c="dimmed" mt={4}>{t.defaultHint}</Text>
             {!unique && <Text size="sm" c="red" mt={4}>{t.error.duplicate}</Text>}
         </div>
     );
