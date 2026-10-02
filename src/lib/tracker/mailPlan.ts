@@ -16,7 +16,17 @@ export type MailTask = {
     type_code: string;
     type_label: string;
 };
-export type NoticeRow = {staff_id: string; cycle_id: string; generation: number; task_ids: string[]};
+/** Snapshot of a task moved away from the recipient (queue column `removed`). */
+export type RemovedMailTask = {
+    task_id: string;
+    project_name: string;
+    cut_code: string;
+    type_code: string;
+    type_label: string;
+    start_date: ISODate;
+    end_date: ISODate;
+};
+export type NoticeRow = {staff_id: string; cycle_id: string; generation: number; task_ids: string[]; removed: RemovedMailTask[]};
 export type Recipient = MailStaff & {email: string};
 
 export const MAX_ATTEMPTS = 5;
@@ -26,7 +36,7 @@ export const REMINDER_LAST_HOUR = 10; // ICT, last hour of the enqueue window (i
 export const SEND_GAP_MS = 550; // pacing between sends (Resend default rate limit: 2 req/s)
 export const REJECTED_PAYLOAD = 'rejected_payload';
 
-export const digestKey = (n: NoticeRow) => `assign-${n.cycle_id}-${n.generation}`;
+export const digestKey = (n: Pick<NoticeRow, 'cycle_id' | 'generation'>) => `assign-${n.cycle_id}-${n.generation}`;
 export const reminderKey = (staffId: string, date: ISODate) => `reminder-${staffId}-${date}`;
 
 /** Constant-time `Authorization: Bearer <secret>` check (lengths compared first, as timingSafeEqual requires). */
@@ -44,20 +54,23 @@ const open = (t: MailTask, today: ISODate) => !t.project_archived && t.progress 
 
 export type DigestPlan =
     | {send: false}
-    | {send: true; staff: Recipient; changed: MailTask[]; others: MailTask[]};
+    | {send: true; staff: Recipient; changed: MailTask[]; others: MailTask[]; removed: RemovedMailTask[]};
 
 /**
  * One claimed queue row → drop or send. Changed = queued task ids still assigned to this staff;
- * others = the staff's other open tasks (end >= today ICT, progress < 100, non-archived projects).
+ * others = the staff's other open tasks (end >= today ICT, progress < 100, non-archived projects);
+ * removed = moved-away snapshots deduped by task (last wins), minus tasks the staff holds again.
  */
 export function planDigest(n: NoticeRow, tasks: MailTask[], staff: MailStaff | null, today: ISODate): DigestPlan {
     if (!recipient(staff)) return {send: false};
     const ids = new Set(n.task_ids);
     const mine = tasks.filter((t) => t.staff_id === n.staff_id);
     const changed = mine.filter((t) => ids.has(t.id)).sort(byDate);
-    if (!changed.length) return {send: false};
+    const mineIds = new Set(mine.map((t) => t.id));
+    const removed = [...new Map(n.removed.map((r) => [r.task_id, r])).values()].filter((r) => !mineIds.has(r.task_id));
+    if (!changed.length && !removed.length) return {send: false};
     const others = mine.filter((t) => !ids.has(t.id) && open(t, today)).sort(byDate);
-    return {send: true, staff, changed, others};
+    return {send: true, staff, changed, others, removed};
 }
 
 /** Reminders for tomorrow (ICT): active staff with email and open tasks ending tomorrow in non-archived projects. */

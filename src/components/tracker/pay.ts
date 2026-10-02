@@ -93,3 +93,15 @@ export function staffTotals(
     }
     return out;
 }
+
+type AdjRow = {id: string; staff_id: string; cut_id: string; work_type_id: string; amount: number; reverses_id: string | null};
+
+/** Adjustments `tracker_move_task` moves: the key's non-reversal rows that no row (of any key) reverses. Mirrors the SQL. */
+export function movableAdjustments<A extends AdjRow>(
+    rows: A[],
+    key: {staff_id: string; cut_id: string; work_type_id: string},
+): A[] {
+    const reversed = new Set(rows.flatMap((r) => (r.reverses_id ? [r.reverses_id] : [])));
+    return rows.filter((r) => r.reverses_id === null && !reversed.has(r.id)
+        && r.staff_id === key.staff_id && r.cut_id === key.cut_id && r.work_type_id === key.work_type_id);
+}

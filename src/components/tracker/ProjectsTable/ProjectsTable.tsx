@@ -9,7 +9,7 @@ import {
     archiveProject, createProject, saveWorkTypes, updateProject, type ActionResult,
 } from '@/app/[locale]/tracker/actions';
 import {DEFAULT_WORK_TYPES} from '@/components/tracker/defaults';
-import WorkTypesEditor, {type EditorType, typesValid} from '@/components/tracker/WorkTypesEditor/WorkTypesEditor';
+import WorkTypesEditor, {COLOR_INPUT_PROPS, type EditorType, typesValid} from '@/components/tracker/WorkTypesEditor/WorkTypesEditor';
 import LinksEditor from '@/components/tracker/LinksEditor/LinksEditor';
 import {cleanLinks, linksValid, sanitizeLinks} from '@/components/tracker/links';
 import type {Tables} from '@/types/database.types';
@@ -82,7 +82,7 @@ function ProjectForm({project, types, onDone}: {project: Project | null; types: 
     return (
         <form onSubmit={submit}>
             <TextInput label={t.name} required maxLength={80} data-autofocus {...form.getInputProps('name')}/>
-            <ColorInput label={t.color} mt="md" format="hex" required {...form.getInputProps('color')}/>
+            <ColorInput label={t.color} mt="md" format="hex" required {...COLOR_INPUT_PROPS} {...form.getInputProps('color')}/>
             <Text fw={500} size="sm" mt="lg" mb={4}>{tl.project}</Text>
             <LinksEditor value={links} onChange={setLinks}/>
             <Text fw={500} size="sm" mt="lg" mb={4}>{t.workTypes}</Text>

@@ -66,6 +66,11 @@ export default function CreateTaskPopover(props: Props) {
     const end = cutMode ? endDraft : props.end;
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    // Popover closes on Esc in a capture handler; while the cut list is open, Esc must close only the list
+    const [listOpen, setListOpen] = useState(false);
+    // Autocomplete hides an empty list (hiddenWhenEmpty); mirror its default filter
+    const query = code.trim().toLowerCase();
+    const listVisible = listOpen && cuts.some((c) => c.code.toLowerCase().includes(query));
 
     const cut = cutMode ? cutMode.cut : cuts.find((c) => c.code === code);
     const used = new Set(cut ? stages.filter((s) => s.cut_id === cut.id).map((s) => s.work_type_id) : []);
@@ -93,7 +98,7 @@ export default function CreateTaskPopover(props: Props) {
     };
 
     return (
-        <Popover opened={opened} onChange={(o) => !o && onClose()} position="bottom-start" width={300} trapFocus withArrow shadow="md">
+        <Popover opened={opened} onChange={(o) => !o && onClose()} position="bottom-start" width={300} trapFocus withArrow shadow="md" closeOnEscape={!listVisible}>
             <Popover.Target>
                 {target ?? <div className={styles.ghost} style={ghostStyle}/>}
             </Popover.Target>
@@ -157,6 +162,10 @@ export default function CreateTaskPopover(props: Props) {
                                 }}
                                 description={code && validCode && !cut ? fill(t.create.newCut, {code}) : undefined}
                                 comboboxProps={INSIDE}
+                                openOnFocus={false}
+                                maxDropdownHeight={180}
+                                onDropdownOpen={() => setListOpen(true)}
+                                onDropdownClose={() => setListOpen(false)}
                             />
                             <div>
                                 <Text size="sm" fw={500} mb={6}>{t.panel.type}</Text>

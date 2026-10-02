@@ -23,6 +23,17 @@ const codesUnique = (rows: EditorType[]) => new Set(rows.map((r) => r.code.trim(
 /** Save is allowed only when this holds. */
 export const typesValid = (rows: EditorType[]) => totalOk(rows) && codesUnique(rows);
 
+// ColorInput inside a Modal: the scroll lock makes <body> position:relative + overflow:hidden, which clips absolute
+// portal dropdowns at the body height, so the picker is positioned fixed. Esc blurs the input (closing the picker);
+// data-mantine-stop-propagation keeps the Modal's window Esc handler from also closing the modal.
+export const COLOR_INPUT_PROPS = {
+    popoverProps: {floatingStrategy: 'fixed'},
+    'data-mantine-stop-propagation': true,
+    onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Escape') e.currentTarget.blur();
+    },
+} as const;
+
 // key '' = new row; commit() gives it a key at click time (no impure calls during render).
 const BLANK: EditorType = {key: '', code: '', label: '', color: '#888888', pay_pct: 0, sort_order: 0, used: false};
 
@@ -98,6 +109,7 @@ export default function WorkTypesEditor({value, onChange}: {value: EditorType[];
                                     <ColorInput
                                         aria-label={t.color}
                                         format="hex"
+                                        {...COLOR_INPUT_PROPS}
                                         required
                                         value={row.color}
                                         onChange={(color) => set(i, {color})}

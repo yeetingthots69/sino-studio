@@ -1,7 +1,7 @@
 // Tracker email templates (plan §3.7): plain JSX, inline styles, Vietnamese only.
 import type {CSSProperties, ReactElement, ReactNode} from 'react';
 import type {ShareLink as Link} from '@/lib/tracker/shareShape';
-import type {MailTask} from '@/lib/tracker/mailPlan';
+import type {MailTask, RemovedMailTask} from '@/lib/tracker/mailPlan';
 
 export type Mail = {subject: string; element: ReactElement};
 
@@ -151,15 +151,52 @@ export function scheduleMail(p: ScheduleProps): Mail {
 
 /* ── Assignment digest ─────────────────────────────────────────── */
 
-export function assignmentMail(p: {staffName: string; changed: MailTask[]; others: MailTask[]}): Mail {
+function RemovedTable({tasks}: {tasks: RemovedMailTask[]}) {
+    return (
+        <table style={s.table}>
+            <thead>
+                <tr>
+                    <th style={s.th}>Dự án</th>
+                    <th style={s.th}>Cut</th>
+                    <th style={s.th}>Công đoạn</th>
+                    <th style={s.th}>Thời gian</th>
+                </tr>
+            </thead>
+            <tbody>
+                {tasks.map((t) => (
+                    <tr key={t.task_id}>
+                        <td style={s.td}>{t.project_name}</td>
+                        <td style={s.td}><b>{t.cut_code}</b></td>
+                        <td style={s.td}>{t.type_code} · {t.type_label}</td>
+                        <td style={s.td}>{range(t.start_date, t.end_date)}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
+}
+
+export function assignmentMail(p: {staffName: string; changed: MailTask[]; others: MailTask[]; removed: RemovedMailTask[]}): Mail {
     return {
         subject: 'Cập nhật công việc được giao',
         element: (
             <Layout title="Cập nhật công việc">
                 <Hello name={p.staffName}/>
-                <p style={{margin: 0}}>Công việc của bạn vừa được giao mới hoặc thay đổi:</p>
-                <p style={s.h}>Vừa thay đổi</p>
-                <TaskTable tasks={p.changed}/>
+                <p style={{margin: 0}}>
+                    {p.changed.length ? 'Công việc của bạn vừa được giao mới hoặc thay đổi:' : 'Công việc của bạn vừa có thay đổi:'}
+                </p>
+                {p.changed.length > 0 && (
+                    <>
+                        <p style={s.h}>Vừa thay đổi</p>
+                        <TaskTable tasks={p.changed}/>
+                    </>
+                )}
+                {p.removed.length > 0 && (
+                    <>
+                        <p style={s.h}>Đã chuyển khỏi bạn</p>
+                        <RemovedTable tasks={p.removed}/>
+                    </>
+                )}
                 {p.others.length > 0 && (
                     <>
                         <p style={s.h}>Các công việc khác đang mở</p>

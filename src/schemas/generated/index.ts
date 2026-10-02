@@ -208,6 +208,7 @@ export const publicTrackerNoticeQueueRowSchema = z.object({
   due_at: z.string(),
   first_change_at: z.string(),
   generation: z.number(),
+  removed: jsonSchema,
   staff_id: z.string(),
   task_ids: z.array(z.string()),
 });
@@ -218,6 +219,7 @@ export const publicTrackerNoticeQueueInsertSchema = z.object({
   due_at: z.string(),
   first_change_at: z.string().optional(),
   generation: z.number().optional(),
+  removed: jsonSchema.optional(),
   staff_id: z.string(),
   task_ids: z.array(z.string()).optional(),
 });
@@ -228,6 +230,7 @@ export const publicTrackerNoticeQueueUpdateSchema = z.object({
   due_at: z.string().optional(),
   first_change_at: z.string().optional(),
   generation: z.number().optional(),
+  removed: jsonSchema.optional(),
   staff_id: z.string().optional(),
   task_ids: z.array(z.string()).optional(),
 });
@@ -711,6 +714,7 @@ export const publicTrackerClaimNoticesReturnsSchema = z.array(
     due_at: z.string(),
     first_change_at: z.string(),
     generation: z.number(),
+    removed: jsonSchema,
     staff_id: z.string(),
     task_ids: z.array(z.string()),
   }),
@@ -759,6 +763,34 @@ export const publicTrackerEnsureCutReturnsSchema = z.object({
   project_id: z.string(),
   updated_at: z.string(),
 });
+
+export const publicTrackerMoveTaskArgsSchema = z.object({
+  p_end: z.string(),
+  p_expected_version: z.number(),
+  p_move_adjustments: z.boolean(),
+  p_op: z.string(),
+  p_reason: z.string(),
+  p_staff: z.string(),
+  p_start: z.string(),
+  p_task: z.string(),
+});
+
+export const publicTrackerMoveTaskReturnsSchema = z.array(
+  z.object({
+    created_at: z.string(),
+    cut_id: z.string(),
+    end_date: z.string(),
+    id: z.string(),
+    links: jsonSchema,
+    progress: z.number(),
+    project_id: z.string(),
+    staff_id: z.string(),
+    start_date: z.string(),
+    updated_at: z.string(),
+    version: z.number(),
+    work_type_id: z.string(),
+  }),
+);
 
 export const publicTrackerNormalizeCutArgsSchema = z.object({
   raw: z.string(),

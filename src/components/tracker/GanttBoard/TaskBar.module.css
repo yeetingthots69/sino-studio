@@ -1,0 +1,40 @@
+/* Bar base styles live in GanttBoard.module.css; this file holds only the narrow / lift variants. */
+
+/* visible span of 1 day: cut code over type code, no grip */
+.narrow .lines {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 30px;
+    padding: 0 3px;
+    font-size: 10px;
+    line-height: 13px;
+    text-align: center;
+}
+
+.narrow .lines > * {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* narrow bars: 6 px handles, only while hovered or focused */
+.narrow .edge {
+    display: none;
+    width: 6px;
+}
+
+.narrow:hover .edge,
+.narrow:focus-visible .edge {
+    display: block;
+}
+
+/* dragged over another staff row */
+.lifted {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+}
+
+.card {
+    display: grid;
+    gap: 2px;
+    font-size: 12px;
+}

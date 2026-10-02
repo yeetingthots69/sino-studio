@@ -198,6 +198,7 @@ export type Database = {
           due_at: string
           first_change_at: string
           generation: number
+          removed: Json
           staff_id: string
           task_ids: string[]
         }
@@ -207,6 +208,7 @@ export type Database = {
           due_at: string
           first_change_at?: string
           generation?: number
+          removed?: Json
           staff_id: string
           task_ids?: string[]
         }
@@ -216,6 +218,7 @@ export type Database = {
           due_at?: string
           first_change_at?: string
           generation?: number
+          removed?: Json
           staff_id?: string
           task_ids?: string[]
         }
@@ -689,6 +692,7 @@ export type Database = {
           due_at: string
           first_change_at: string
           generation: number
+          removed: Json
           staff_id: string
           task_ids: string[]
         }[]
@@ -746,6 +750,38 @@ export type Database = {
           to: "tracker_cuts"
           isOneToOne: true
           isSetofReturn: false
+        }
+      }
+      tracker_move_task: {
+        Args: {
+          p_end: string
+          p_expected_version: number
+          p_move_adjustments: boolean
+          p_op: string
+          p_reason: string
+          p_staff: string
+          p_start: string
+          p_task: string
+        }
+        Returns: {
+          created_at: string
+          cut_id: string
+          end_date: string
+          id: string
+          links: Json
+          progress: number
+          project_id: string
+          staff_id: string
+          start_date: string
+          updated_at: string
+          version: number
+          work_type_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "tracker_tasks"
+          isOneToOne: false
+          isSetofReturn: true
         }
       }
       tracker_normalize_cut: { Args: { raw: string }; Returns: string }

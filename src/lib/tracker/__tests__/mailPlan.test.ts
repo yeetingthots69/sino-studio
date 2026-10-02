@@ -2,7 +2,7 @@ import {describe, expect, it} from 'vitest';
 import {nowICT} from '@/components/tracker/dates';
 import {
     bearerOk, chunk, completionPatch, digestKey, payloadOk, planDigest, reminderDue, reminderKey, reminderTargets, shouldRetry,
-    type MailStaff, type MailTask,
+    type MailStaff, type MailTask, type NoticeRow, type RemovedMailTask,
 } from '../mailPlan';
 
 const staff = (over: Partial<MailStaff> = {}): MailStaff =>
@@ -11,7 +11,11 @@ const task = (over: Partial<MailTask> = {}): MailTask => ({
     id: 't1', staff_id: 's1', start_date: '2026-10-01', end_date: '2026-10-05', progress: 0,
     project_name: 'Demo', project_archived: false, cut_code: 'C1', type_code: 'LO', type_label: 'Layout', ...over,
 });
-const notice = {staff_id: 's1', cycle_id: 'c', generation: 3, task_ids: ['t1', 't2']};
+const notice: NoticeRow = {staff_id: 's1', cycle_id: 'c', generation: 3, task_ids: ['t1', 't2'], removed: []};
+const snap = (over: Partial<RemovedMailTask> = {}): RemovedMailTask => ({
+    task_id: 't9', project_name: 'Demo', cut_code: 'C9', type_code: 'LO', type_label: 'Layout',
+    start_date: '2026-10-01', end_date: '2026-10-03', ...over,
+});
 const TODAY = '2026-10-01';
 
 describe('planDigest', () => {
@@ -40,6 +44,26 @@ describe('planDigest', () => {
         if (!plan.send) return;
         expect(plan.changed.map((t) => t.id)).toEqual(['t1', 't2']); // natural cut order C2 < C10
         expect(plan.others.map((t) => t.id)).toEqual(['t3']);
+    });
+
+    it('sends a removed-only digest', () => {
+        const plan = planDigest({...notice, task_ids: [], removed: [snap()]}, [], staff(), TODAY);
+        expect(plan).toEqual({send: true, staff: staff(), changed: [], others: [], removed: [snap()]});
+    });
+
+    it('drops removed entries the recipient owns again', () => {
+        const n = {...notice, task_ids: ['t9'], removed: [snap()]};
+        const plan = planDigest(n, [task({id: 't9'})], staff(), TODAY);
+        expect(plan.send && plan.removed).toEqual([]);
+        expect(plan.send && plan.changed.map((t) => t.id)).toEqual(['t9']);
+        expect(planDigest({...n, task_ids: []}, [task({id: 't9'})], staff(), TODAY)).toEqual({send: false});
+    });
+
+    it('collapses duplicate removed entries to the last snapshot', () => {
+        const a = snap({end_date: '2026-10-03'});
+        const b = snap({end_date: '2026-10-09'});
+        const plan = planDigest({...notice, task_ids: [], removed: [a, snap({task_id: 't8'}), b]}, [], staff(), TODAY);
+        expect(plan.send && plan.removed).toEqual([b, snap({task_id: 't8'})]);
     });
 
     it('keys by cycle and generation', () => {

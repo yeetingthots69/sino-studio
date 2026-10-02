@@ -1,7 +1,7 @@
 'use client';
 
-import {useEffect, useRef, useState, type RefObject} from 'react';
-import {Autocomplete, Button, Group, Modal, Select, Slider, Stack, Text, UnstyledButton} from '@mantine/core';
+import {useEffect, useId, useRef, useState, type CSSProperties, type RefObject} from 'react';
+import {Autocomplete, Button, CloseButton, Group, Modal, Select, Slider, Stack, Text, UnstyledButton} from '@mantine/core';
 import {DateInput} from '@mantine/dates';
 import {useDictionary} from '@/i18n/DictionaryProvider';
 import {daysBetween} from '../dates';
@@ -15,7 +15,9 @@ import {fill, type Cut, type Staff, type Task, type TaskPatch, type WorkType} fr
 import styles from './GanttBoard.module.css';
 
 interface Props {
-    task: Task | null;
+    task: Task;
+    /** Enter/exit transition styles. */
+    style?: CSSProperties;
     cutCode: string;
     /** Project cuts in natural order. */
     cuts: Cut[];
@@ -30,15 +32,29 @@ interface Props {
     settle: () => void;
     /** `display` = optimistic fields; `baseline` = confirmed version when the interaction started. */
     onUpdate: (patch: TaskPatch, display: Partial<Task>, baseline: number) => void;
+    /** Assignee change: the board confirms it (MoveDialog) and moves the task. */
+    onReassign: (staffId: string) => void;
     onDelete: (baseline: number) => void;
     onInvalidCut: () => void;
+    /** Close request (header X); the board asks first when a draft is dirty. */
+    onClose: () => void;
+    /** A close/switch is waiting on the "Discard changes?" answer. */
+    discardPrompt: boolean;
+    /** `true` once the links draft is dropped (the board then performs the pending action). */
+    onResolveDiscard: (discard: boolean) => void;
 }
 
 // Mounted with key={task.id}: drafts reset whenever the selection changes.
 export default function TaskPanel(props: Props) {
-    const {task, cutCode, cuts, staff, strengthLabels, workTypes, usedTypeIds, projectLinks, panelDirtyRef, settle, onUpdate, onDelete, onInvalidCut} = props;
+    const {task, style, cutCode, cuts, staff, strengthLabels, workTypes, usedTypeIds, projectLinks, panelDirtyRef, settle, onUpdate, onReassign, onDelete, onInvalidCut, onClose, discardPrompt, onResolveDiscard} = props;
     const {board, common, links: tl, mail} = useDictionary().tracker;
     const t = board.panel;
+    // discard prompt: focus "Keep editing" when it appears
+    const discardId = useId();
+    const keepRef = useRef<HTMLButtonElement>(null);
+    useEffect(() => {
+        if (discardPrompt) keepRef.current?.focus();
+    }, [discardPrompt]);
     // cut draft: baseline recorded at the first keystroke
     const [cutEdit, setCutEdit] = useState<{draft: string; baseline: number} | null>(null);
     // slider gesture: baseline recorded at its first onChange; otherwise the slider follows task.progress
@@ -64,15 +80,6 @@ export default function TaskPanel(props: Props) {
         panelDirtyRef.current = false;
         settle();
     }, [panelDirtyRef, settle]);
-
-    if (!task) {
-        return (
-            <aside className={styles.panel}>
-                <div className={styles.panelTitle}>{t.title}</div>
-                <Text c="dimmed" size="sm">{t.empty}</Text>
-            </aside>
-        );
-    }
 
     const owner = staff.find((s) => s.id === task.staff_id);
     const type = workTypes.find((w) => w.id === task.work_type_id);
@@ -121,8 +128,30 @@ export default function TaskPanel(props: Props) {
     ].filter(Boolean).join(' · ');
 
     return (
-        <aside className={styles.panel}>
-            <div className={styles.panelTitle}>{t.title}</div>
+        <aside className={styles.panel} style={style}>
+            <div className={styles.panelHead}>
+                <div className={styles.panelTitle}>{t.title}</div>
+                <CloseButton size="sm" aria-label={board.closePanel} onClick={onClose}/>
+            </div>
+            {discardPrompt && (
+                <div className={styles.discard} role="alertdialog" aria-labelledby={`${discardId}-t`} aria-describedby={`${discardId}-b`}>
+                    <Text id={`${discardId}-t`} size="sm" fw={600}>{board.discardTitle}</Text>
+                    <Text id={`${discardId}-b`} size="sm" c="dimmed">{board.discardBody}</Text>
+                    <Group justify="flex-end" gap="xs" mt="sm">
+                        <Button ref={keepRef} size="xs" variant="default" onClick={() => onResolveDiscard(false)}>{board.keepEditing}</Button>
+                        <Button
+                            size="xs"
+                            color="red"
+                            onClick={() => {
+                                endLinksEdit(null);
+                                onResolveDiscard(true);
+                            }}
+                        >
+                            {board.discard}
+                        </Button>
+                    </Group>
+                </div>
+            )}
             <div className={styles.panelName}>{cutCode} · {type?.code}</div>
             <Text size="xs" c="dimmed" mb="lg">{summary}</Text>
 
@@ -225,7 +254,8 @@ export default function TaskPanel(props: Props) {
                     const labels = strengthLabels.get(s.id);
                     return {value: s.id, label: labels ? `${s.name} — ${labels}` : s.name};
                 })}
-                onChange={(v) => v && v !== task.staff_id && update({staff_id: v})}
+                // controlled by task.staff_id: a cancelled move leaves the stored assignee shown
+                onChange={(v) => v && v !== task.staff_id && onReassign(v)}
             />
 
             <Text size="sm" fw={500} mt="md" mb={6}>{tl.task}</Text>

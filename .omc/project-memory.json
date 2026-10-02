@@ -196,45 +196,57 @@
   },
   "hotPaths": [
     {
-      "path": "src/app/[locale]/tracker/actions.ts",
-      "accessCount": 48,
-      "lastAccessed": 1790832549057,
+      "path": "src/components/tracker/GanttBoard/GanttBoard.tsx",
+      "accessCount": 63,
+      "lastAccessed": 1790916036519,
       "type": "file"
     },
     {
-      "path": "src/components/tracker/GanttBoard/GanttBoard.tsx",
-      "accessCount": 28,
-      "lastAccessed": 1790763852897,
+      "path": "src/app/[locale]/tracker/actions.ts",
+      "accessCount": 56,
+      "lastAccessed": 1790912896180,
       "type": "file"
     },
     {
       "path": "src/components/tracker/GanttBoard/TaskPanel.tsx",
-      "accessCount": 21,
-      "lastAccessed": 1790763861565,
+      "accessCount": 29,
+      "lastAccessed": 1790912895963,
+      "type": "file"
+    },
+    {
+      "path": "CLAUDE.md",
+      "accessCount": 17,
+      "lastAccessed": 1790912870854,
       "type": "file"
     },
     {
       "path": "src/i18n/dictionaries/en.json",
-      "accessCount": 15,
-      "lastAccessed": 1790824826527,
-      "type": "file"
-    },
-    {
-      "path": "src/i18n/dictionaries/vi.json",
-      "accessCount": 13,
-      "lastAccessed": 1790755076402,
+      "accessCount": 16,
+      "lastAccessed": 1790912188836,
       "type": "file"
     },
     {
       "path": "src/types/database.types.ts",
-      "accessCount": 13,
-      "lastAccessed": 1790832548453,
+      "accessCount": 16,
+      "lastAccessed": 1790912786693,
+      "type": "file"
+    },
+    {
+      "path": "src/i18n/dictionaries/vi.json",
+      "accessCount": 15,
+      "lastAccessed": 1790912189515,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/GanttBoard.module.css",
+      "accessCount": 14,
+      "lastAccessed": 1790916051209,
       "type": "file"
     },
     {
       "path": "src/components/tracker/ProjectsTable/ProjectsTable.tsx",
-      "accessCount": 11,
-      "lastAccessed": 1790825554808,
+      "accessCount": 14,
+      "lastAccessed": 1790916908159,
       "type": "file"
     },
     {
@@ -244,9 +256,21 @@
       "type": "file"
     },
     {
-      "path": "CLAUDE.md",
+      "path": "src/components/tracker/GanttBoard/MonthNav.tsx",
       "accessCount": 9,
-      "lastAccessed": 1790761999618,
+      "lastAccessed": 1790912504564,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/__tests__/dragMath.test.ts",
+      "accessCount": 8,
+      "lastAccessed": 1790912504667,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/GanttBoard/TaskBar.tsx",
+      "accessCount": 8,
+      "lastAccessed": 1790916040426,
       "type": "file"
     },
     {
@@ -262,9 +286,15 @@
       "type": "file"
     },
     {
+      "path": "src/components/tracker/GanttBoard/dragMath.ts",
+      "accessCount": 7,
+      "lastAccessed": 1790912165957,
+      "type": "file"
+    },
+    {
       "path": "src/app/[locale]/layout.tsx",
-      "accessCount": 6,
-      "lastAccessed": 1790515772361,
+      "accessCount": 7,
+      "lastAccessed": 1790916657608,
       "type": "file"
     },
     {
@@ -286,12 +316,6 @@
       "type": "file"
     },
     {
-      "path": "src/components/tracker/GanttBoard/dragMath.ts",
-      "accessCount": 6,
-      "lastAccessed": 1790763854535,
-      "type": "file"
-    },
-    {
       "path": "src/components/language-switcher/LanguageSwitcher.tsx",
       "accessCount": 4,
       "lastAccessed": 1790502119331,
@@ -301,18 +325,6 @@
       "path": "src/utils/supabase/proxy.ts",
       "accessCount": 4,
       "lastAccessed": 1790517822562,
-      "type": "file"
-    },
-    {
-      "path": "src/components/tracker/GanttBoard/__tests__/dragMath.test.ts",
-      "accessCount": 4,
-      "lastAccessed": 1790752393048,
-      "type": "file"
-    },
-    {
-      "path": "src/components/tracker/GanttBoard/TaskBar.tsx",
-      "accessCount": 4,
-      "lastAccessed": 1790763858330,
       "type": "file"
     },
     {
@@ -328,9 +340,9 @@
       "type": "file"
     },
     {
-      "path": "src/components/tracker/GanttBoard/GanttBoard.module.css",
+      "path": "package.json",
       "accessCount": 3,
-      "lastAccessed": 1790764169408,
+      "lastAccessed": 1790911486627,
       "type": "file"
     },
     {
@@ -352,21 +364,9 @@
       "type": "file"
     },
     {
-      "path": "package.json",
-      "accessCount": 2,
-      "lastAccessed": 1790747616727,
-      "type": "file"
-    },
-    {
       "path": "src/components/tracker/GanttBoard/AddTaskButton.tsx",
       "accessCount": 2,
       "lastAccessed": 1790747622210,
-      "type": "file"
-    },
-    {
-      "path": "src/components/tracker/GanttBoard/MonthNav.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1790747625609,
       "type": "file"
     },
     {
@@ -385,6 +385,12 @@
       "path": "src/utils/supabase/client.ts",
       "accessCount": 2,
       "lastAccessed": 1790763457943,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/TrackerShell/TrackerShell.module.css",
+      "accessCount": 2,
+      "lastAccessed": 1790910413655,
       "type": "file"
     },
     {
@@ -457,12 +463,6 @@
       "path": "src/components/tracker/TrackerShell/TrackerShell.tsx",
       "accessCount": 1,
       "lastAccessed": 1790500832939,
-      "type": "file"
-    },
-    {
-      "path": "src/components/tracker/TrackerShell/TrackerShell.module.css",
-      "accessCount": 1,
-      "lastAccessed": 1790500833996,
       "type": "file"
     },
     {

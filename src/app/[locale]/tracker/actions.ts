@@ -501,6 +501,42 @@ export async function reverseAdjustment(input: {op_id: string; id: string; reaso
     });
 }
 
+// Defined here (not under Tasks) because it uses `reason`.
+const moveTaskSchema = z.object({
+    id: z.uuid(),
+    expected_version: z.number().int().min(1),
+    staff_id: z.uuid(),
+    start_date: isoDate,
+    end_date: isoDate,
+    move_adjustments: z.boolean(),
+    op_id: z.uuid(),
+    reason,
+}).refine(datesOrdered);
+
+/** Reassign + redate in one versioned RPC; `move_adjustments` also moves the old person's open stage adjustments. */
+export async function moveTask(input: {
+    id: string;
+    expected_version: number;
+    staff_id: string;
+    start_date: string;
+    end_date: string;
+    move_adjustments: boolean;
+    op_id: string;
+    reason: string;
+}): Promise<ActionResult<Task>> {
+    return writeVersioned(input, moveTaskSchema, (supabase, d) =>
+        supabase.rpc('tracker_move_task', {
+            p_task: d.id,
+            p_expected_version: d.expected_version,
+            p_staff: d.staff_id,
+            p_start: d.start_date,
+            p_end: d.end_date,
+            p_move_adjustments: d.move_adjustments,
+            p_op: d.op_id,
+            p_reason: d.reason,
+        }).maybeSingle());
+}
+
 /* ── Shares ────────────────────────────────────────────────────── */
 
 type Share = Tables<'tracker_shares'>;

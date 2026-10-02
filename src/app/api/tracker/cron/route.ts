@@ -3,7 +3,7 @@ import {addDays, nowICT} from '@/components/tracker/dates';
 import {assignmentMail, reminderMail, type Mail} from '@/components/tracker/emails/TrackerEmails';
 import {
     bearerOk, chunk, completionPatch, digestKey, payloadOk, planDigest, REJECTED_PAYLOAD, reminderDue, reminderKey, reminderTargets,
-    SEND_GAP_MS, shouldRetry, type MailStaff, type MailTask,
+    SEND_GAP_MS, shouldRetry, type MailStaff, type MailTask, type RemovedMailTask,
 } from '@/lib/tracker/mailPlan';
 import {deliver, mailFrom, render, sleep, type MailPayload} from '@/services/trackerMail';
 
@@ -33,6 +33,14 @@ const toMailTask = (t: TaskRow): MailTask => ({
     cut_code: t.cut?.code ?? '', type_code: t.type?.code ?? '', type_label: t.type?.label ?? '',
 });
 
+const REMOVED_FIELDS = ['task_id', 'project_name', 'cut_code', 'type_code', 'type_label', 'start_date', 'end_date'] as const;
+/** Queue `removed` jsonb → snapshots; malformed entries are dropped. */
+const parseRemoved = (v: unknown): RemovedMailTask[] =>
+    Array.isArray(v)
+        ? v.filter((r): r is RemovedMailTask =>
+            !!r && typeof r === 'object' && REMOVED_FIELDS.every((k) => typeof (r as Record<string, unknown>)[k] === 'string'))
+        : [];
+
 function fail(step: string, error: unknown): never {
     console.error(`[tracker-cron] ${step} failed:`, (error as {message?: string})?.message ?? error);
     throw new Error(step);
@@ -59,9 +67,10 @@ async function digests(db: Db, today: string) {
         if (loadErr) fail('digest load', loadErr);
         const tasks = new Map<string, TaskRow>();
         for (const r of [open, ...changed]) for (const t of r.data as TaskRow[]) tasks.set(t.id, t);
-        const plan = planDigest(n, [...tasks.values()].map(toMailTask), staff.data as MailStaff | null, today);
+        const plan = planDigest({...n, removed: parseRemoved(n.removed)},
+            [...tasks.values()].map(toMailTask), staff.data as MailStaff | null, today);
         if (plan.send) {
-            const mail = assignmentMail({staffName: plan.staff.name, changed: plan.changed, others: plan.others});
+            const mail = assignmentMail({staffName: plan.staff.name, changed: plan.changed, others: plan.others, removed: plan.removed});
             const {error: insErr} = await db.from('tracker_email_log').upsert({
                 kind: 'assignment', staff_id: plan.staff.id, to_email: plan.staff.email, subject: mail.subject,
                 payload: await payload(plan.staff.email, mail), status: 'pending', idempotency_key: digestKey(n),

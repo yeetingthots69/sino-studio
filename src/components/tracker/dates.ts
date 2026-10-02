@@ -65,18 +65,51 @@ export function clampToMonth(
     };
 }
 
-export function assignLanes<T extends {start_date: ISODate; end_date: ISODate}>(tasks: T[]): Map<T, number> {
-    const sorted = [...tasks].sort((a, b) =>
-        a.start_date.localeCompare(b.start_date) || a.end_date.localeCompare(b.end_date));
+/** Lanes per row: tasks of the same cut form one block (span = min start..max end) and share a lane. */
+export function assignLanes<T extends {start_date: ISODate; end_date: ISODate; cut_id?: string | null}>(tasks: T[]): Map<T, number> {
+    type Block = {tasks: T[]; start: ISODate; end: ISODate; key: string; idx: number};
+    const blocks: Block[] = [];
+    const byCut = new Map<string, Block>();
+    tasks.forEach((t, idx) => {
+        const b = t.cut_id != null ? byCut.get(t.cut_id) : undefined;
+        if (b) {
+            b.tasks.push(t);
+            if (t.start_date < b.start) b.start = t.start_date;
+            if (t.end_date > b.end) b.end = t.end_date;
+            return;
+        }
+        const nb: Block = {tasks: [t], start: t.start_date, end: t.end_date, key: t.cut_id ?? '', idx};
+        blocks.push(nb);
+        if (t.cut_id != null) byCut.set(t.cut_id, nb);
+    });
+    blocks.sort((a, b) => a.start.localeCompare(b.start) || a.end.localeCompare(b.end)
+        || a.key.localeCompare(b.key) || a.idx - b.idx);
     const laneEnds: ISODate[] = [];
     const lanes = new Map<T, number>();
-    for (const t of sorted) {
-        let lane = laneEnds.findIndex((end) => end < t.start_date);
+    for (const b of blocks) {
+        let lane = laneEnds.findIndex((end) => end < b.start);
         if (lane === -1) lane = laneEnds.length;
-        laneEnds[lane] = t.end_date;
-        lanes.set(t, lane);
+        laneEnds[lane] = b.end;
+        for (const t of b.tasks) lanes.set(t, lane);
     }
     return lanes;
+}
+
+/** Free-text month ('10/2026', '2026-10', '10/26', 'T10/2026', 'tháng 10 2026'…) → 'YYYY-MM', or null. */
+export function parseMonthInput(text: string): string | null {
+    const s = text.normalize('NFC').trim().toLowerCase().replace(/^(tháng|thg|t)\s*/, '');
+    const a = /^(\d{1,2})\s*[/\-. ]\s*(\d{4}|\d{2})$/.exec(s);
+    const b = a ? null : /^(\d{4})\s*[/\-. ]\s*(\d{1,2})$/.exec(s);
+    if (!a && !b) return null;
+    const [yy, mo] = a ? [a[2], a[1]] : [b![1], b![2]];
+    const y = yy.length === 2 ? `20${yy}` : yy;
+    const out = `${y}-${mo.padStart(2, '0')}`;
+    return isValidMonth(out) ? out : null;
+}
+
+export function shiftMonth(m: string, n: number): string {
+    const [y, mo] = m.split('-').map(Number);
+    return new Date(Date.UTC(y, mo - 1 + n, 1)).toISOString().slice(0, 7);
 }
 
 /** Today's date and hour in Asia/Ho_Chi_Minh (ICT). */

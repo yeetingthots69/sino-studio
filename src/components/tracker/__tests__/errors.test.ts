@@ -1,6 +1,6 @@
 import {describe, expect, it, vi} from 'vitest';
 import {
-    ADJUSTMENT_INVALID, ORDER_CONFLICT, PCT_TOTAL, PROJECT_IMMUTABLE, SHARE_REVOKED, TYPE_IN_USE, mapDbError, retryDeadlock,
+    ADJUSTMENT_INVALID, ORDER_CONFLICT, PCT_TOTAL, PROJECT_IMMUTABLE, SHARE_REVOKED, STAFF_ARCHIVED, TYPE_IN_USE, mapDbError, retryDeadlock,
 } from '../errors';
 
 describe('mapDbError', () => {
@@ -11,6 +11,7 @@ describe('mapDbError', () => {
         [{code: 'P0001', message: ADJUSTMENT_INVALID}, {error: 'invalid'}],
         [{code: 'P0001', message: PROJECT_IMMUTABLE}, {error: 'invalid'}],
         [{code: 'P0001', message: SHARE_REVOKED}, {error: 'invalid'}],
+        [{code: 'P0001', message: STAFF_ARCHIVED}, {error: 'staff_archived'}],
         [{code: 'P0001', message: 'something_else'}, {error: 'generic'}],
         [{code: '23503'}, {error: 'invalid'}],
         [{code: '23505'}, {error: 'duplicate'}],

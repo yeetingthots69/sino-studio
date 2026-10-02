@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {payLines, pctHundredths, pctTotalOk, stagePay, stagePct, staffTotals} from '../pay';
+import {movableAdjustments, payLines, pctHundredths, pctTotalOk, stagePay, stagePct, staffTotals} from '../pay';
 
 describe('pay', () => {
     it('pctHundredths rounds float noise', () => {
@@ -57,5 +57,31 @@ describe('pay', () => {
         expect(lines.map((l) => l.amount)).toEqual([300_000, 300_000, 400_000, 300_000, 200_000, 500_000, 500_000, 500_000, 0]);
         expect(stagePct(cuts[1], types[1])).toBe(20);
         expect(stagePct(cuts[0], types[1])).toBe(30);
+    });
+
+    describe('movableAdjustments', () => {
+        const key = {staff_id: 's1', cut_id: 'c1', work_type_id: 't1'};
+        const row = (id: string, amount: number, extra: Partial<{staff_id: string; cut_id: string; work_type_id: string; reverses_id: string | null}> = {}) =>
+            ({id, amount, ...key, reverses_id: null, ...extra});
+
+        it('keeps open originals of the key only', () => {
+            const rows = [
+                row('a', 100),
+                row('b', -50),
+                row('b-rev', 50, {reverses_id: 'b'}), // reversal: excluded, and b is excluded as reversed
+                row('x', 10, {staff_id: 's2'}),
+                row('y', 10, {cut_id: 'c2'}),
+                row('z', 10, {work_type_id: 't2'}),
+            ];
+            expect(movableAdjustments(rows, key).map((r) => r.id)).toEqual(['a']);
+        });
+
+        it('excludes a reversal row even when nothing else matches', () => {
+            expect(movableAdjustments([row('r', -10, {reverses_id: 'gone'})], key)).toEqual([]);
+        });
+
+        it('empty input → empty', () => {
+            expect(movableAdjustments([], key)).toEqual([]);
+        });
     });
 });
