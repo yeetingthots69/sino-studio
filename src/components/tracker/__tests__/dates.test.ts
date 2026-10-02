@@ -70,6 +70,25 @@ describe('dates', () => {
             expect([lanes.get(n1), lanes.get(n3), lanes.get(n2)]).toEqual([0, 1, 0]);
         });
 
+        it('overlapping tasks of one cut get sub-lanes', () => {
+            const ge = t('A', 1, 5), sh = t('A', 3, 6);
+            const lanes = assignLanes([sh, ge]);
+            expect([lanes.get(ge), lanes.get(sh)]).toEqual([0, 1]);
+        });
+
+        it('a later non-overlapping block of height 2 reuses lanes 0-1', () => {
+            const a1 = t('A', 1, 5), a2 = t('A', 3, 6), b1 = t('B', 8, 10), b2 = t('B', 9, 12);
+            const lanes = assignLanes([b2, a2, b1, a1]);
+            expect([lanes.get(a1), lanes.get(a2), lanes.get(b1), lanes.get(b2)]).toEqual([0, 1, 0, 1]);
+        });
+
+        it('a k=2 block takes the lowest 2 consecutive free lanes', () => {
+            const x = t('X', 1, 4), y1 = t('Y', 3, 5), y2 = t('Y', 4, 6);
+            const lanes = assignLanes([y2, x, y1]);
+            expect(lanes.get(x)).toBe(0);
+            expect([lanes.get(y1), lanes.get(y2)]).toEqual([1, 2]);
+        });
+
         it('date-only input yields a valid non-overlapping packing', () => {
             const rows = [[1, 4], [3, 6], [5, 8], [2, 2], [7, 9], [1, 9]].map(([s, e]) => ({start_date: d(s), end_date: d(e)}));
             const lanes = assignLanes(rows);

@@ -13,6 +13,7 @@ import {compareCutCodes} from '../cuts';
 import {sanitizeLinks} from '../links';
 import {addDays, assignLanes, daysBetween, isWeekend, monthRange, weekdayLabel} from '../dates';
 import {viewStaff} from '../staffView';
+import {typeRule} from '../pipeline';
 import ProjectViewTabs from '../ProjectViewTabs/ProjectViewTabs';
 import AddTaskButton from './AddTaskButton';
 import CreateTaskPopover, {type CreateInput} from './CreateTaskPopover';
@@ -249,7 +250,7 @@ export default function GanttBoard(props: Props) {
     // header + weekend columns follow the target month while a navigation is pending
     const dates = Array.from({length: view.days}, (_, i) => addDays(view.start, i));
     const typeById = new Map(workTypes.map((w) => [w.id, w]));
-    const typeOrder = new Map(workTypes.map((w) => [w.id, w.sort_order]));
+    const rule = typeRule(workTypes);
     const cutList = [...cuts.values()].sort((a, b) => compareCutCodes(a.code, b.code));
     const cutCodes = new Map(cutList.map((c) => [c.id, c.code]));
 
@@ -297,7 +298,7 @@ export default function GanttBoard(props: Props) {
     const SortIcon = SORT_ICON[prefs.sort];
 
     const describeConflict = (conflictId: string | undefined, typeId: string | undefined) =>
-        orderConflictText(t, conflictId, typeId, stages, cutCodes, typeById);
+        orderConflictText(t, conflictId, typeId, stages, cutCodes, typeById, rule);
 
     const failText = (r: {error: string; detail?: string}, ctx: {typeId?: string; cut?: boolean}) => {
         switch (r.error) {
@@ -890,7 +891,7 @@ export default function GanttBoard(props: Props) {
                                                     cuts={cutList}
                                                     workTypes={workTypes}
                                                     stages={stages}
-                                                    typeOrder={typeOrder}
+                                                    typeRule={rule}
                                                     describeConflict={describeConflict}
                                                     onClose={drag.close}
                                                     onSubmit={create}

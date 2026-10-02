@@ -1,11 +1,13 @@
 import {describe, expect, it, vi} from 'vitest';
 import {
-    ADJUSTMENT_INVALID, ORDER_CONFLICT, PCT_TOTAL, PROJECT_IMMUTABLE, SHARE_REVOKED, STAFF_ARCHIVED, TYPE_IN_USE, mapDbError, retryDeadlock,
+    ADJUSTMENT_INVALID, ORDER_CONFLICT, OVERLAP_IN_USE, PCT_TOTAL, PROJECT_IMMUTABLE, SHARE_REVOKED, STAFF_ARCHIVED, TYPE_IN_USE, mapDbError, retryDeadlock,
 } from '../errors';
 
 describe('mapDbError', () => {
     it.each([
         [{code: 'P0001', message: ORDER_CONFLICT, details: 'task-1'}, {error: 'order_conflict', detail: 'task-1'}],
+        [{code: 'P0001', message: OVERLAP_IN_USE, details: 'C-12'}, {error: 'overlap_in_use', detail: 'C-12'}],
+        [{code: 'P0001', message: OVERLAP_IN_USE}, {error: 'overlap_in_use'}],
         [{code: 'P0001', message: TYPE_IN_USE}, {error: 'in_use'}],
         [{code: 'P0001', message: PCT_TOTAL}, {error: 'pct_total'}],
         [{code: 'P0001', message: ADJUSTMENT_INVALID}, {error: 'invalid'}],

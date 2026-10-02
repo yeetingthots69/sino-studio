@@ -1,6 +1,7 @@
 import type {StaffSort} from '../staffView';
 import {initTaskState, reconcile, type SyncInput, type TaskState} from './taskSync';
 import type {Tables} from '@/types/database.types';
+import {isOverlapPair, type TypeRule} from '../pipeline';
 
 type Task = Tables<'tracker_tasks'>;
 
@@ -44,16 +45,18 @@ type Stage = {id: string; cut_id: string; work_type_id: string; start_date: stri
 
 /**
  * "Không thể xếp: C12 · LO (10/09–14/09) chưa kết thúc" for the stage `conflictId` (an order_conflict
- * detail or an orderConflict() hit). Earlier stage → "hasn't ended", later → "has started"; the generic
- * text when the stage or its cut / type is unknown here.
+ * detail or an orderConflict() hit). Earlier stage → "hasn't ended", later → "has started"; for an overlap
+ * pair (pipeline isOverlapPair) earlier → "starts before it starts", later → "must start no later than";
+ * the generic text when the stage or its cut / type is unknown here.
  */
 export function orderConflictText(
-    t: {orderEarlier: string; orderLater: string; orderGeneric: string},
+    t: {orderEarlier: string; orderLater: string; orderEarly: string; orderLate: string; orderGeneric: string},
     conflictId: string | undefined,
     candidateTypeId: string | undefined,
     stages: Stage[],
     cutCodes: Map<string, string>,
     types: Map<string, {code: string; sort_order: number}>,
+    rule: TypeRule,
 ): string {
     const s = conflictId ? stages.find((x) => x.id === conflictId) : undefined;
     const cut = s && cutCodes.get(s.cut_id);
@@ -62,7 +65,11 @@ export function orderConflictText(
     const own = candidateTypeId ? types.get(candidateTypeId) : undefined;
     const stage = `${cut} · ${type.code} (${ddmm(s.start_date)}–${ddmm(s.end_date)})`;
     const later = own !== undefined && type.sort_order > own.sort_order;
-    return (later ? t.orderLater : t.orderEarlier).replace('{stage}', stage);
+    const overlap = !!candidateTypeId && (later
+        ? isOverlapPair(rule, candidateTypeId, s.work_type_id)
+        : isOverlapPair(rule, s.work_type_id, candidateTypeId));
+    const text = later ? (overlap ? t.orderLate : t.orderLater) : (overlap ? t.orderEarly : t.orderEarlier);
+    return text.replace('{stage}', stage);
 }
 
 /* ── Task store ───────────────────────────────────────────────── */

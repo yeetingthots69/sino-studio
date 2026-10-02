@@ -2,7 +2,7 @@
 
 import {useState, useTransition} from 'react';
 import Link from 'next/link';
-import {Button, ColorInput, Group, Modal, Switch, Table, Text, TextInput, Title} from '@mantine/core';
+import {Anchor, Button, ColorInput, Group, Modal, Switch, Table, Text, TextInput, Title} from '@mantine/core';
 import {useForm} from '@mantine/form';
 import {useDictionary, useLocale} from '@/i18n/DictionaryProvider';
 import {
@@ -31,12 +31,17 @@ function useErrorText() {
         duplicate: wt.duplicate,
         invalid: wt.invalid,
     };
-    return (res: ActionResult<unknown>) => (res.ok ? null : byError[res.error] ?? common.error.generic);
+    return (res: ActionResult<unknown>) => {
+        if (res.ok) return null;
+        if (res.error === 'overlap_in_use') return wt.overlapInUse.replace('{cut}', res.detail ?? '?');
+        return byError[res.error] ?? common.error.generic;
+    };
 }
 
 // What saveWorkTypes receives; also used to detect edits.
-const payload = (rows: EditorType[]) => rows.map(({id, code, label, color, pay_pct, sort_order}) => ({
+const payload = (rows: EditorType[]) => rows.map(({id, code, label, color, pay_pct, sort_order, overlaps_prev}, i) => ({
     ...(id && {id}), code: code.trim(), label: label.trim(), color, pay_pct: Number(pay_pct) || 0, sort_order,
+    overlaps_prev: i > 0 && overlaps_prev,
 }));
 
 function ProjectForm({project, types, onDone}: {project: Project | null; types: ProjectWorkType[]; onDone: () => void}) {
@@ -148,7 +153,7 @@ export default function ProjectsTable({projects, workTypes}: {projects: Project[
                             <Table.Tr key={p.id} className={p.archived_at ? styles.archived : undefined}>
                                 <Table.Td><div className={styles.swatch} style={{background: p.color}}/></Table.Td>
                                 <Table.Td>
-                                    {p.name}
+                                    <Anchor component={Link} href={`/${locale}/tracker/${p.id}`} c="inherit">{p.name}</Anchor>
                                     {p.archived_at && <Text span c="dimmed" size="sm"> ({t.archived})</Text>}
                                 </Table.Td>
                                 <Table.Td>{dateFmt.format(new Date(p.created_at))}</Table.Td>

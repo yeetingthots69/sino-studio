@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "entries": {
+    "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
+      "last_emitted_at_ms": 1790946242708,
+      "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
+    },
+    "6c471c3c72cfab669deac4be0d798d92b12f37daa1e23bef381eafed2a551f07": {
+      "last_emitted_at_ms": 1790946133689,
+      "message": "Spawning agent: opus-executor (inherit) | Task: Review B1 + B3"
+    },
+    "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
+      "last_emitted_at_ms": 1790946072569,
+      "message": "Read multiple files in parallel when possible for faster analysis."
+    },
+    "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
+      "last_emitted_at_ms": 1790945961421,
+      "message": "Verify changes work after editing. Test functionality before marking complete."
+    },
+    "9ef9c3ae697e3dfb5e5a1ece990554d16c20e500d8a846b6753b74461e9cad99": {
+      "last_emitted_at_ms": 1790945947812,
+      "message": "Spawning agent: opus-executor (inherit) | Task: B3 editor + actions + errors"
+    },
+    "c6c6a0f31a991a3df657acbb9688d4e7d5458df0f6eff423370167269e12d039": {
+      "last_emitted_at_ms": 1790945940245,
+      "message": "Spawning agent: opus-executor (inherit) | Task: B1 client rule + texts"
+    },
+    "c6172e9f07fe2b41bc00c1704df4951b9d107bf0ed54a5008de1b2ba649ac1a3": {
+      "last_emitted_at_ms": 1790945893764,
+      "message": "Spawning agent: sonnet-executor (inherit) | Task: Regen Supabase types"
+    }
+  },
+  "updated_at": "2026-10-02T13:04:02.708Z"
+}

@@ -26,3 +26,12 @@
 .iconWrap {
     display: inline-flex;
 }
+
+.overlap {
+    width: 60px;
+    text-align: center;
+}
+
+.overlap > * {
+    display: inline-block;
+}

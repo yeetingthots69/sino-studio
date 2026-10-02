@@ -201,6 +201,7 @@ const saveWorkTypesSchema = z.object({
         color: hexColor,
         pay_pct: payPct,
         sort_order: z.number().int(),
+        overlaps_prev: z.boolean(),
     })).min(1),
 }).refine(({types}) =>
     pctSum(types.map((t) => t.pay_pct))
@@ -210,7 +211,7 @@ const saveWorkTypesSchema = z.object({
 
 export async function saveWorkTypes(input: {
     project_id: string;
-    types: {id?: string; code: string; label: string; color: string; pay_pct: number; sort_order: number}[];
+    types: {id?: string; code: string; label: string; color: string; pay_pct: number; sort_order: number; overlaps_prev: boolean}[];
 }): Promise<ActionResult<WorkType[]>> {
     return writeRow(input, saveWorkTypesSchema, async (supabase, d) => {
         // The RPC silently skips ids of other projects; refuse them instead (23514 → 'invalid').

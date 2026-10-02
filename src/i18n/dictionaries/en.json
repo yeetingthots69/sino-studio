@@ -414,6 +414,8 @@
             "conflict": "Changed by someone else — showing the latest",
             "orderEarlier": "Can't schedule: {stage} hasn't ended yet",
             "orderLater": "Can't schedule: {stage} has already started",
+            "orderEarly": "Can't schedule: starts before {stage} starts",
+            "orderLate": "Can't schedule: must start no later than {stage}",
             "orderGeneric": "Can't schedule: this breaks the cut's stage order",
             "duplicateStage": "This cut already has a task of this work type",
             "dismiss": "Dismiss",
@@ -655,11 +657,14 @@
             "total": "Total",
             "totalHint": "Pay % must add up to exactly 100.",
             "defaultHint": "These % are the default split for every cut. A cut can override them on the Cuts page.",
+            "overlapsPrev": "Overlaps previous",
+            "overlapsPrevHint": "This stage may start once the stage before it has started (same day or later, never earlier) and may end at any time. Example: shiage during douga.",
             "error": {
                 "pctTotal": "Pay % must add up to exactly 100.",
                 "inUse": "A work type with tasks cannot be deleted or moved.",
                 "duplicate": "Each work type needs a different code.",
-                "invalid": "Some values are invalid. Check codes, names, colors and pay %."
+                "invalid": "Some values are invalid. Check codes, names, colors and pay %.",
+                "overlapInUse": "Can't save: cut {cut} has stages that overlap under this setting."
             }
         },
         "shell": {

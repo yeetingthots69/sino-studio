@@ -197,14 +197,14 @@
   "hotPaths": [
     {
       "path": "src/components/tracker/GanttBoard/GanttBoard.tsx",
-      "accessCount": 95,
-      "lastAccessed": 1790922282386,
+      "accessCount": 97,
+      "lastAccessed": 1790946336355,
       "type": "file"
     },
     {
       "path": "src/app/[locale]/tracker/actions.ts",
-      "accessCount": 62,
-      "lastAccessed": 1790920644855,
+      "accessCount": 63,
+      "lastAccessed": 1790941780603,
       "type": "file"
     },
     {
@@ -232,6 +232,12 @@
       "type": "file"
     },
     {
+      "path": "src/components/tracker/ProjectsTable/ProjectsTable.tsx",
+      "accessCount": 19,
+      "lastAccessed": 1790941856174,
+      "type": "file"
+    },
+    {
       "path": "src/types/database.types.ts",
       "accessCount": 16,
       "lastAccessed": 1790912786693,
@@ -241,12 +247,6 @@
       "path": "src/components/tracker/GanttBoard/GanttBoard.module.css",
       "accessCount": 15,
       "lastAccessed": 1790920738769,
-      "type": "file"
-    },
-    {
-      "path": "src/components/tracker/ProjectsTable/ProjectsTable.tsx",
-      "accessCount": 14,
-      "lastAccessed": 1790916908159,
       "type": "file"
     },
     {

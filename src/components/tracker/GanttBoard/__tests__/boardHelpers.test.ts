@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'vitest';
 import {DEFAULT_PREFS, isValidCutCode, orderConflictText, parsePrefs} from '../boardHelpers';
+import {typeRule} from '../../pipeline';
 
 describe('parsePrefs', () => {
     it('defaults for missing / corrupt / wrong-typed values', () => {
@@ -20,18 +21,27 @@ describe('isValidCutCode', () => {
 });
 
 describe('orderConflictText', () => {
-    const t = {orderEarlier: 'E {stage}', orderLater: 'L {stage}', orderGeneric: 'G'};
+    const t = {orderEarlier: 'E {stage}', orderLater: 'L {stage}', orderEarly: 'EY {stage}', orderLate: 'LT {stage}', orderGeneric: 'G'};
     const stages = [{id: 's1', cut_id: 'c', work_type_id: 'lo', start_date: '2026-09-10', end_date: '2026-09-14'}];
     const cuts = new Map([['c', 'C12']]);
     const types = new Map([['lo', {code: 'LO', sort_order: 10}], ['ge', {code: 'GE', sort_order: 20}], ['cl', {code: 'CL', sort_order: 5}]]);
+    const rule = (geOverlaps = false) => typeRule([...types].map(([id, w]) => ({id, sort_order: w.sort_order, overlaps_prev: id === 'ge' && geOverlaps})));
 
     it('names the stage; earlier vs later relative to the candidate type', () => {
-        expect(orderConflictText(t, 's1', 'ge', stages, cuts, types)).toBe('E C12 · LO (10/09–14/09)');
-        expect(orderConflictText(t, 's1', 'cl', stages, cuts, types)).toBe('L C12 · LO (10/09–14/09)');
+        expect(orderConflictText(t, 's1', 'ge', stages, cuts, types, rule())).toBe('E C12 · LO (10/09–14/09)');
+        expect(orderConflictText(t, 's1', 'cl', stages, cuts, types, rule())).toBe('L C12 · LO (10/09–14/09)');
+    });
+
+    it('flagged adjacent pair → early / late; a non-adjacent pair stays strict', () => {
+        // CL(5) → LO(10) → GE(20), GE overlaps LO
+        expect(orderConflictText(t, 's1', 'ge', stages, cuts, types, rule(true))).toBe('EY C12 · LO (10/09–14/09)');
+        const ge = [{id: 's2', cut_id: 'c', work_type_id: 'ge', start_date: '2026-09-10', end_date: '2026-09-10'}];
+        expect(orderConflictText(t, 's2', 'lo', ge, cuts, types, rule(true))).toBe('LT C12 · GE (10/09–10/09)');
+        expect(orderConflictText(t, 's2', 'cl', ge, cuts, types, rule(true))).toBe('L C12 · GE (10/09–10/09)');
     });
 
     it('generic when the stage is unknown', () => {
-        expect(orderConflictText(t, 'nope', 'ge', stages, cuts, types)).toBe('G');
-        expect(orderConflictText(t, undefined, 'ge', stages, cuts, types)).toBe('G');
+        expect(orderConflictText(t, 'nope', 'ge', stages, cuts, types, rule())).toBe('G');
+        expect(orderConflictText(t, undefined, 'ge', stages, cuts, types, rule())).toBe('G');
     });
 });

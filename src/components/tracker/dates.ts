@@ -65,7 +65,11 @@ export function clampToMonth(
     };
 }
 
-/** Lanes per row: tasks of the same cut form one block (span = min start..max end) and share a lane. */
+/**
+ * Lanes per row: tasks of the same cut form one block (span = min start..max end). Inside a block,
+ * overlapping tasks get sub-lanes, so the block is k lanes tall; a block takes the lowest k
+ * consecutive lanes that all end before its start.
+ */
 export function assignLanes<T extends {start_date: ISODate; end_date: ISODate; cut_id?: string | null}>(tasks: T[]): Map<T, number> {
     type Block = {tasks: T[]; start: ISODate; end: ISODate; key: string; idx: number};
     const blocks: Block[] = [];
@@ -87,10 +91,23 @@ export function assignLanes<T extends {start_date: ISODate; end_date: ISODate; c
     const laneEnds: ISODate[] = [];
     const lanes = new Map<T, number>();
     for (const b of blocks) {
-        let lane = laneEnds.findIndex((end) => end < b.start);
-        if (lane === -1) lane = laneEnds.length;
-        laneEnds[lane] = b.end;
-        for (const t of b.tasks) lanes.set(t, lane);
+        // Stable sort: ties keep input order.
+        const order = [...b.tasks].sort((x, y) => x.start_date.localeCompare(y.start_date)
+            || x.end_date.localeCompare(y.end_date));
+        const subEnds: ISODate[] = [];
+        const sub = new Map<T, number>();
+        for (const t of order) {
+            let s = subEnds.findIndex((end) => end < t.start_date);
+            if (s === -1) s = subEnds.length;
+            subEnds[s] = t.end_date;
+            sub.set(t, s);
+        }
+        const k = subEnds.length;
+        let lane = 0;
+        // Lanes past the array are free, so lane = laneEnds.length always fits.
+        while (laneEnds.slice(lane, lane + k).some((end) => !(end < b.start))) lane++;
+        for (let j = 0; j < k; j++) laneEnds[lane + j] = b.end;
+        for (const t of b.tasks) lanes.set(t, lane + sub.get(t)!);
     }
     return lanes;
 }

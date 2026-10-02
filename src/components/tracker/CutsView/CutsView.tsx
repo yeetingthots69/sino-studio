@@ -11,6 +11,7 @@ import {compareCutCodes} from '../cuts';
 import {formatVnd} from '../earnings';
 import {sanitizeLinks} from '../links';
 import {cutSplit, payLines, stagePct} from '../pay';
+import {typeRule} from '../pipeline';
 import {useRealtimeBusy} from '../useRealtimeRefresh';
 import ProjectViewTabs from '../ProjectViewTabs/ProjectViewTabs';
 import CreateTaskPopover, {type CreateInput} from '../GanttBoard/CreateTaskPopover';
@@ -72,7 +73,7 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
     const cutList = [...cuts].sort((a, b) => compareCutCodes(a.code, b.code));
     const cutById = new Map(cuts.map((c) => [c.id, c]));
     const typeById = new Map(workTypes.map((w) => [w.id, w]));
-    const typeOrder = new Map(workTypes.map((w) => [w.id, w.sort_order]));
+    const rule = typeRule(workTypes);
     const cutCodes = new Map(cuts.map((c) => [c.id, c.code]));
     const staffById = new Map(staff.map((s) => [s.id, s]));
     const activeStaff = staff.filter((s) => !s.archived_at);
@@ -94,7 +95,7 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
     const errorText = (r: {error: string; detail?: string}, typeId?: string) => {
         switch (r.error) {
             case 'order_conflict':
-                return orderConflictText(board, r.detail, typeId, tasks, cutCodes, typeById);
+                return orderConflictText(board, r.detail, typeId, tasks, cutCodes, typeById, rule);
             case 'duplicate':
                 return board.duplicateStage;
             case 'in_use':
@@ -349,10 +350,10 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                                                                             cuts={cutList}
                                                                             workTypes={workTypes}
                                                                             stages={tasks}
-                                                                            typeOrder={typeOrder}
+                                                                            typeRule={rule}
                                                                             cutMode={{cut, workType: w, staff: activeStaff}}
                                                                             describeConflict={(id, typeId) =>
-                                                                                orderConflictText(board, id, typeId, tasks, cutCodes, typeById)}
+                                                                                orderConflictText(board, id, typeId, tasks, cutCodes, typeById, rule)}
                                                                             onClose={() => setCreateAt(null)}
                                                                             onSubmit={createFromCell}
                                                                         />

@@ -467,6 +467,8 @@
             "conflict": "Công việc vừa được người khác sửa — đang hiển thị bản mới nhất",
             "orderEarlier": "Không thể xếp: {stage} chưa kết thúc",
             "orderLater": "Không thể xếp: {stage} đã bắt đầu",
+            "orderEarly": "Không thể xếp: bắt đầu trước khi {stage} bắt đầu",
+            "orderLate": "Không thể xếp: phải bắt đầu trước hoặc cùng ngày với {stage}",
             "orderGeneric": "Không thể xếp: sai thứ tự công đoạn của cut",
             "duplicateStage": "Cut này đã có công việc thuộc loại này",
             "dismiss": "Đóng",
@@ -708,11 +710,14 @@
             "total": "Tổng",
             "totalHint": "Tổng % thù lao phải đúng bằng 100.",
             "defaultHint": "Các % này là tỉ lệ mặc định cho mọi cut. Từng cut có thể đặt tỉ lệ riêng ở trang Cut.",
+            "overlapsPrev": "Chồng công đoạn trước",
+            "overlapsPrevHint": "Công đoạn này có thể bắt đầu từ ngày công đoạn ngay trước bắt đầu trở đi (không sớm hơn) và kết thúc lúc nào cũng được. Ví dụ: shiage làm song song với douga.",
             "error": {
                 "pctTotal": "Tổng % thù lao phải đúng bằng 100.",
                 "inUse": "Loại công việc đã có công việc thì không thể xóa hoặc đổi thứ tự.",
                 "duplicate": "Mỗi loại công việc cần một mã khác nhau.",
-                "invalid": "Có giá trị không hợp lệ. Hãy kiểm tra mã, tên, màu và % thù lao."
+                "invalid": "Có giá trị không hợp lệ. Hãy kiểm tra mã, tên, màu và % thù lao.",
+                "overlapInUse": "Không thể lưu: cut {cut} có các công đoạn đang chồng nhau theo thiết lập này."
             }
         },
         "shell": {

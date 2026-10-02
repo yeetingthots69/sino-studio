@@ -5,7 +5,7 @@ import {Autocomplete, Button, NumberInput, Popover, Select, Text, UnstyledButton
 import {DateInput} from '@mantine/dates';
 import {useDictionary} from '@/i18n/DictionaryProvider';
 import {normalizeCutCode} from '../cuts';
-import {orderConflict} from '../pipeline';
+import {orderConflict, type TypeRule} from '../pipeline';
 import {ddmm, isValidCutCode, parseDMY} from './boardHelpers';
 import {fill, type Cut, type StageRow, type WorkType} from './GanttBoard';
 import styles from './GanttBoard.module.css';
@@ -35,7 +35,7 @@ interface Props {
     cuts: Cut[];
     workTypes: WorkType[];
     stages: Stage[];
-    typeOrder: Map<string, number>;
+    typeRule: TypeRule;
     /** Cuts view: cut + type fixed, pick staff + dates. */
     cutMode?: {
         cut: Pick<Cut, 'id' | 'code'>;
@@ -53,7 +53,7 @@ const INSIDE = {withinPortal: false};
 
 /** Create-task form anchored to the drag ghost (plan §3.4) or, in cut mode, to a Cuts-view cell (§3.5). */
 export default function CreateTaskPopover(props: Props) {
-    const {opened, ghostStyle, target, cuts, workTypes, stages, typeOrder, cutMode, describeConflict, onClose, onSubmit} = props;
+    const {opened, ghostStyle, target, cuts, workTypes, stages, typeRule, cutMode, describeConflict, onClose, onSubmit} = props;
     const t = useDictionary().tracker.board;
     const [code, setCode] = useState(cutMode?.cut.code ?? '');
     const [typeId, setTypeId] = useState<string | null>(cutMode?.workType.id ?? null);
@@ -78,10 +78,10 @@ export default function CreateTaskPopover(props: Props) {
     const validCode = isValidCutCode(code);
     const validDates = !!start && !!end && end >= start;
     const conflict = cut && type && validDates
-        ? orderConflict(stages, typeOrder, {id: '', cut_id: cut.id, work_type_id: type, start_date: start, end_date: end})
+        ? orderConflict(stages, typeRule, {id: '', cut_id: cut.id, work_type_id: type, start_date: start, end_date: end})
         : null;
     const message = error
-        ?? (code && !validCode ? t.invalidCut : conflict && type ? describeConflict(conflict.id, type) : null);
+        ?? (code && !validCode ? t.invalidCut : conflict && type ? describeConflict(conflict.task.id, type) : null);
     const ready = !!type && validCode && !conflict && (!cutMode || (!!staffId && validDates));
 
     const submit = async () => {

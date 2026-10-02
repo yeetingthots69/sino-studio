@@ -1,6 +1,6 @@
 'use client';
 
-import {ActionIcon, Button, ColorInput, Group, NumberInput, Table, Text, TextInput, Tooltip} from '@mantine/core';
+import {ActionIcon, Button, Checkbox, ColorInput, Group, NumberInput, Table, Text, TextInput, Tooltip} from '@mantine/core';
 import {IconArrowDown, IconArrowUp, IconLock, IconPlus, IconTrash} from '@tabler/icons-react';
 import {useDictionary} from '@/i18n/DictionaryProvider';
 import {pctHundredths, pctTotalOk} from '@/components/tracker/pay';
@@ -15,6 +15,7 @@ export type EditorType = {
     color: string;
     pay_pct: number | string; // NumberInput yields a string while a decimal is being typed
     sort_order: number;
+    overlaps_prev: boolean; // may start with the previous stage; ignored (sent false) on the first row
     used: boolean;
 };
 
@@ -35,7 +36,7 @@ export const COLOR_INPUT_PROPS = {
 } as const;
 
 // key '' = new row; commit() gives it a key at click time (no impure calls during render).
-const BLANK: EditorType = {key: '', code: '', label: '', color: '#888888', pay_pct: 0, sort_order: 0, used: false};
+const BLANK: EditorType = {key: '', code: '', label: '', color: '#888888', pay_pct: 0, sort_order: 0, overlaps_prev: false, used: false};
 
 export default function WorkTypesEditor({value, onChange}: {value: EditorType[]; onChange: (v: EditorType[]) => void}) {
     const t = useDictionary().tracker.workTypesEditor;
@@ -66,7 +67,7 @@ export default function WorkTypesEditor({value, onChange}: {value: EditorType[];
 
     return (
         <div>
-            <Table.ScrollContainer minWidth={640}>
+            <Table.ScrollContainer minWidth={700}>
                 <Table verticalSpacing={4}>
                     <Table.Thead>
                         <Table.Tr>
@@ -75,6 +76,11 @@ export default function WorkTypesEditor({value, onChange}: {value: EditorType[];
                             <Table.Th>{t.label}</Table.Th>
                             <Table.Th>{t.color}</Table.Th>
                             <Table.Th>{t.payPct}</Table.Th>
+                            <Table.Th>
+                                <Tooltip label={t.overlapsPrevHint} multiline w={260}>
+                                    <span tabIndex={0}>{t.overlapsPrev}</span>
+                                </Tooltip>
+                            </Table.Th>
                             <Table.Th/>
                         </Table.Tr>
                     </Table.Thead>
@@ -125,6 +131,14 @@ export default function WorkTypesEditor({value, onChange}: {value: EditorType[];
                                         suffix="%"
                                         value={row.pay_pct}
                                         onChange={(pay_pct) => set(i, {pay_pct})}
+                                    />
+                                </Table.Td>
+                                <Table.Td className={styles.overlap}>
+                                    <Checkbox
+                                        aria-label={t.overlapsPrev}
+                                        disabled={i === 0}
+                                        checked={i > 0 && row.overlaps_prev}
+                                        onChange={(e) => set(i, {overlaps_prev: e.currentTarget.checked})}
                                     />
                                 </Table.Td>
                                 <Table.Td>

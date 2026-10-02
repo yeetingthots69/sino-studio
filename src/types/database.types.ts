@@ -585,6 +585,7 @@ export type Database = {
           created_at: string
           id: string
           label: string
+          overlaps_prev: boolean
           pay_pct: number
           project_id: string
           sort_order: number
@@ -596,6 +597,7 @@ export type Database = {
           created_at?: string
           id?: string
           label: string
+          overlaps_prev?: boolean
           pay_pct?: number
           project_id: string
           sort_order?: number
@@ -607,6 +609,7 @@ export type Database = {
           created_at?: string
           id?: string
           label?: string
+          overlaps_prev?: boolean
           pay_pct?: number
           project_id?: string
           sort_order?: number
@@ -793,6 +796,7 @@ export type Database = {
           created_at: string
           id: string
           label: string
+          overlaps_prev: boolean
           pay_pct: number
           project_id: string
           sort_order: number
