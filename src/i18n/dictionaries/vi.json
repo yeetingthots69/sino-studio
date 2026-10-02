@@ -491,7 +491,7 @@
                 "end": "Ngày kết thúc",
                 "assignee": "Nhân sự phụ trách",
                 "delete": "Xoá công việc",
-                "confirmDelete": "Xoá công việc này? Không thể hoàn tác.",
+                "confirmDelete": "Xoá công việc này? Bạn có thể hoàn tác ngay sau đó (Ctrl+Z hoặc nút Hoàn tác).",
                 "empty": "Chọn một công việc trên lịch để xem chi tiết.",
                 "days": "{n} ngày",
                 "summary": "ngày {s} – {e}"
@@ -519,7 +519,30 @@
             "hoverDays": "{n} ngày",
             "hoverProgress": "Tiến độ",
             "hoverAssignee": "Phụ trách",
-            "loading": "Đang tải…"
+            "loading": "Đang tải…",
+            "undo": {
+                "undo": "Hoàn tác",
+                "redo": "Làm lại",
+                "undoHint": "Hoàn tác (Ctrl+Z)",
+                "redoHint": "Làm lại (Ctrl+Y)",
+                "close": "Đóng",
+                "undone": "Đã hoàn tác: {label}",
+                "redone": "Đã làm lại: {label}",
+                "conflict": "Công việc này đã bị thay đổi sau đó nên không thể hoàn tác.",
+                "payChanged": "Không thể tự động chuyển lại thưởng/phạt. Hãy sửa ở trang Cut.",
+                "offMonth": "{label} · {m}/{y}",
+                "label": {
+                    "dates": "{cut} {type}: ngày",
+                    "progress": "{cut} {type}: tiến độ",
+                    "links": "{cut} {type}: link",
+                    "cut": "{cut} {type}: cut",
+                    "type": "{cut} {type}: loại công việc",
+                    "move": "{cut} {type} → {name}",
+                    "created": "Tạo {cut} {type}",
+                    "deleted": "Xoá {cut} {type}"
+                },
+                "moveReason": "Hoàn tác/làm lại: chuyển {cut} {type} sang {name}"
+            }
         },
         "views": {
             "label": "Chế độ xem",

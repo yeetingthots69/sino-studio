@@ -87,7 +87,8 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
     const typeTotals = new Map<string, number>();
     for (const l of lines) typeTotals.set(l.work_type_id, (typeTotals.get(l.work_type_id) ?? 0) + l.amount);
     const grandTotal = lines.reduce((s, l) => s + l.amount, 0);
-    const cutsWithTasks = new Set(tasks.map((x) => x.cut_id));
+    // a cut with tasks or any bonus/penalty row (append-only, never deletable) cannot be deleted (FK restrict)
+    const lockedCuts = new Set([...tasks, ...adjustments].map((x) => x.cut_id));
     const staffName = (id: string) => staffById.get(id)?.name ?? t.unknownStaff;
 
     const errorText = (r: {error: string; detail?: string}, typeId?: string) => {
@@ -243,7 +244,7 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                                         <th scope="row" className={styles.sticky}>
                                             <div className={styles.cutHead}>
                                                 <span className={styles.cutCode}>{cut.code}</span>
-                                                {!cutsWithTasks.has(cut.id) && (confirmDelete === cut.id ? (
+                                                {!lockedCuts.has(cut.id) && (confirmDelete === cut.id ? (
                                                     <Button size="compact-xs" color="red" onClick={() => void removeCut(cut)}>
                                                         {fill(t.confirmDelete, {code: cut.code})}
                                                     </Button>

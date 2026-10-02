@@ -90,6 +90,12 @@ values ('someone@sinostudio.vn', 'manager', 'Someone');  -- email must be lowerc
 
 **Client sync** — `GanttBoard/taskSync.ts` is the single source of truth for board tasks: a synchronous store; `planCommit` runs inside the commit chain (`createCommitChain`), never before it; `refreshStart` must be called before every board refresh; conflicts are decided by `version` (stale writes are refused by the DB version check; foreign changes after baseline are tracked by version).
 
+**Undo / redo (v2.4)** — Board only (plan `.omc/plans/tracker-v2.4-undo.md`). The pure stack is `GanttBoard/undoStack.ts`. State is a module-level map per project id, so it survives the per-month remount and is cleared on reload; own changes only, max 20. Shortcuts: Ctrl/Cmd+Z, Ctrl+Y or Ctrl+Shift+Z; there are also toolbar buttons and an `UndoToast`.
+- Conflict rule: undo/redo sends `commit(..., {expected: entry.version})`, skipping `planCommit`, so the server version check alone decides. This is exact only because **every own confirmed task write calls `rebase(id, row.version)`**; keep that true for any new board write path.
+- Undoing a delete re-creates the task (`createTask`, then a versioned update for progress/links) and `remap`s the old id.
+- Undoing a move with moved bonus/penalty runs the `payUnchanged` pre-check (by `batch_id`) and refuses if pay changed.
+- Barrier: undo is ignored while anything is in flight (a module-level counter per project), or while the panel is dirty, a dialog is open, the create popover is open, or a drag is running.
+
 **Board behaviour (v2.3)** — Lanes are grouped by cut: `assignLanes` packs per-cut blocks (board, share page, PNG). One reassign path: a vertical drag or the panel assignee Select opens `MoveDialog`, then `moveTask` through `commit()`. Wheel hand-off: `GanttBoard/wheelHandoff.ts` sends wheel input nothing else can consume to the grid; only modal dialogs and Ctrl are excluded. The panel closes on re-click, Esc and the X button, with a discard prompt for the links draft. Month jump: `MonthNav` popover with `parseMonthInput`. A skeleton shows while a month loads. The digest shows a "Đã chuyển khỏi bạn" table; `planDigest` dedupes by `task_id` and drops tasks the recipient owns again.
 
 **Server actions** — all data actions go through `writeRow` in `tracker/actions.ts`: `getUser()` guard (retried once on network errors; never `getClaims`), zod validation, `.select().single()`, never throw. Task actions pass `{revalidate: 'none'}` (the board applies the returned row itself); project/staff/work-type actions call `refresh()`. The proxy skips `getUser` on server-action POSTs because each action authenticates itself. The proxy only sets `NEXT_LOCALE` when it changes — a `Set-Cookie` on an action response invalidates the client router cache.
@@ -116,7 +122,7 @@ select cron.schedule('tracker-mail', '*/5 * * * *', $$ select net.http_post(url 
 1. Supabase MCP `generate_typescript_types` → write to `src/types/database.types.ts`
 2. `npx supazod -i src/types/database.types.ts -o src/schemas/generated/index.ts -s public` (Zod schemas used by the actions)
 
-**Tests** — `npm test` (Vitest) covers the proxy/session logic and the pure tracker modules: `dates`, `cuts`, `pipeline`, `pay`, `earnings`, `errors`, `ics`, `links`, `staffView`, `useRealtimeRefresh`, `GanttBoard/taskSync` + `dragMath` + `boardHelpers` + `presence` + `wheelHandoff`, `lib/tracker/mailPlan` + `shareShape`, `services/trackerMail`. v2.3 cases: `dates` (lanes by cut, month parsing), `dragMath` (targetStaff, drag latch), `pay` (`movableAdjustments`), `mailPlan` (removed digest).
+**Tests** — `npm test` (Vitest) covers the proxy/session logic and the pure tracker modules: `dates`, `cuts`, `pipeline`, `pay`, `earnings`, `errors`, `ics`, `links`, `staffView`, `useRealtimeRefresh`, `GanttBoard/taskSync` + `dragMath` + `boardHelpers` + `presence` + `wheelHandoff` + `undoStack`, `lib/tracker/mailPlan` + `shareShape`, `services/trackerMail`. v2.3 cases: `dates` (lanes by cut, month parsing), `dragMath` (targetStaff, drag latch), `pay` (`movableAdjustments`), `mailPlan` (removed digest).
 
 **Next agent rules** — the `nextjs-agent-rules` block at the end of this file is auto-added by `next dev`; it is kept on purpose, do not remove it.
 

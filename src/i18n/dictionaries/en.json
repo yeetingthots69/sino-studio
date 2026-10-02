@@ -438,7 +438,7 @@
                 "end": "End date",
                 "assignee": "Assignee",
                 "delete": "Delete task",
-                "confirmDelete": "Delete this task? This cannot be undone.",
+                "confirmDelete": "Delete this task? You can undo it right after (Ctrl+Z or the Undo button).",
                 "empty": "Select a task on the board to see its details.",
                 "days": "{n} days",
                 "summary": "day {s} – {e}"
@@ -466,7 +466,30 @@
             "hoverDays": "{n} days",
             "hoverProgress": "Progress",
             "hoverAssignee": "Assignee",
-            "loading": "Loading…"
+            "loading": "Loading…",
+            "undo": {
+                "undo": "Undo",
+                "redo": "Redo",
+                "undoHint": "Undo (Ctrl+Z)",
+                "redoHint": "Redo (Ctrl+Y)",
+                "close": "Close",
+                "undone": "Undone: {label}",
+                "redone": "Redone: {label}",
+                "conflict": "This task was changed since, so it can't be undone.",
+                "payChanged": "Can't move the bonus/penalty back automatically. Fix it on the Cut page.",
+                "offMonth": "{label} · {m}/{y}",
+                "label": {
+                    "dates": "{cut} {type}: dates",
+                    "progress": "{cut} {type}: progress",
+                    "links": "{cut} {type}: links",
+                    "cut": "{cut} {type}: cut",
+                    "type": "{cut} {type}: type",
+                    "move": "{cut} {type} → {name}",
+                    "created": "{cut} {type} created",
+                    "deleted": "{cut} {type} deleted"
+                },
+                "moveReason": "Undo/redo: {cut} {type} moved to {name}"
+            }
         },
         "views": {
             "label": "Views",

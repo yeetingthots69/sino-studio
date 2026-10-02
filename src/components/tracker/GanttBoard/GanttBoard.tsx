@@ -3,11 +3,12 @@
 import {useEffect, useRef, useState, useSyncExternalStore, useTransition, type CSSProperties, type PointerEvent, type ReactNode} from 'react';
 import Link from 'next/link';
 import {usePathname, useRouter} from 'next/navigation';
-import {ActionIcon, Avatar, CloseButton, MultiSelect, Skeleton, Text, Transition, UnstyledButton, VisuallyHidden} from '@mantine/core';
-import {IconArrowsSort, IconEye, IconEyeOff, IconSortAscendingLetters, IconSortDescendingLetters} from '@tabler/icons-react';
+import {ActionIcon, Avatar, CloseButton, MultiSelect, Skeleton, Text, Tooltip, Transition, UnstyledButton, VisuallyHidden} from '@mantine/core';
+import {IconArrowBackUp, IconArrowForwardUp, IconArrowsSort, IconEye, IconEyeOff, IconSortAscendingLetters, IconSortDescendingLetters} from '@tabler/icons-react';
 import {useDictionary} from '@/i18n/DictionaryProvider';
 import {createTask, deleteTask, moveTask, updateTask, type ActionResult, type TaskPatch as ActionTaskPatch} from '@/app/[locale]/tracker/actions';
 import type {Tables} from '@/types/database.types';
+import {getBrowserClient} from '@/utils/supabase/client';
 import {compareCutCodes} from '../cuts';
 import {sanitizeLinks} from '../links';
 import {addDays, assignLanes, daysBetween, isWeekend, monthRange, weekdayLabel} from '../dates';
@@ -29,6 +30,8 @@ import {useDragCreate} from './useDragCreate';
 import {useRefreshScheduler} from './useRefreshScheduler';
 import {useTaskRealtime} from './useTaskRealtime';
 import {useWheelHandoff} from './wheelHandoff';
+import {EMPTY_UNDO, inverse, payUnchanged, rebase, record, remap, settled, take, type Dir, type Fields, type UndoEntry, type UndoState} from './undoStack';
+import UndoToast, {type UndoToastData} from './UndoToast';
 import {isRealtimeBusy, useRealtimeIdle, useRealtimeTables} from '@/components/tracker/useRealtimeRefresh';
 import styles from './GanttBoard.module.css';
 
@@ -57,6 +60,21 @@ type Pending = {seq: number; id: string; patch: Partial<Task>; hide?: boolean};
 type PendingNav = {kind: 'close'} | {kind: 'select'; id: string};
 /** Cross-person move waiting for MoveDialog. */
 type MoveDraft = {task: Task; staff_id: string; start_date: string; end_date: string; baseline: number};
+
+/** Undo/redo stacks per project: module-level so they survive the per-month remount; cleared on reload. */
+const undoStore = new Map<string, UndoState>();
+const undoListeners = new Set<() => void>();
+const subscribeUndo = (l: () => void) => {
+    undoListeners.add(l);
+    return () => void undoListeners.delete(l);
+};
+/** Board writes in flight per project, across month remounts (an old board's write still blocks undo on the new one). */
+const inFlight = new Map<string, number>();
+const bumpInFlight = (projectId: string, d: 1 | -1) => {
+    inFlight.set(projectId, (inFlight.get(projectId) ?? 0) + d);
+    for (const l of undoListeners) l();
+};
+const UPDATE_KEYS = ['start_date', 'end_date', 'progress', 'links', 'work_type_id'] as const;
 
 /** Stable pseudo-random skeleton bars `[day offset, length]` for a staff row (1–2 bars inside the month). */
 function skeletonBars(id: string, days: number): [number, number][] {
@@ -108,6 +126,23 @@ export default function GanttBoard(props: Props) {
     const [lastMove, setLastMove] = useState<MoveDraft | null>(null);
     if (moveDraft !== null && moveDraft !== lastMove) setLastMove(moveDraft);
     const [dropTarget, setDropTarget] = useState<string | null>(null);
+    // undo/redo: the module map is the synchronous source (survives the month remount), rendered via useSyncExternalStore
+    const getUndo = () => undoStore.get(project.id) ?? EMPTY_UNDO;
+    const undo = useSyncExternalStore(subscribeUndo, getUndo, getUndo);
+    const getFlying = () => inFlight.get(project.id) ?? 0;
+    const flying = useSyncExternalStore(subscribeUndo, getFlying, getFlying);
+    const setUndo = (f: (s: UndoState) => UndoState) => {
+        undoStore.set(project.id, f(getUndo()));
+        for (const l of undoListeners) l();
+    };
+    const [toast, setToast] = useState<UndoToastData | null>(null);
+    // ref = synchronous guard, state = disabled buttons; held for the whole runUndo / New Task create
+    const undoBusyRef = useRef(false);
+    const [undoBusy, setUndoBusy] = useState(false);
+    const createBusyRef = useRef(false);
+    const [createBusy, setCreateBusy] = useState(false);
+    // toast buttons call the latest runUndo (fresh barrier and lookups), not the one of the render that made the toast
+    const runUndoRef = useRef<(dir: Dir) => void>(() => {});
     const [prefs, setPrefs] = useBoardPrefs();
     const {start: monthStart, end: monthEnd, days} = monthRange(month);
 
@@ -287,6 +322,9 @@ export default function GanttBoard(props: Props) {
      * Versioned write through the per-task chain: expected_version is planned when the commit is sent
      * (planCommit on the store, not render state); a conflict or failure reverts the optimistic layer and
      * drops the commits queued behind it.
+     * `ctx.expected` (undo/redo): send that version as is, no planCommit (the task may be off-month or not in the
+     * store); the server version check decides. `ctx.undo`: refusals show the undo conflict text.
+     * Resolves true when the write succeeded.
      */
     function commit<T>(
         id: string,
@@ -294,15 +332,17 @@ export default function GanttBoard(props: Props) {
         optimistic: Omit<Pending, 'seq' | 'id'>,
         send: (expected_version: number) => Promise<ActionResult<T>>,
         onOk: (data: T) => void,
-        ctx: {typeId?: string; cut?: boolean},
-    ) {
+        ctx: {typeId?: string; cut?: boolean; expected?: number; undo?: boolean},
+    ): Promise<boolean> {
         const seq = ++seqRef.current;
         setPending((p) => [...p, {seq, id, ...optimistic}]);
         setNotice(null);
-        void chain(id, async () => {
-            const plan = planCommit(store.get(), id, baseline);
+        const conflictText = ctx.undo ? t.undo.conflict : t.conflict;
+        bumpInFlight(project.id, 1);
+        return chain(id, async () => {
+            const plan = ctx.expected === undefined ? planCommit(store.get(), id, baseline) : {expected_version: ctx.expected};
             if (plan === 'conflict-local') {
-                setNotice(t.conflict);
+                setNotice(conflictText);
                 return false;
             }
             store.apply({kind: 'begin', id});
@@ -319,20 +359,39 @@ export default function GanttBoard(props: Props) {
             }
             if (r.error === 'conflict') {
                 store.apply({kind: 'ack', id, fresh: r.fresh});
-                setNotice(t.conflict);
+                setNotice(conflictText);
                 return false;
             }
             store.apply({kind: 'ack', id});
-            setNotice(failText(r, ctx));
+            setNotice(ctx.undo && r.error === 'not_found' ? conflictText : failText(r, ctx));
             return false;
-        }).then(() => {
+        }).then((outcome) => {
+            bumpInFlight(project.id, -1);
             setPending((p) => p.filter((x) => x.seq !== seq));
             settle();
+            return outcome === 'ok';
         });
     }
 
-    const update = (task: Task, patch: TaskPatch, display: Partial<Task>, baseline: number) =>
-        commit(
+    // version invariant: every own confirmed write rebases that task's entries; a no-op change records nothing
+    const confirmWrite = (id: string, version: number, entry?: UndoEntry, same?: boolean) => {
+        setUndo((s) => {
+            const r = rebase(s, id, version);
+            return entry && !same ? record(r, entry) : r;
+        });
+        if (entry && !same) setToast({text: entry.label, action: {label: t.undo.undo, onClick: () => runUndoRef.current('undo')}});
+    };
+    const codes = (cutId: string, typeId: string) => ({cut: cutCodes.get(cutId) ?? '', type: typeById.get(typeId)?.code ?? ''});
+
+    const update = (task: Task, patch: TaskPatch, display: Partial<Task>, baseline: number) => {
+        // undo entry: before-values from the displayed task at action start, after-values from the returned row
+        const keys = UPDATE_KEYS.filter((k) => patch[k] !== undefined);
+        const pick = (r: Task) => Object.fromEntries(keys.map((k) => [k, r[k]])) as Fields;
+        const before = pick(task);
+        const beforeCut = cutCodes.get(task.cut_id) ?? '';
+        const kind = patch.cut_code !== undefined ? 'cut' : patch.work_type_id !== undefined ? 'type'
+            : patch.progress !== undefined ? 'progress' : patch.links !== undefined ? 'links' : 'dates';
+        return commit(
             task.id,
             baseline,
             {patch: display},
@@ -341,18 +400,38 @@ export default function GanttBoard(props: Props) {
                 store.apply({kind: 'ack', id: task.id, row});
                 // a new cut arrives by realtime; without it (channel down) the refresh brings it
                 if (!cuts.has(row.cut_id)) requestRefresh();
+                const after = pick(row);
+                if (patch.cut_code !== undefined) {
+                    before.cut_code = beforeCut;
+                    after.cut_code = patch.cut_code;
+                }
+                const label = fill(t.undo.label[kind], {cut: patch.cut_code ?? beforeCut, type: typeById.get(row.work_type_id)?.code ?? ''});
+                confirmWrite(task.id, row.version, {kind: 'update', id: task.id, version: row.version, before, after, label},
+                    JSON.stringify(before) === JSON.stringify(after));
             },
             {typeId: patch.work_type_id ?? task.work_type_id, cut: patch.cut_code !== undefined},
         );
+    };
+
+    const snapshotOf = (task: Task) => ({
+        project_id: task.project_id, staff_id: task.staff_id, work_type_id: task.work_type_id,
+        cut_code: cutCodes.get(task.cut_id) ?? '', budget: cuts.get(task.cut_id)?.budget ?? null,
+        start_date: task.start_date, end_date: task.end_date, progress: task.progress, links: task.links,
+    });
 
     const remove = (task: Task, baseline: number) => {
         setSelectedId(null);
+        const entry: UndoEntry = {kind: 'presence', id: task.id, version: task.version, exists: false, snapshot: snapshotOf(task),
+            label: fill(t.undo.label.deleted, codes(task.cut_id, task.work_type_id))};
         commit(
             task.id,
             baseline,
             {patch: {}, hide: true},
             (expected_version) => deleteTask({id: task.id, expected_version}),
-            () => store.apply({kind: 'ownDelete', id: task.id}),
+            () => {
+                store.apply({kind: 'ownDelete', id: task.id});
+                confirmWrite(task.id, task.version, entry);
+            },
             {},
         );
     };
@@ -360,17 +439,27 @@ export default function GanttBoard(props: Props) {
     const draft = drag.draft;
     const create = async (input: CreateInput): Promise<string | null> => {
         if (!draft) return null;
+        createBusyRef.current = true;
+        setCreateBusy(true);
+        bumpInFlight(project.id, 1);
         const r = await createTask({
             ...input,
             project_id: project.id,
             staff_id: draft.staffId,
             start_date: addDays(monthStart, draft.from),
             end_date: addDays(monthStart, draft.to),
-        }).catch(() => ({ok: false, error: 'network'}) as const);
+        }).catch(() => ({ok: false, error: 'network'}) as const).finally(() => {
+            createBusyRef.current = false;
+            setCreateBusy(false);
+            bumpInFlight(project.id, -1);
+        });
         if (!r.ok) return failText(r, {typeId: input.work_type_id, cut: true});
         const {task, cut} = r.data;
         store.apply({kind: 'ack', id: task.id, row: task});
         setCuts((m) => new Map(m).set(cut.id, cut));
+        confirmWrite(task.id, task.version, {kind: 'presence', id: task.id, version: task.version, exists: true,
+            snapshot: {...snapshotOf(task), cut_code: cut.code, budget: cut.budget},
+            label: fill(t.undo.label.created, {cut: cut.code, type: typeById.get(task.work_type_id)?.code ?? ''})});
         requestSelect(task.id);
         drag.close();
         return null;
@@ -432,15 +521,165 @@ export default function GanttBoard(props: Props) {
             from: staffNames.get(task.staff_id) ?? '',
             to: staffNames.get(staff_id) ?? '',
         });
+        const before = {staff_id: task.staff_id, start_date: task.start_date, end_date: task.end_date};
         commit(
             task.id,
             baseline,
             {patch: {staff_id, start_date, end_date}},
             (expected_version) => moveTask({id: task.id, expected_version, staff_id, start_date, end_date, move_adjustments: moveAdjustments, op_id, reason}),
-            (row) => store.apply({kind: 'ack', id: task.id, row}),
+            (row) => {
+                store.apply({kind: 'ack', id: task.id, row});
+                const after = {staff_id: row.staff_id, start_date: row.start_date, end_date: row.end_date};
+                confirmWrite(task.id, row.version, {
+                    kind: 'move', id: task.id, version: row.version, before, after, moveAdjustments, opId: op_id,
+                    cut_id: row.cut_id, work_type_id: row.work_type_id,
+                    label: fill(t.undo.label.move, {...codes(row.cut_id, row.work_type_id), name: staffNames.get(row.staff_id) ?? ''}),
+                }, JSON.stringify(before) === JSON.stringify(after));
+            },
             {typeId: task.work_type_id},
         );
     };
+
+    // Undo/redo barrier: a pending write, the panel draft or its discard prompt, MoveDialog, New Task, a bar drag.
+    // State drives the buttons; `blocked()` adds the synchronous refs for keys and clicks.
+    const undoBlocked = pending.length > 0 || flying > 0 || undoBusy || createBusy || panelIsDirty || pendingNav !== null
+        || moveDraft !== null || draft !== null || dragId !== null;
+    const blocked = () => undoBlocked || getFlying() > 0 || undoBusyRef.current || createBusyRef.current || panelDirtyRef.current || dragging.current;
+    const toastLabel = (label: string, start: string, end: string) => (start <= monthEnd && end >= monthStart
+        ? label
+        : fill(t.undo.offMonth, {label, m: Number(start.slice(5, 7)), y: start.slice(0, 4)}));
+
+    /** Sends the inverse of `e`; resolves the settled entry (new version / id) and the task's dates, or null (dropped). */
+    async function applyInverse(e: UndoEntry, dir: Dir): Promise<{entry: UndoEntry; start: string; end: string} | null> {
+        const inv = inverse(e, dir);
+        const got: {row?: Task} = {};
+        const ack = (row: Task) => {
+            store.apply({kind: 'ack', id: row.id, row});
+            got.row = row;
+        };
+        switch (inv.op) {
+            case 'update': {
+                const {cut_code, links, ...rest} = inv.fields;
+                const patch: TaskPatch = {...rest, ...(cut_code === undefined ? {} : {cut_code}), ...(links === undefined ? {} : {links: sanitizeLinks(links)})};
+                const cutId = cut_code === undefined ? undefined : cutList.find((c) => c.code === cut_code)?.id;
+                const display: Partial<Task> = {...rest, ...(links === undefined ? {} : {links}), ...(cutId ? {cut_id: cutId} : {})};
+                const ok = await commit(e.id, e.version, {patch: display}, (v) => updateTask({id: e.id, expected_version: v, patch}), (row) => {
+                    ack(row);
+                    if (!cuts.has(row.cut_id)) requestRefresh();
+                }, {typeId: patch.work_type_id ?? store.get().entries.get(e.id)?.row.work_type_id, cut: cut_code !== undefined, expected: e.version, undo: true});
+                return ok && got.row ? {entry: {...e, version: got.row.version}, start: got.row.start_date, end: got.row.end_date} : null;
+            }
+            case 'move': {
+                if (e.kind !== 'move') return null;
+                const {placement, holder, moveAdjustments} = inv;
+                if (moveAdjustments) {
+                    // proceed only if the holder's open rows for the stage are exactly the copies the last move made
+                    let rows = null;
+                    try {
+                        rows = (await getBrowserClient().from('tracker_pay_adjustments')
+                            .select('id, staff_id, cut_id, work_type_id, amount, reverses_id, batch_id')
+                            .eq('project_id', project.id).eq('cut_id', e.cut_id).eq('work_type_id', e.work_type_id).eq('staff_id', holder)).data;
+                    } catch {
+                        // network failure → generic message below
+                    }
+                    if (!rows) {
+                        setNotice(common.error.generic);
+                        return null;
+                    }
+                    if (!payUnchanged(rows, {staff_id: holder, cut_id: e.cut_id, work_type_id: e.work_type_id}, e.opId)) {
+                        setNotice(t.undo.payChanged);
+                        return null;
+                    }
+                }
+                const op_id = crypto.randomUUID();
+                const reason = fill(t.undo.moveReason, {...codes(e.cut_id, e.work_type_id), name: staffNames.get(placement.staff_id) ?? ''});
+                const ok = await commit(e.id, e.version, {patch: {...placement}},
+                    (v) => moveTask({id: e.id, expected_version: v, ...placement, move_adjustments: moveAdjustments, op_id, reason}),
+                    ack, {typeId: e.work_type_id, expected: e.version, undo: true});
+                return ok && got.row ? {entry: {...e, version: got.row.version, opId: op_id}, start: got.row.start_date, end: got.row.end_date} : null;
+            }
+            case 'delete': {
+                if (e.kind !== 'presence') return null;
+                if (selectedId === e.id) setSelectedId(null);
+                const ok = await commit(e.id, e.version, {patch: {}, hide: true}, (v) => deleteTask({id: e.id, expected_version: v}),
+                    () => store.apply({kind: 'ownDelete', id: e.id}), {expected: e.version, undo: true});
+                return ok ? {entry: e, start: e.snapshot.start_date, end: e.snapshot.end_date} : null;
+            }
+            case 'create': {
+                // re-create (new id), then restore progress/links when they differ from the DB defaults (0, [])
+                const s = inv.snapshot;
+                const r = await createTask({
+                    project_id: s.project_id, staff_id: s.staff_id, work_type_id: s.work_type_id, cut_code: s.cut_code,
+                    start_date: s.start_date, end_date: s.end_date, ...(s.budget === null ? {} : {budget: s.budget}),
+                }).catch(() => ({ok: false, error: 'network'}) as const);
+                if (!r.ok) {
+                    setNotice(failText(r, {typeId: s.work_type_id, cut: true}));
+                    return null;
+                }
+                const {task, cut} = r.data;
+                store.apply({kind: 'ack', id: task.id, row: task});
+                setCuts((m) => new Map(m).set(cut.id, cut));
+                setUndo((st) => remap(st, e.id, task.id, task.version));
+                let version = task.version;
+                const links = sanitizeLinks(s.links);
+                if (s.progress !== 0 || links.length > 0) {
+                    // failure: the banner only; the re-created task stays recorded at its real version
+                    const ok = await commit(task.id, version, {patch: {progress: s.progress, links: s.links}},
+                        (v) => updateTask({id: task.id, expected_version: v, patch: {progress: s.progress, links}}), ack, {expected: version});
+                    if (ok && got.row) {
+                        version = got.row.version;
+                        setUndo((st) => rebase(st, task.id, version));
+                    }
+                }
+                return {entry: {...e, id: task.id, version}, start: task.start_date, end: task.end_date};
+            }
+        }
+    }
+
+    async function runUndo(dir: Dir) {
+        if (blocked()) return;
+        const taken = take(getUndo(), dir);
+        if (!taken) return;
+        undoBusyRef.current = true;
+        setUndoBusy(true);
+        bumpInFlight(project.id, 1);
+        try {
+            setUndo(() => taken.state); // the entry is dropped unless it settles
+            setNotice(null);
+            const done = await applyInverse(taken.entry, dir);
+            if (!done) return;
+            setUndo((s) => settled(s, dir, done.entry, taken.gen));
+            const back: Dir = dir === 'undo' ? 'redo' : 'undo';
+            setToast({
+                text: fill(dir === 'undo' ? t.undo.undone : t.undo.redone, {label: toastLabel(done.entry.label, done.start, done.end)}),
+                action: {label: t.undo[back], onClick: () => runUndoRef.current(back)},
+            });
+        } finally {
+            undoBusyRef.current = false;
+            setUndoBusy(false);
+            bumpInFlight(project.id, -1);
+        }
+    }
+    useEffect(() => {
+        runUndoRef.current = (dir) => void runUndo(dir);
+    });
+
+    // Ctrl/Cmd+Z = undo, Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y = redo; fields, dialogs and popovers keep their own undo
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            if (!(e.ctrlKey || e.metaKey) || e.altKey || e.repeat || e.isComposing || e.defaultPrevented) return;
+            const dir: Dir | null = e.code === 'KeyZ' ? (e.shiftKey ? 'redo' : 'undo') : e.code === 'KeyY' ? 'redo' : null;
+            if (!dir) return;
+            const el = e.target instanceof HTMLElement ? e.target : null;
+            if (el?.isContentEditable) return;
+            if (el?.closest('input, textarea, select, [aria-modal="true"], [role=listbox], .mantine-Popover-dropdown')) return;
+            if (blocked()) return;
+            e.preventDefault();
+            void runUndo(dir);
+        };
+        window.addEventListener('keydown', onKey, true);
+        return () => window.removeEventListener('keydown', onKey, true);
+    });
 
     // "+": the 1st of the month, or today when today is in the viewed month
     const openAdd = (staffId: string) => {
@@ -466,6 +705,23 @@ export default function GanttBoard(props: Props) {
                 <div className={styles.card}>
                     <div className={styles.topBar}>
                         <MonthNav month={skeleton ? pendingMonth : month} onNavigate={navigate}/>
+                        <ActionIcon.Group>
+                            {/* span wrappers: a disabled button gets no pointer events, the hint still shows */}
+                            <Tooltip label={t.undo.undoHint}>
+                                <span>
+                                    <ActionIcon variant="subtle" color="gray" aria-label={t.undo.undo} disabled={undoBlocked || undo.undo.length === 0} onClick={() => void runUndo('undo')}>
+                                        <IconArrowBackUp size={18}/>
+                                    </ActionIcon>
+                                </span>
+                            </Tooltip>
+                            <Tooltip label={t.undo.redoHint}>
+                                <span>
+                                    <ActionIcon variant="subtle" color="gray" aria-label={t.undo.redo} disabled={undoBlocked || undo.redo.length === 0} onClick={() => void runUndo('redo')}>
+                                        <IconArrowForwardUp size={18}/>
+                                    </ActionIcon>
+                                </span>
+                            </Tooltip>
+                        </ActionIcon.Group>
                         <Legend workTypes={workTypes}/>
                         {presence.people.length > 0 && (
                             <Avatar.Group className={styles.presence} aria-label={t.presence.label}>
@@ -694,6 +950,8 @@ export default function GanttBoard(props: Props) {
                     onConfirm={confirmMove}
                 />
             )}
+            {/* closes only the toast it was opened for: a toast button may already have set the next one */}
+            <UndoToast toast={toast} onClose={() => setToast((cur) => (cur === toast ? null : cur))}/>
         </section>
     );
 }

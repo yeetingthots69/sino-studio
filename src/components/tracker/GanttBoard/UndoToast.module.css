@@ -1,0 +1,8 @@
+/* Above the board and shell header (100), below Mantine modals (200). */
+.region {
+    position: fixed;
+    left: 16px;
+    bottom: 16px;
+    z-index: 150;
+    width: min(360px, calc(100vw - 32px));
+}
