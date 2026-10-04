@@ -8,7 +8,7 @@ export type Fields = Partial<Pick<Task, 'start_date' | 'end_date' | 'progress' |
 export type Placement = {staff_id: string; start_date: string; end_date: string};
 export type TaskSnapshot = {
     project_id: string; staff_id: string; work_type_id: string; cut_code: string; budget: number | null;
-    start_date: string; end_date: string; progress: number; links: Task['links'];
+    start_date: string; end_date: string; progress: number; links: Task['links']; is_fix: boolean;
 };
 
 export type UndoEntry =

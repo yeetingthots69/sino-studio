@@ -2,8 +2,8 @@ import createAdminClient from '@/utils/supabase/admin';
 import {addDays, nowICT} from '@/components/tracker/dates';
 import {assignmentMail, reminderMail, type Mail} from '@/components/tracker/emails/TrackerEmails';
 import {
-    bearerOk, chunk, completionPatch, digestKey, payloadOk, planDigest, REJECTED_PAYLOAD, reminderDue, reminderKey, reminderTargets,
-    SEND_GAP_MS, shouldRetry, type MailStaff, type MailTask, type RemovedMailTask,
+    bearerOk, chunk, completionPatch, digestKey, parseRemoved, payloadOk, planDigest, REJECTED_PAYLOAD, reminderDue, reminderKey,
+    reminderTargets, SEND_GAP_MS, shouldRetry, toMailTask, type MailStaff, type TaskRow,
 } from '@/lib/tracker/mailPlan';
 import {deliver, mailFrom, render, sleep, type MailPayload} from '@/services/trackerMail';
 
@@ -20,26 +20,7 @@ const json = (body: unknown, status = 200) => Response.json(body, {status, heade
 
 type Db = ReturnType<typeof createAdminClient>;
 
-const TASK_COLS = 'id, staff_id, start_date, end_date, progress, project:tracker_projects(name, archived_at), cut:tracker_cuts!tracker_tasks_cut_fk(code), type:tracker_work_types!tracker_tasks_type_fk(code, label)';
-type TaskRow = {
-    id: string; staff_id: string; start_date: string; end_date: string; progress: number;
-    project: {name: string; archived_at: string | null} | null;
-    cut: {code: string} | null;
-    type: {code: string; label: string} | null;
-};
-const toMailTask = (t: TaskRow): MailTask => ({
-    id: t.id, staff_id: t.staff_id, start_date: t.start_date, end_date: t.end_date, progress: t.progress,
-    project_name: t.project?.name ?? '', project_archived: !!t.project?.archived_at,
-    cut_code: t.cut?.code ?? '', type_code: t.type?.code ?? '', type_label: t.type?.label ?? '',
-});
-
-const REMOVED_FIELDS = ['task_id', 'project_name', 'cut_code', 'type_code', 'type_label', 'start_date', 'end_date'] as const;
-/** Queue `removed` jsonb → snapshots; malformed entries are dropped. */
-const parseRemoved = (v: unknown): RemovedMailTask[] =>
-    Array.isArray(v)
-        ? v.filter((r): r is RemovedMailTask =>
-            !!r && typeof r === 'object' && REMOVED_FIELDS.every((k) => typeof (r as Record<string, unknown>)[k] === 'string'))
-        : [];
+const TASK_COLS = 'id, staff_id, start_date, end_date, progress, is_fix, project:tracker_projects(name, archived_at), cut:tracker_cuts!tracker_tasks_cut_fk(code), type:tracker_work_types!tracker_tasks_type_fk(code, label)';
 
 function fail(step: string, error: unknown): never {
     console.error(`[tracker-cron] ${step} failed:`, (error as {message?: string})?.message ?? error);

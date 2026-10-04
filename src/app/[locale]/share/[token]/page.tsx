@@ -44,7 +44,7 @@ export default async function SharePage({params, searchParams}: Props) {
             </header>
             <ScheduleGrid
                 dto={dto}
-                labels={t}
+                labels={{...t, fix: dict.tracker.board.fix}}
                 monthLabel={t.month.replace('{m}', String(Number(month.slice(5)))).replace('{y}', month.slice(0, 4))}
                 prevHref={href(addDays(start, -1).slice(0, 7))}
                 nextHref={href(addDays(end, 1).slice(0, 7))}

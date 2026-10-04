@@ -27,7 +27,7 @@ import styles from './CutsView.module.css';
 export type Cut = Tables<'tracker_cuts'>;
 export type WorkType = Tables<'tracker_work_types'>;
 export type Task = Pick<Tables<'tracker_tasks'>,
-    'id' | 'project_id' | 'cut_id' | 'work_type_id' | 'staff_id' | 'progress' | 'start_date' | 'end_date'>;
+    'id' | 'project_id' | 'cut_id' | 'work_type_id' | 'staff_id' | 'progress' | 'start_date' | 'end_date' | 'is_fix'>;
 export type Staff = Pick<Tables<'tracker_staff'>, 'id' | 'name' | 'email' | 'archived_at'>;
 export type Adjustment = Pick<Tables<'tracker_pay_adjustments'>,
     'id' | 'batch_id' | 'project_id' | 'cut_id' | 'work_type_id' | 'staff_id' | 'amount' | 'reason' | 'reverses_id' | 'created_by' | 'created_at'>;
@@ -77,7 +77,12 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
     const cutCodes = new Map(cuts.map((c) => [c.id, c.code]));
     const staffById = new Map(staff.map((s) => [s.id, s]));
     const activeStaff = staff.filter((s) => !s.archived_at);
-    const taskByStage = new Map(tasks.map((x) => [stageKey(x.cut_id, x.work_type_id), x]));
+    const taskByStage = new Map(tasks.filter((x) => !x.is_fix).map((x) => [stageKey(x.cut_id, x.work_type_id), x]));
+    const fixCount = new Map<string, number>();
+    for (const x of tasks) {
+        const k = stageKey(x.cut_id, x.work_type_id);
+        if (x.is_fix) fixCount.set(k, (fixCount.get(k) ?? 0) + 1);
+    }
     const lines = payLines(tasks, cuts, workTypes);
     const lineByTask = new Map(lines.map((l) => [l.task_id, l]));
     const adjByStage = new Map<string, Adjustment[]>();
@@ -98,6 +103,8 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                 return orderConflictText(board, r.detail, typeId, tasks, cutCodes, typeById, rule);
             case 'duplicate':
                 return board.duplicateStage;
+            case 'fix_no_stage':
+                return board.fixNoStageError;
             case 'in_use':
                 return t.cutInUse;
             case 'invalid':
@@ -299,6 +306,7 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                                                             >
                                                                 <span className={styles.cellHead}>
                                                                     <span className={styles.code}>{w.code}</span>
+                                                                    {fixCount.has(key) && <span className={styles.fixCount}>{fill(t.fixCount, {n: fixCount.get(key)!})}</span>}
                                                                     {state === 'done' && <span className={styles.check}>{t.done}</span>}
                                                                 </span>
                                                                 <span className={styles.badge}>{formatVnd(lineByTask.get(task.id)?.amount ?? 0)}</span>

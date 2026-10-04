@@ -2,8 +2,8 @@ import {describe, expect, it} from 'vitest';
 import {orderConflict, typeRule, type StageTask} from '../pipeline';
 
 const ORDER = typeRule([{id: 'LO', sort_order: 10, overlaps_prev: false}, {id: 'GE', sort_order: 20, overlaps_prev: false}, {id: 'DS', sort_order: 30, overlaps_prev: false}]);
-const t = (id: string, type: string, start: string, end: string, cut = 'c1'): StageTask =>
-    ({id, cut_id: cut, work_type_id: type, start_date: start, end_date: end});
+const t = (id: string, type: string, start: string, end: string, cut = 'c1', is_fix = false): StageTask =>
+    ({id, cut_id: cut, work_type_id: type, start_date: start, end_date: end, is_fix});
 const hit = (stages: StageTask[], rule: ReturnType<typeof typeRule>, c: StageTask) => orderConflict(stages, rule, c)?.task ?? null;
 
 describe('orderConflict', () => {
@@ -37,6 +37,15 @@ describe('orderConflict', () => {
         expect(hit([t('x', 'LO', '2026-10-01', '2026-10-09', 'c2')], ORDER, t('ge', 'GE', '2026-10-05', '2026-10-06'))).toBeNull();
         expect(hit([t('x', 'ZZ', '2026-10-01', '2026-10-09')], ORDER, t('ge', 'GE', '2026-10-05', '2026-10-06'))).toBeNull();
         expect(hit([lo], ORDER, t('z', 'ZZ', '2026-10-01', '2026-10-09'))).toBeNull();
+    });
+
+    it('fix tasks (v2.6): a fix candidate never conflicts; a fix row never blocks', () => {
+        const ge = t('ge', 'GE', '2026-10-06', '2026-10-08');
+        expect(orderConflict([lo, ge], ORDER, t('fx', 'LO', '2026-10-07', '2026-10-09', 'c1', true))).toBeNull();
+        expect(orderConflict([lo, ge], ORDER, t('fx', 'GE', '2026-10-01', '2026-10-01', 'c1', true))).toBeNull();
+        const loFix = t('fx', 'LO', '2026-10-06', '2026-10-20', 'c1', true);
+        expect(orderConflict([lo, loFix], ORDER, ge)).toBeNull();
+        expect(orderConflict([loFix], ORDER, t('ds', 'DS', '2026-10-10', '2026-10-12'))).toBeNull();
     });
 });
 

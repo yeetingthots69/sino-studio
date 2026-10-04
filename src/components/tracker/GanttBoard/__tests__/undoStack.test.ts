@@ -8,7 +8,7 @@ const upd = (id: string, version = 1): UndoEntry =>
     ({kind: 'update', id, version, before: {progress: 0}, after: {progress: 50}, label: id});
 
 const snapshot: TaskSnapshot = {project_id: 'p', staff_id: 's1', work_type_id: 'w', cut_code: 'C01', budget: null,
-    start_date: '2026-10-01', end_date: '2026-10-03', progress: 0, links: []};
+    start_date: '2026-10-01', end_date: '2026-10-03', progress: 0, links: [], is_fix: false};
 
 const move: Extract<UndoEntry, {kind: 'move'}> = {kind: 'move', id: 't', version: 1, moveAdjustments: true, opId: 'op', cut_id: 'c', work_type_id: 'w',
     before: {staff_id: 'a', start_date: '2026-10-01', end_date: '2026-10-02'},

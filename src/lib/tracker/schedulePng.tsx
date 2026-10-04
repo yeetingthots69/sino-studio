@@ -3,7 +3,7 @@ import {readFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {ImageResponse} from 'next/og';
 import {addDays, assignLanes, clampToMonth, isWeekend, monthRange} from '@/components/tracker/dates';
-import type {ShareDto} from './shareShape';
+import {fixSuffix, FIX_STRIPE, type ShareDto} from './shareShape';
 
 // Be Vietnam Pro (OFL, fonts/OFL.txt): Vietnamese coverage. Traced via outputFileTracingIncludes.
 // Loaded on first render and memoised; a failed read is not cached, so the next request retries.
@@ -72,7 +72,7 @@ export async function renderSchedulePng(dto: ShareDto): Promise<ImageResponse> {
                             {tasks.map((t) => {
                                 const {colStart, colEnd} = clampToMonth(t, dto.month);
                                 const color = types.get(t.work_type_id)?.color ?? '#888888';
-                                const label = `${cuts.get(t.cut_id)?.code ?? ''} · ${types.get(t.work_type_id)?.code ?? ''}${t.progress === 100 ? ' · 100%' : ''}`;
+                                const label = `${cuts.get(t.cut_id)?.code ?? ''} · ${types.get(t.work_type_id)?.code ?? ''}${fixSuffix(t)}${t.progress === 100 ? ' · 100%' : ''}`;
                                 return (
                                     <div
                                         key={t.id}
@@ -88,7 +88,7 @@ export async function renderSchedulePng(dto: ShareDto): Promise<ImageResponse> {
                                             borderRadius: 3,
                                             overflow: 'hidden',
                                             fontSize: 11,
-                                            background: `linear-gradient(90deg, ${color} ${t.progress}%, ${color}55 ${t.progress}%)`,
+                                            background: `${t.is_fix ? `${FIX_STRIPE}, ` : ''}linear-gradient(90deg, ${color} ${t.progress}%, ${color}55 ${t.progress}%)`,
                                         }}
                                     >
                                         {label}

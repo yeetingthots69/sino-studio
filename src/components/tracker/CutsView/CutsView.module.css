@@ -209,6 +209,12 @@ button.cell:focus-visible {
     color: var(--dim);
 }
 
+.fixCount {
+    color: var(--dim);
+    font-weight: 500;
+    text-transform: none;
+}
+
 .check {
     margin-left: auto;
     background: var(--c);

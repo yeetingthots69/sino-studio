@@ -2,10 +2,10 @@
 import type {CSSProperties} from 'react';
 import Link from 'next/link';
 import {addDays, assignLanes, clampToMonth, isWeekend, monthRange} from '@/components/tracker/dates';
-import {dateRange, type ShareDto, type ShareLink} from '@/lib/tracker/shareShape';
+import {dateRange, FIX_STRIPE, type ShareDto, type ShareLink} from '@/lib/tracker/shareShape';
 import styles from './ScheduleGrid.module.css';
 
-type Labels = {member: string; details: string; noTasks: string; links: string; prevMonth: string; nextMonth: string};
+type Labels = {member: string; details: string; noTasks: string; links: string; prevMonth: string; nextMonth: string; fix: string};
 
 const LANE_H = 28;
 
@@ -22,7 +22,7 @@ export default function ScheduleGrid({dto, labels, monthLabel, prevHref, nextHre
     const dates = Array.from({length: days}, (_, i) => addDays(start, i));
     const types = new Map(dto.types.map((t) => [t.id, t]));
     const cuts = new Map(dto.cuts.map((c) => [c.id, c]));
-    const name = (t: ShareDto['tasks'][number]) => `${cuts.get(t.cut_id)?.code ?? ''} · ${types.get(t.work_type_id)?.code ?? ''}`;
+    const name = (t: ShareDto['tasks'][number]) => `${cuts.get(t.cut_id)?.code ?? ''} · ${types.get(t.work_type_id)?.code ?? ''}${t.is_fix ? ` · ${labels.fix}` : ''}`;
     const cols = {'--days': days} as CSSProperties;
 
     return (
@@ -70,7 +70,7 @@ export default function ScheduleGrid({dto, labels, monthLabel, prevHref, nextHre
                                                     left: `${((colStart - 1) / days) * 100}%`,
                                                     width: `${((colEnd - colStart + 1) / days) * 100}%`,
                                                     top: (lanes.get(t) ?? 0) * LANE_H + 4,
-                                                    background: `linear-gradient(90deg, ${color} ${t.progress}%, ${color}55 ${t.progress}%)`,
+                                                    background: `${t.is_fix ? `${FIX_STRIPE}, ` : ''}linear-gradient(90deg, ${color} ${t.progress}%, ${color}55 ${t.progress}%)`,
                                                 }}
                                             >
                                                 {name(t)}{t.progress === 100 ? ' ✓' : ''}

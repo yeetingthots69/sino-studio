@@ -38,3 +38,8 @@
     gap: 2px;
     font-size: 12px;
 }
+
+/* fix task: diagonal stripes in the stage colour over the tint (the progress fill draws above) */
+.fix {
+    background-image: repeating-linear-gradient(135deg, var(--stripe) 0 4px, transparent 4px 10px);
+}

@@ -443,6 +443,10 @@
             }
         },
         "board": {
+            "fix": "Fix",
+            "fixSwitch": "Sửa công đoạn (Fix)",
+            "fixNoStage": "Cut này chưa có công đoạn nào để sửa",
+            "fixNoStageError": "Công đoạn cần sửa chưa có task",
             "kicker": "Lịch sản xuất",
             "title": "Lịch phân công Animator",
             "hint": "Bấm hoặc kéo trên ngày trống để tạo công việc. Kéo thanh để dời ngày, kéo hai mép để đổi độ dài, chọn một thanh để sửa.",
@@ -553,6 +557,7 @@
             "people": "Nhân sự"
         },
         "cuts": {
+            "fixCount": "{n} fix",
             "kicker": "Dự án",
             "title": "Cut × công đoạn",
             "hint": "Bấm vào ô có màu để xem thù lao. Ngân sách và tỉ lệ thù lao sửa trực tiếp được.",

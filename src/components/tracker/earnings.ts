@@ -18,17 +18,28 @@ export function parseMonthFilter(raw: unknown, fallback: MonthFilter): MonthFilt
 }
 
 /**
- * Effective month per adjustment id: the stage task's end_date month when that task (same cut + type) exists,
- * else the created_at month in Asia/Ho_Chi_Minh; a reversal takes the effective month of the entry it reverses.
+ * Effective month per adjustment id: the end_date month of the adjustment staff's latest fix on that stage (v2.6 D9),
+ * else the stage task's (non-fix, same cut + type) end_date month, else the created_at month in Asia/Ho_Chi_Minh;
+ * a reversal takes the effective month of the entry it reverses.
  */
 export function effectiveMonths(
-    tasks: Pick<Task, 'cut_id' | 'work_type_id' | 'end_date'>[],
+    tasks: Pick<Task, 'cut_id' | 'work_type_id' | 'staff_id' | 'end_date' | 'is_fix'>[],
     adjustments: Adjustment[],
 ): Map<string, string> {
-    const taskMonth = new Map(tasks.map((t) => [`${t.cut_id}:${t.work_type_id}`, String(t.end_date).slice(0, 7)]));
+    const stageMonth = new Map<string, string>();
+    const fixMonth = new Map<string, string>(); // 'cut:type:staff' → month of that staff's latest fix end
+    for (const t of tasks) {
+        const month = String(t.end_date).slice(0, 7);
+        if (!t.is_fix) stageMonth.set(`${t.cut_id}:${t.work_type_id}`, month);
+        else {
+            const key = `${t.cut_id}:${t.work_type_id}:${t.staff_id}`;
+            if (month > (fixMonth.get(key) ?? '')) fixMonth.set(key, month);
+        }
+    }
     const byId = new Map(adjustments.map((a) => [a.id, a]));
     const own = (a: Adjustment) =>
-        taskMonth.get(`${a.cut_id}:${a.work_type_id}`) ?? defaultMonth(new Date(a.created_at));
+        fixMonth.get(`${a.cut_id}:${a.work_type_id}:${a.staff_id}`)
+        ?? stageMonth.get(`${a.cut_id}:${a.work_type_id}`) ?? defaultMonth(new Date(a.created_at));
     return new Map(adjustments.map((a) => {
         const original = a.reverses_id ? byId.get(a.reverses_id) : undefined;
         return [a.id, own(original ?? a)];

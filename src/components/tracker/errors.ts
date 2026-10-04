@@ -7,10 +7,12 @@ export const PROJECT_IMMUTABLE = 'project_immutable';
 export const SHARE_REVOKED = 'share_revoked'; // migration tracker_v2_shares_token
 export const STAFF_ARCHIVED = 'staff_archived'; // migration tracker_v23_move_task
 export const OVERLAP_IN_USE = 'overlap_in_use'; // migration tracker_v25_overlap
+export const FIX_NO_STAGE = 'fix_no_stage'; // migration tracker_v26_fix
+export const FIX_IMMUTABLE = 'fix_immutable'; // migration tracker_v26_fix
 
 export type TrackerError =
     | 'network' | 'unauthenticated' | 'invalid' | 'duplicate' | 'not_found'
-    | 'in_use' | 'order_conflict' | 'overlap_in_use' | 'pct_total' | 'staff_archived' | 'generic';
+    | 'in_use' | 'order_conflict' | 'overlap_in_use' | 'pct_total' | 'staff_archived' | 'fix_no_stage' | 'generic';
 
 /** What a 23503 (foreign key) means: unknown id on insert/update, still referenced on delete. */
 export type FkError = 'invalid' | 'in_use';
@@ -26,6 +28,8 @@ const P0001: Record<string, TrackerError> = {
     [SHARE_REVOKED]: 'invalid',
     [STAFF_ARCHIVED]: 'staff_archived',
     [OVERLAP_IN_USE]: 'overlap_in_use',
+    [FIX_NO_STAGE]: 'fix_no_stage',
+    [FIX_IMMUTABLE]: 'invalid',
 };
 const BY_CODE: Record<string, TrackerError> = {
     '23505': 'duplicate',

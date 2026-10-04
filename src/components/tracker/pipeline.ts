@@ -1,6 +1,6 @@
 import type {ISODate} from './dates';
 
-export type StageTask = {id: string; cut_id: string; work_type_id: string; start_date: ISODate; end_date: ISODate};
+export type StageTask = {id: string; cut_id: string; work_type_id: string; start_date: ISODate; end_date: ISODate; is_fix: boolean};
 
 /** Project type order: sort order, direct predecessor (by sort_order) and the overlaps_prev flags. */
 export type TypeRule = {order: Map<string, number>; prev: Map<string, string | null>; overlaps: Set<string>};
@@ -26,15 +26,16 @@ export type OrderConflict = {task: StageTask; reason: 'earlier' | 'later' | 'ear
  * later.start >= earlier.start. Returns the offending task with the lowest type order (SQL
  * `order by sort_order limit 1`) or null. 'earlier'/'later' = strict pair, 'early' = the candidate starts
  * before its predecessor, 'late' = the candidate starts after its overlapping successor. The candidate's
- * own id is skipped; types without an order entry are ignored.
+ * own id is skipped; types without an order entry are ignored. Fix tasks (v2.6) are outside the rule: a fix
+ * candidate never conflicts and fix rows never block.
  */
 export function orderConflict(stages: StageTask[], rule: TypeRule, candidate: StageTask): OrderConflict | null {
     const own = rule.order.get(candidate.work_type_id);
-    if (own === undefined) return null;
+    if (own === undefined || candidate.is_fix) return null;
     let best: OrderConflict | null = null;
     let bestOrder = Infinity;
     for (const t of stages) {
-        if (t.id === candidate.id || t.cut_id !== candidate.cut_id) continue;
+        if (t.id === candidate.id || t.is_fix || t.cut_id !== candidate.cut_id) continue;
         const o = rule.order.get(t.work_type_id);
         if (o === undefined || o >= bestOrder || o === own) continue;
         let reason: OrderConflict['reason'] | null;

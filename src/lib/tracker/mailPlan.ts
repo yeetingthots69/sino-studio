@@ -15,6 +15,7 @@ export type MailTask = {
     cut_code: string;
     type_code: string;
     type_label: string;
+    is_fix: boolean;
 };
 /** Snapshot of a task moved away from the recipient (queue column `removed`). */
 export type RemovedMailTask = {
@@ -25,7 +26,33 @@ export type RemovedMailTask = {
     type_label: string;
     start_date: ISODate;
     end_date: ISODate;
+    is_fix: boolean;
 };
+
+/** Row of the worker's task query (cron `TASK_COLS`). */
+export type TaskRow = {
+    id: string; staff_id: string; start_date: string; end_date: string; progress: number; is_fix: boolean;
+    project: {name: string; archived_at: string | null} | null;
+    cut: {code: string} | null;
+    type: {code: string; label: string} | null;
+};
+export const toMailTask = (t: TaskRow): MailTask => ({
+    id: t.id, staff_id: t.staff_id, start_date: t.start_date, end_date: t.end_date, progress: t.progress,
+    project_name: t.project?.name ?? '', project_archived: !!t.project?.archived_at,
+    cut_code: t.cut?.code ?? '', type_code: t.type?.code ?? '', type_label: t.type?.label ?? '', is_fix: t.is_fix,
+});
+
+const REMOVED_FIELDS = ['task_id', 'project_name', 'cut_code', 'type_code', 'type_label', 'start_date', 'end_date'] as const;
+/** Queue `removed` jsonb → snapshots; malformed entries are dropped; `is_fix` missing (pre-v2.6 rows) or non-true ⇒ false. */
+export const parseRemoved = (v: unknown): RemovedMailTask[] =>
+    Array.isArray(v)
+        ? v.flatMap((r) => {
+            const o = (r ?? {}) as Record<string, unknown>;
+            return r && typeof r === 'object' && REMOVED_FIELDS.every((k) => typeof o[k] === 'string')
+                ? [{...(o as Omit<RemovedMailTask, 'is_fix'>), is_fix: o.is_fix === true}]
+                : [];
+        })
+        : [];
 export type NoticeRow = {staff_id: string; cycle_id: string; generation: number; task_ids: string[]; removed: RemovedMailTask[]};
 export type Recipient = MailStaff & {email: string};
 

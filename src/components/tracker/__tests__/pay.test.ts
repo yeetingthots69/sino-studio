@@ -24,7 +24,7 @@ describe('pay', () => {
 
     it('payLines + staffTotals', () => {
         const task = (id: string, staff: string, type: string, progress: number) =>
-            ({id, project_id: 'p', cut_id: 'c', work_type_id: type, staff_id: staff, progress, end_date: '2026-10-05'});
+            ({id, project_id: 'p', cut_id: 'c', work_type_id: type, staff_id: staff, progress, end_date: '2026-10-05', is_fix: false});
         const lines = payLines(
             [task('a', 's1', 'LO', 100), task('b', 's1', 'GE', 50), task('x', 's2', 'NOPE', 100)],
             [{id: 'c', budget: 1_000_000, pay_split: null}],
@@ -42,7 +42,7 @@ describe('pay', () => {
 
     it('a cut split overrides the type defaults; types it omits get 0', () => {
         const task = (id: string, cut: string, type: string) =>
-            ({id, project_id: 'p', cut_id: cut, work_type_id: type, staff_id: 's', progress: 0, end_date: '2026-10-05'});
+            ({id, project_id: 'p', cut_id: cut, work_type_id: type, staff_id: 's', progress: 0, end_date: '2026-10-05', is_fix: false});
         const types = [{id: 'LO', pay_pct: 30}, {id: 'GE', pay_pct: 30}, {id: 'DO', pay_pct: 40}];
         const cuts = [
             {id: 'c1', budget: 1_000_000, pay_split: null},
@@ -57,6 +57,17 @@ describe('pay', () => {
         expect(lines.map((l) => l.amount)).toEqual([300_000, 300_000, 400_000, 300_000, 200_000, 500_000, 500_000, 500_000, 0]);
         expect(stagePct(cuts[1], types[1])).toBe(20);
         expect(stagePct(cuts[0], types[1])).toBe(30);
+    });
+
+    it('payLines: a fix (v2.6) emits no line; totals equal the data without it', () => {
+        const base = {project_id: 'p', cut_id: 'c', work_type_id: 'LO', progress: 100, end_date: '2026-10-05'};
+        const stage = {...base, id: 'lo', staff_id: 'A', is_fix: false};
+        const fix = {...base, id: 'fx', staff_id: 'B', is_fix: true};
+        const cuts = [{id: 'c', budget: 1_000_000, pay_split: null}];
+        const types = [{id: 'LO', pay_pct: 30}];
+        const withFix = payLines([stage, fix], cuts, types);
+        expect(withFix.map((l) => l.task_id)).toEqual(['lo']);
+        expect(staffTotals(withFix, [])).toEqual(staffTotals(payLines([stage], cuts, types), []));
     });
 
     describe('movableAdjustments', () => {

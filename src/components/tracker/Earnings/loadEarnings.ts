@@ -15,7 +15,7 @@ export default async function loadEarnings(projectId?: string) {
             return projectId ? q.eq('id', projectId) : q;
         }),
         all(() => scoped(supabase.from('tracker_tasks')
-            .select('id, project_id, cut_id, work_type_id, staff_id, progress, start_date, end_date'))),
+            .select('id, project_id, cut_id, work_type_id, staff_id, progress, start_date, end_date, is_fix'))),
         all(() => scoped(supabase.from('tracker_cuts').select('id, project_id, code, budget, pay_split'))),
         all(() => scoped(supabase.from('tracker_work_types').select('id, project_id, code, label, color, pay_pct'))),
         all(() => scoped(supabase.from('tracker_pay_adjustments')

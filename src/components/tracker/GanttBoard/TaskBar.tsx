@@ -44,6 +44,8 @@ export default function TaskBar({task, cutCode, workType, month, lane, dayWidth,
     const done = task.progress === 100;
     const color = done ? DONE_COLOR : (workType?.color ?? '#888888');
     const code = workType?.code ?? '';
+    // fix rows: "LO · Fix" wherever the type code shows
+    const typeText = task.is_fix ? `${code} · ${t.fix}` : code;
     const {colStart, colEnd, clippedStart, clippedEnd} = clampToMonth(preview ?? task, month);
     const narrow = colEnd - colStart + 1 < 2;
     const lifted = dropStaffId !== null;
@@ -51,7 +53,7 @@ export default function TaskBar({task, cutCode, workType, month, lane, dayWidth,
 
     const card = (
         <div className={local.card}>
-            <b>{cutCode} · {code}{workType?.label ? ` ${workType.label}` : ''}</b>
+            <b>{cutCode} · {code}{workType?.label ? ` ${workType.label}` : ''}{task.is_fix ? ` · ${t.fix}` : ''}</b>
             <span>{dm(task.start_date)} – {dm(task.end_date)} · {fill(days === 1 ? t.hoverDay : t.hoverDays, {n: days})}</span>
             <span>{t.hoverProgress}: {task.progress}%</span>
             {staffName && <span>{t.hoverAssignee}: {staffName}</span>}
@@ -69,7 +71,7 @@ export default function TaskBar({task, cutCode, workType, month, lane, dayWidth,
             {/* Tooltip merges its reference handlers with these (floating-ui calls both) and forwards its ref here */}
             <button
                 type="button"
-                className={`${styles.bar} ${selected ? styles.selected : ''} ${preview || lifted ? styles.dragging : ''} ${editor ? styles.editing : ''} ${narrow ? local.narrow : ''} ${lifted ? local.lifted : ''}`}
+                className={`${styles.bar} ${selected ? styles.selected : ''} ${preview || lifted ? styles.dragging : ''} ${editor ? styles.editing : ''} ${narrow ? local.narrow : ''} ${lifted ? local.lifted : ''} ${task.is_fix ? local.fix : ''}`}
                 onClick={() => {
                     if (wasDrag()) return;
                     onSelect();
@@ -78,7 +80,7 @@ export default function TaskBar({task, cutCode, workType, month, lane, dayWidth,
                 aria-pressed={selected}
                 aria-label={fill(t.barLabel, {
                     name: cutCode,
-                    label: done ? `${code}, ${t.done}` : code,
+                    label: done ? `${typeText}, ${t.done}` : typeText,
                     s: Number(task.start_date.slice(8)),
                     e: Number(task.end_date.slice(8)),
                 })}
@@ -87,7 +89,8 @@ export default function TaskBar({task, cutCode, workType, month, lane, dayWidth,
                     // a preview dragged fully outside the month collapses to nothing
                     width: Math.max(0, (colEnd - colStart + 1) * dayWidth - 4),
                     top: lane * LANE_H + 4,
-                    background: color + '33',
+                    backgroundColor: color + '33',
+                    ...({'--stripe': color + '66'} as CSSProperties),
                     borderColor: color,
                     borderTopLeftRadius: clippedStart ? 0 : undefined,
                     borderBottomLeftRadius: clippedStart ? 0 : undefined,
@@ -101,12 +104,12 @@ export default function TaskBar({task, cutCode, workType, month, lane, dayWidth,
                 {narrow ? (
                     <span className={`${styles.barText} ${local.lines}`}>
                         <b>{cutCode}</b>
-                        <span>{code}</span>
+                        <span>{typeText}</span>
                     </span>
                 ) : (
                     <span className={styles.barText}>
                         <span className={styles.grip} aria-hidden>⋮⋮</span>
-                        <b>{cutCode}</b> · {code}
+                        <b>{cutCode}</b> · {typeText}
                     </span>
                 )}
                 {/* edges clipped by the month bound are not handles */}

@@ -1,0 +1,147 @@
+{
+  "updatedAt": "2026-10-04T08:28:04.402Z",
+  "missions": [
+    {
+      "id": "session:c0725038-1c3b-4691-afb3-f0a2fe79a625:none",
+      "source": "session",
+      "name": "none",
+      "objective": "Session mission",
+      "createdAt": "2026-10-04T08:16:21.134Z",
+      "updatedAt": "2026-10-04T08:28:04.402Z",
+      "status": "done",
+      "workerCount": 4,
+      "taskCounts": {
+        "total": 4,
+        "pending": 0,
+        "blocked": 0,
+        "inProgress": 0,
+        "completed": 4,
+        "failed": 0
+      },
+      "agents": [
+        {
+          "name": "opus-executor:a21c991",
+          "role": "opus-executor",
+          "ownership": "a21c991d65e12474f",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-10-04T08:27:39.816Z"
+        },
+        {
+          "name": "opus-executor:a5240b7",
+          "role": "opus-executor",
+          "ownership": "a5240b7c78f8e0a9d",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-10-04T08:22:44.349Z"
+        },
+        {
+          "name": "opus-executor:af4bfe9",
+          "role": "opus-executor",
+          "ownership": "af4bfe90c73fb692d",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-10-04T08:27:20.333Z"
+        },
+        {
+          "name": "opus-executor:ac2c81a",
+          "role": "opus-executor",
+          "ownership": "ac2c81a601517331c",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-10-04T08:28:04.402Z"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "session-stop:a5514e61d37bc4310:2026-10-04T08:26:03.426Z",
+          "at": "2026-10-04T08:26:03.426Z",
+          "kind": "completion",
+          "agent": "opus-executor:a21c991",
+          "detail": "completed",
+          "sourceKey": "session-stop:a5514e61d37bc4310"
+        },
+        {
+          "id": "session-stop:af4bfe90c73fb692d:2026-10-04T08:26:25.337Z",
+          "at": "2026-10-04T08:26:25.337Z",
+          "kind": "completion",
+          "agent": "opus-executor:af4bfe9",
+          "detail": "completed",
+          "sourceKey": "session-stop:af4bfe90c73fb692d"
+        },
+        {
+          "id": "session-start:af4bfe90c73fb692d:2026-10-04T08:26:32.486Z",
+          "at": "2026-10-04T08:26:32.486Z",
+          "kind": "update",
+          "agent": "opus-executor:af4bfe9",
+          "detail": "started opus-executor:af4bfe9",
+          "sourceKey": "session-start:af4bfe90c73fb692d"
+        },
+        {
+          "id": "session-stop:af620bf8d5c895773:2026-10-04T08:26:35.115Z",
+          "at": "2026-10-04T08:26:35.115Z",
+          "kind": "completion",
+          "agent": "opus-executor:a21c991",
+          "detail": "completed",
+          "sourceKey": "session-stop:af620bf8d5c895773"
+        },
+        {
+          "id": "session-stop:af4bfe90c73fb692d:2026-10-04T08:27:02.504Z",
+          "at": "2026-10-04T08:27:02.504Z",
+          "kind": "completion",
+          "agent": "opus-executor:af4bfe9",
+          "detail": "completed",
+          "sourceKey": "session-stop:af4bfe90c73fb692d"
+        },
+        {
+          "id": "session-stop:a8736903df6ce7c9c:2026-10-04T08:27:05.955Z",
+          "at": "2026-10-04T08:27:05.955Z",
+          "kind": "completion",
+          "agent": "opus-executor:a21c991",
+          "detail": "completed",
+          "sourceKey": "session-stop:a8736903df6ce7c9c"
+        },
+        {
+          "id": "session-stop:a5ae49c2450b0350e:2026-10-04T08:27:07.403Z",
+          "at": "2026-10-04T08:27:07.403Z",
+          "kind": "completion",
+          "agent": "opus-executor:a21c991",
+          "detail": "completed",
+          "sourceKey": "session-stop:a5ae49c2450b0350e"
+        },
+        {
+          "id": "session-stop:af4bfe90c73fb692d:2026-10-04T08:27:20.333Z",
+          "at": "2026-10-04T08:27:20.333Z",
+          "kind": "completion",
+          "agent": "opus-executor:af4bfe9",
+          "detail": "completed",
+          "sourceKey": "session-stop:af4bfe90c73fb692d"
+        },
+        {
+          "id": "session-stop:a6812e5ba3bab2d3e:2026-10-04T08:27:39.816Z",
+          "at": "2026-10-04T08:27:39.816Z",
+          "kind": "completion",
+          "agent": "opus-executor:a21c991",
+          "detail": "completed",
+          "sourceKey": "session-stop:a6812e5ba3bab2d3e"
+        },
+        {
+          "id": "session-stop:ac2c81a601517331c:2026-10-04T08:28:04.402Z",
+          "at": "2026-10-04T08:28:04.402Z",
+          "kind": "completion",
+          "agent": "opus-executor:ac2c81a",
+          "detail": "completed",
+          "sourceKey": "session-stop:ac2c81a601517331c"
+        }
+      ]
+    }
+  ]
+}

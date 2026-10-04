@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd \\\"/d/WORK/SINO STUDIO/sino-studio/src/components/tracker\\\" && python - <<'EOF'\\nimport re\\ndef sub(path, old, new, count=1):\\n    s=open(path,encoding='utf-8').read()\\n    assert s.coun...",
+  "error": "Exit code 49\nPython was not found; run without arguments to install from the Microsoft Store, or disable this shortcut from Settings > Apps > Advanced app settings > App execution aliases.",
+  "timestamp": "2026-10-04T08:20:34.964Z",
+  "retry_count": 1
+}

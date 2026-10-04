@@ -1,5 +1,6 @@
 import {buildIcs} from '@/components/tracker/ics';
 import {loadShareMember} from '@/lib/tracker/shareData';
+import {icsSummary} from '@/lib/tracker/shareShape';
 
 const NO_STORE = {'Cache-Control': 'private, no-store'};
 
@@ -12,7 +13,7 @@ export async function GET(_req: Request, ctx: {params: Promise<{token: string; s
         uid: `${t.id}@sinostudio.vn`,
         start: t.start_date,
         endInclusive: t.end_date,
-        summary: `${t.cut_code} · ${t.type_code}`,
+        summary: icsSummary(t),
         description: t.links.map((l) => `${l.label}: ${l.url}`).join('\n') || undefined,
         sequence: t.version,
         stamp: t.updated_at,

@@ -40,7 +40,7 @@ export default async function BoardPage({params, searchParams}: Props) {
         // stage index: every task of the project (order pre-checks, one-task-per-stage chips across months)
         selectAll(() => supabase
             .from('tracker_tasks')
-            .select('id, cut_id, work_type_id, staff_id, start_date, end_date, version')
+            .select('id, cut_id, work_type_id, staff_id, start_date, end_date, version, is_fix')
             .eq('project_id', projectId)),
         // active share links (ShareModal)
         supabase.from('tracker_shares').select('*').eq('project_id', projectId).is('revoked_at', null)

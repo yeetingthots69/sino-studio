@@ -390,6 +390,10 @@
             }
         },
         "board": {
+            "fix": "Fix",
+            "fixSwitch": "Fix a stage",
+            "fixNoStage": "This cut has no stage task to fix",
+            "fixNoStageError": "The stage to fix has no task",
             "kicker": "Production schedule",
             "title": "Animator assignments",
             "hint": "Click or drag on an empty day to create a task. Drag a bar to move it, drag its edges to change the length, select a bar to edit it.",
@@ -500,6 +504,7 @@
             "people": "People"
         },
         "cuts": {
+            "fixCount": "{n} fix",
             "kicker": "Project",
             "title": "Cuts × stages",
             "hint": "Click a coloured cell to see its pay. Budgets and pay splits are editable in place.",

@@ -6,7 +6,7 @@ export type ShareType = {id: string; code: string; label: string; color: string;
 export type ShareCut = {id: string; code: string; links: ShareLink[]};
 export type ShareTask = {
     id: string; staff_id: string; cut_id: string; work_type_id: string;
-    start_date: ISODate; end_date: ISODate; progress: number; links: ShareLink[];
+    start_date: ISODate; end_date: ISODate; progress: number; links: ShareLink[]; is_fix: boolean;
 };
 export type ShareDto = {
     project: {name: string};
@@ -19,8 +19,31 @@ export type ShareDto = {
 
 export type IcsTask = {
     id: string; cut_code: string; type_code: string; start_date: ISODate; end_date: ISODate;
-    links: ShareLink[]; version: number; updated_at: string;
+    links: ShareLink[]; version: number; updated_at: string; is_fix: boolean;
 };
+
+/** Suffix of a fix task's label ("C1 · LO · Fix"); empty for a stage task. */
+export const fixSuffix = (t: {is_fix: boolean}) => (t.is_fix ? ' · Fix' : '');
+/** Background layer drawn over a fix bar (share grid and PNG). */
+export const FIX_STRIPE = 'repeating-linear-gradient(45deg, rgba(0,0,0,0.35) 0px, rgba(0,0,0,0.35) 4px, transparent 4px, transparent 8px)';
+
+/** DB row of the ICS member query → IcsTask. */
+export const toIcsTask = (t: {
+    id: string; start_date: ISODate; end_date: ISODate; links: unknown; version: number; updated_at: string; is_fix: boolean;
+    cut: {code: string} | null; type: {code: string} | null;
+}): IcsTask => ({
+    id: t.id,
+    cut_code: t.cut?.code ?? '',
+    type_code: t.type?.code ?? '',
+    start_date: t.start_date,
+    end_date: t.end_date,
+    links: sanitizeLinks(t.links),
+    version: t.version,
+    updated_at: t.updated_at,
+    is_fix: t.is_fix,
+});
+
+export const icsSummary = (t: IcsTask) => `${t.cut_code} · ${t.type_code}${fixSuffix(t)}`;
 
 /** Keeps only well-formed https links with a non-empty label (capped at 80) from a jsonb `links` column. */
 export function sanitizeLinks(raw: unknown): ShareLink[] {
@@ -48,7 +71,7 @@ export function shapeShare(input: {
         .filter((t) => staffIds.has(t.staff_id))
         .map((t) => ({
             id: t.id, staff_id: t.staff_id, cut_id: t.cut_id, work_type_id: t.work_type_id,
-            start_date: t.start_date, end_date: t.end_date, progress: t.progress, links: sanitizeLinks(t.links),
+            start_date: t.start_date, end_date: t.end_date, progress: t.progress, links: sanitizeLinks(t.links), is_fix: t.is_fix,
         }));
     const cutIds = new Set(tasks.map((t) => t.cut_id));
     const typeIds = new Set(tasks.map((t) => t.work_type_id));

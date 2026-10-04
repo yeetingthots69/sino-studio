@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "entries": {
+    "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
+      "last_emitted_at_ms": 1791102271450,
+      "message": "Verify changes work after editing. Test functionality before marking complete."
+    },
+    "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
+      "last_emitted_at_ms": 1791102227195,
+      "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
+    },
+    "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
+      "last_emitted_at_ms": 1791102219734,
+      "message": "Read multiple files in parallel when possible for faster analysis."
+    },
+    "3a8232eaf1d56ef6aef32b3ac7cda82a515db0efdf61ba07a2a654f7aa3542e0": {
+      "last_emitted_at_ms": 1791102201693,
+      "message": "Spawning agent: opus-executor (inherit) | Task: B3 cuts/share/PNG/ICS/emails for fixes"
+    },
+    "62745eaca6cbc7cd0c8e06f2eaee0ab4fe370676f32715362c8e06a292652cde": {
+      "last_emitted_at_ms": 1791102186631,
+      "message": "Spawning agent: opus-executor (inherit) | Task: B2 board + actions for fixes"
+    },
+    "ebb86bd3d421c24010630c82c283977c59317f87bfb0cd6984e2fa6314ca140b": {
+      "last_emitted_at_ms": 1791102001502,
+      "message": "Spawning agent: opus-executor (inherit) | Task: B1 pure modules, errors, dictionaries"
+    },
+    "459c54e5f35d6a58dcd90d2aecc21fa6d1f35d241bc5b134c506f87dc7b6d67b": {
+      "last_emitted_at_ms": 1791101784176,
+      "message": "Combine searches in parallel when investigating multiple patterns."
+    },
+    "b5a8fcb2f6a32e72d76cca6ea70a969bde270f96db846d19bcc016bb798d35d9": {
+      "last_emitted_at_ms": 1791101780156,
+      "message": "Spawning agent: opus-executor (inherit) | Task: A2 SQL acceptance + types regen"
+    }
+  },
+  "updated_at": "2026-10-04T08:24:31.450Z"
+}

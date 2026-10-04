@@ -152,9 +152,11 @@ export default function TaskPanel(props: Props) {
                     </Group>
                 </div>
             )}
-            <div className={styles.panelName}>{cutCode} · {type?.code}</div>
+            <div className={styles.panelName}>{cutCode} · {type?.code}{task.is_fix ? ` · ${board.fix}` : ''}</div>
             <Text size="xs" c="dimmed" mb="lg">{summary}</Text>
 
+            {/* a fix stays on its stage: no cut/type editors (the header shows "C1 · LO · Fix") */}
+            {!task.is_fix && (<>
             {/* Enter without a highlighted option submits; with one, the combobox handles it (onOptionSubmit) */}
             <form
                 onSubmit={(e) => {
@@ -196,6 +198,7 @@ export default function TaskPanel(props: Props) {
                     </UnstyledButton>
                 ))}
             </div>
+            </>)}
 
             <Group justify="space-between" mt="md" mb={6}>
                 <Text size="sm" fw={500}>{t.progress}</Text>

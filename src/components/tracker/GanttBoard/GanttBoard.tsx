@@ -40,7 +40,7 @@ export type Task = Tables<'tracker_tasks'>;
 export type Staff = Tables<'tracker_staff'>;
 export type WorkType = Tables<'tracker_work_types'>;
 export type Cut = Tables<'tracker_cuts'>;
-export type StageRow = Pick<Task, 'id' | 'cut_id' | 'work_type_id' | 'staff_id' | 'start_date' | 'end_date' | 'version'>;
+export type StageRow = Pick<Task, 'id' | 'cut_id' | 'work_type_id' | 'staff_id' | 'start_date' | 'end_date' | 'version' | 'is_fix'>;
 export type TaskPatch = ActionTaskPatch;
 
 /** Minimum day column width; the board widens days to fill the card (`dayW`). */
@@ -312,6 +312,8 @@ export default function GanttBoard(props: Props) {
                 return common.error.notFound;
             case 'staff_archived':
                 return t.moveArchived;
+            case 'fix_no_stage':
+                return t.fixNoStageError;
             case 'network':
                 return common.error.network;
             default:
@@ -382,7 +384,8 @@ export default function GanttBoard(props: Props) {
         });
         if (entry && !same) setToast({text: entry.label, action: {label: t.undo.undo, onClick: () => runUndoRef.current('undo')}});
     };
-    const codes = (cutId: string, typeId: string) => ({cut: cutCodes.get(cutId) ?? '', type: typeById.get(typeId)?.code ?? ''});
+    const typeCode = (typeId: string, isFix = false) => (typeById.get(typeId)?.code ?? '') + (isFix ? ` · ${t.fix}` : '');
+    const codes = (cutId: string, typeId: string, isFix = false) => ({cut: cutCodes.get(cutId) ?? '', type: typeCode(typeId, isFix)});
 
     const update = (task: Task, patch: TaskPatch, display: Partial<Task>, baseline: number) => {
         // undo entry: before-values from the displayed task at action start, after-values from the returned row
@@ -406,7 +409,7 @@ export default function GanttBoard(props: Props) {
                     before.cut_code = beforeCut;
                     after.cut_code = patch.cut_code;
                 }
-                const label = fill(t.undo.label[kind], {cut: patch.cut_code ?? beforeCut, type: typeById.get(row.work_type_id)?.code ?? ''});
+                const label = fill(t.undo.label[kind], {cut: patch.cut_code ?? beforeCut, type: typeCode(row.work_type_id, row.is_fix)});
                 confirmWrite(task.id, row.version, {kind: 'update', id: task.id, version: row.version, before, after, label},
                     JSON.stringify(before) === JSON.stringify(after));
             },
@@ -417,13 +420,13 @@ export default function GanttBoard(props: Props) {
     const snapshotOf = (task: Task) => ({
         project_id: task.project_id, staff_id: task.staff_id, work_type_id: task.work_type_id,
         cut_code: cutCodes.get(task.cut_id) ?? '', budget: cuts.get(task.cut_id)?.budget ?? null,
-        start_date: task.start_date, end_date: task.end_date, progress: task.progress, links: task.links,
+        start_date: task.start_date, end_date: task.end_date, progress: task.progress, links: task.links, is_fix: task.is_fix,
     });
 
     const remove = (task: Task, baseline: number) => {
         setSelectedId(null);
         const entry: UndoEntry = {kind: 'presence', id: task.id, version: task.version, exists: false, snapshot: snapshotOf(task),
-            label: fill(t.undo.label.deleted, codes(task.cut_id, task.work_type_id))};
+            label: fill(t.undo.label.deleted, codes(task.cut_id, task.work_type_id, task.is_fix))};
         commit(
             task.id,
             baseline,
@@ -460,7 +463,7 @@ export default function GanttBoard(props: Props) {
         setCuts((m) => new Map(m).set(cut.id, cut));
         confirmWrite(task.id, task.version, {kind: 'presence', id: task.id, version: task.version, exists: true,
             snapshot: {...snapshotOf(task), cut_code: cut.code, budget: cut.budget},
-            label: fill(t.undo.label.created, {cut: cut.code, type: typeById.get(task.work_type_id)?.code ?? ''})});
+            label: fill(t.undo.label.created, {cut: cut.code, type: typeCode(task.work_type_id, task.is_fix)})});
         requestSelect(task.id);
         drag.close();
         return null;
@@ -534,7 +537,7 @@ export default function GanttBoard(props: Props) {
                 confirmWrite(task.id, row.version, {
                     kind: 'move', id: task.id, version: row.version, before, after, moveAdjustments, opId: op_id,
                     cut_id: row.cut_id, work_type_id: row.work_type_id,
-                    label: fill(t.undo.label.move, {...codes(row.cut_id, row.work_type_id), name: staffNames.get(row.staff_id) ?? ''}),
+                    label: fill(t.undo.label.move, {...codes(row.cut_id, row.work_type_id, row.is_fix), name: staffNames.get(row.staff_id) ?? ''}),
                 }, JSON.stringify(before) === JSON.stringify(after));
             },
             {typeId: task.work_type_id},
@@ -611,7 +614,7 @@ export default function GanttBoard(props: Props) {
                 const s = inv.snapshot;
                 const r = await createTask({
                     project_id: s.project_id, staff_id: s.staff_id, work_type_id: s.work_type_id, cut_code: s.cut_code,
-                    start_date: s.start_date, end_date: s.end_date, ...(s.budget === null ? {} : {budget: s.budget}),
+                    start_date: s.start_date, end_date: s.end_date, ...(s.budget === null ? {} : {budget: s.budget}), is_fix: s.is_fix,
                 }).catch(() => ({ok: false, error: 'network'}) as const);
                 if (!r.ok) {
                     setNotice(failText(r, {typeId: s.work_type_id, cut: true}));
@@ -919,7 +922,7 @@ export default function GanttBoard(props: Props) {
                             strengthLabels={strengthLabels}
                             workTypes={workTypes}
                             usedTypeIds={new Set(stages
-                                .filter((x) => x.cut_id === panelTask.cut_id && x.id !== panelTask.id)
+                                .filter((x) => x.cut_id === panelTask.cut_id && x.id !== panelTask.id && !x.is_fix)
                                 .map((x) => x.work_type_id))}
                             projectLinks={sanitizeLinks(project.links)}
                             panelDirtyRef={panelDirtyRef}

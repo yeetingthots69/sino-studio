@@ -392,8 +392,10 @@ const createTaskSchema = z.object({
     start_date: isoDate,
     end_date: isoDate,
     budget: money.optional(),
+    is_fix: z.boolean().optional(),
 }).refine(datesOrdered);
 
+// no `is_fix`: a task never switches between stage and fix (unknown keys are stripped)
 const taskPatch = z.object({
     cut_code: cutCodeInput,
     staff_id: z.uuid(),
@@ -417,6 +419,7 @@ export async function createTask(input: {
     start_date: string;
     end_date: string;
     budget?: number;
+    is_fix?: boolean;
 }): Promise<ActionResult<{task: Task; cut: Cut}>> {
     return writeRow(input, createTaskSchema, async (supabase, d) => {
         const {data, error} = await supabase.rpc('tracker_create_task', {
@@ -427,6 +430,7 @@ export async function createTask(input: {
             p_start: d.start_date,
             p_end: d.end_date,
             p_budget: d.budget,
+            p_is_fix: d.is_fix ?? false,
         });
         return {data: data as {task: Task; cut: Cut} | null, error};
     }, NO_REVALIDATE);
@@ -634,7 +638,7 @@ export async function sendResources(input: {task_id: string} | {cut_id: string})
             cutId = t.data.cut_id;
         }
         let taskQuery = supabase.from('tracker_tasks')
-            .select('id, staff_id, start_date, end_date, links, type:tracker_work_types!tracker_tasks_type_fk(code, label, sort_order), staff:tracker_staff(name, email, archived_at)')
+            .select('id, staff_id, start_date, end_date, links, is_fix, type:tracker_work_types!tracker_tasks_type_fk(code, label, sort_order), staff:tracker_staff(name, email, archived_at)')
             .eq('cut_id', cutId);
         if (taskId) taskQuery = taskQuery.eq('id', taskId);
         const [cut, tasks] = await Promise.all([
@@ -659,8 +663,8 @@ export async function sendResources(input: {task_id: string} | {cut_id: string})
                     stages: list
                         .sort((a, b) => (a.type?.sort_order ?? 0) - (b.type?.sort_order ?? 0))
                         .map((t) => ({
-                            type_code: t.type?.code ?? '', type_label: t.type?.label ?? '',
-                            start_date: t.start_date, end_date: t.end_date, links: sanitizeLinks(t.links),
+                            id: t.id, type_code: t.type?.code ?? '', type_label: t.type?.label ?? '',
+                            start_date: t.start_date, end_date: t.end_date, links: sanitizeLinks(t.links), is_fix: t.is_fix,
                         })),
                     cutLinks: sanitizeLinks(cutLinks),
                     projectLinks: sanitizeLinks(project?.links),
@@ -685,7 +689,7 @@ export async function sendSchedule(input: {share_id: string; month: string}): Pr
         const [staff, tasks] = await Promise.all([
             supabase.from('tracker_staff').select('id, name, email, archived_at').in('id', staff_ids),
             supabase.from('tracker_tasks')
-                .select('id, staff_id, start_date, end_date, progress, cut:tracker_cuts!tracker_tasks_cut_fk(code), type:tracker_work_types!tracker_tasks_type_fk(code, label)')
+                .select('id, staff_id, start_date, end_date, progress, is_fix, cut:tracker_cuts!tracker_tasks_cut_fk(code), type:tracker_work_types!tracker_tasks_type_fk(code, label)')
                 .eq('project_id', project_id).in('staff_id', staff_ids)
                 .lte('start_date', end).gte('end_date', start)
                 .order('start_date'),
@@ -704,7 +708,7 @@ export async function sendSchedule(input: {share_id: string; month: string}): Pr
                     projectName,
                     month,
                     tasks: tasks.data.filter((t) => t.staff_id === s.id).map((t) => ({
-                        id: t.id, staff_id: t.staff_id, start_date: t.start_date, end_date: t.end_date, progress: t.progress,
+                        id: t.id, staff_id: t.staff_id, start_date: t.start_date, end_date: t.end_date, progress: t.progress, is_fix: t.is_fix,
                         project_name: projectName, project_archived: false,
                         cut_code: t.cut?.code ?? '', type_code: t.type?.code ?? '', type_label: t.type?.label ?? '',
                     })),

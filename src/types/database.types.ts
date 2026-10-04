@@ -489,6 +489,7 @@ export type Database = {
           cut_id: string
           end_date: string
           id: string
+          is_fix: boolean
           links: Json
           progress: number
           project_id: string
@@ -503,6 +504,7 @@ export type Database = {
           cut_id: string
           end_date: string
           id?: string
+          is_fix?: boolean
           links?: Json
           progress?: number
           project_id: string
@@ -517,6 +519,7 @@ export type Database = {
           cut_id?: string
           end_date?: string
           id?: string
+          is_fix?: boolean
           links?: Json
           progress?: number
           project_id?: string
@@ -729,6 +732,7 @@ export type Database = {
           p_budget?: number
           p_cut_code: string
           p_end: string
+          p_is_fix?: boolean
           p_project: string
           p_staff: string
           p_start: string
@@ -771,6 +775,7 @@ export type Database = {
           cut_id: string
           end_date: string
           id: string
+          is_fix: boolean
           links: Json
           progress: number
           project_id: string

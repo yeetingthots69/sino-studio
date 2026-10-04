@@ -1,7 +1,7 @@
 import 'server-only';
 import createAdminClient from '@/utils/supabase/admin';
 import {monthRange} from '@/components/tracker/dates';
-import {sanitizeLinks, shapeShare, shareScope, type IcsTask, type ShareDto} from './shareShape';
+import {shapeShare, shareScope, toIcsTask, type IcsTask, type ShareDto} from './shareShape';
 
 // Public share reads (service role). Scope comes only from the share row; explicit column lists;
 // never budget, pay_pct, email, adjustments or staff outside `staff_ids`. Tokens are never logged.
@@ -33,7 +33,7 @@ export async function loadShare(token: string, month: string): Promise<ShareDto 
     const [staff, tasks] = await Promise.all([
         db.from('tracker_staff').select('id, name').in('id', staff_ids).order('sort_order').order('name').then(list),
         db.from('tracker_tasks')
-            .select('id, staff_id, cut_id, work_type_id, start_date, end_date, progress, links')
+            .select('id, staff_id, cut_id, work_type_id, start_date, end_date, progress, links, is_fix')
             .eq('project_id', project_id).in('staff_id', staff_ids)
             .lte('start_date', end).gte('end_date', start)
             .order('start_date').then(list),
@@ -62,7 +62,7 @@ export async function loadShareMember(token: string, staffId: string): Promise<{
     const [staff, tasks] = await Promise.all([
         db.from('tracker_staff').select('name').eq('id', staffId).maybeSingle().then(must),
         db.from('tracker_tasks')
-            .select('id, start_date, end_date, links, version, updated_at, cut:tracker_cuts!tracker_tasks_cut_fk(code), type:tracker_work_types!tracker_tasks_type_fk(code)')
+            .select('id, start_date, end_date, links, version, updated_at, is_fix, cut:tracker_cuts!tracker_tasks_cut_fk(code), type:tracker_work_types!tracker_tasks_type_fk(code)')
             .eq('project_id', project_id).eq('staff_id', staffId)
             .order('start_date').then(list),
     ]);
@@ -70,15 +70,6 @@ export async function loadShareMember(token: string, staffId: string): Promise<{
     return {
         project,
         staff,
-        tasks: tasks.map((t) => ({
-            id: t.id,
-            cut_code: t.cut?.code ?? '',
-            type_code: t.type?.code ?? '',
-            start_date: t.start_date,
-            end_date: t.end_date,
-            links: sanitizeLinks(t.links),
-            version: t.version,
-            updated_at: t.updated_at,
-        })),
+        tasks: tasks.map(toIcsTask),
     };
 }

@@ -29,7 +29,7 @@ export default async function CutsPage({params, searchParams}: Props) {
         supabase.from('tracker_work_types').select('*').eq('project_id', projectId).order('sort_order').then(must),
         selectAll(() => supabase.from('tracker_cuts').select('*').eq('project_id', projectId)),
         selectAll(() => supabase.from('tracker_tasks')
-            .select('id, project_id, cut_id, work_type_id, staff_id, progress, start_date, end_date')
+            .select('id, project_id, cut_id, work_type_id, staff_id, progress, start_date, end_date, is_fix')
             .eq('project_id', projectId)),
         supabase.from('tracker_staff').select('id, name, email, archived_at').order('sort_order').order('name').then(must),
         selectAll(() => supabase.from('tracker_pay_adjustments')

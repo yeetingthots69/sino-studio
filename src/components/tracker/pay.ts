@@ -40,9 +40,9 @@ export type PayLine = {
     end_date: ISODate;
 };
 
-type PayTask = Pick<Tables<'tracker_tasks'>, 'id' | 'project_id' | 'cut_id' | 'work_type_id' | 'staff_id' | 'progress' | 'end_date'>;
+type PayTask = Pick<Tables<'tracker_tasks'>, 'id' | 'project_id' | 'cut_id' | 'work_type_id' | 'staff_id' | 'progress' | 'end_date' | 'is_fix'>;
 
-/** One line per task whose cut and type are known; earned = progress 100. Month filtering (by end_date) is the caller's. */
+/** One line per non-fix task whose cut and type are known (a fix pays nothing, v2.6 D1); earned = progress 100. Month filtering (by end_date) is the caller's. */
 export function payLines(
     tasks: PayTask[],
     cuts: Pick<Tables<'tracker_cuts'>, 'id' | 'budget' | 'pay_split'>[],
@@ -53,7 +53,7 @@ export function payLines(
     return tasks.flatMap((t) => {
         const cut = cutById.get(t.cut_id);
         const type = typeById.get(t.work_type_id);
-        if (!cut || !type) return [];
+        if (!cut || !type || t.is_fix) return [];
         return [{
             task_id: t.id,
             project_id: t.project_id,

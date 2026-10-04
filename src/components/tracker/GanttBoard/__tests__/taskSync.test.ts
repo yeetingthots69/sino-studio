@@ -16,6 +16,7 @@ const task = (id: string, version: number, over: Partial<Task> = {}): Task => ({
     end_date: '2026-10-08',
     progress: 0,
     links: [],
+    is_fix: false,
     version,
     created_at: '',
     updated_at: '',

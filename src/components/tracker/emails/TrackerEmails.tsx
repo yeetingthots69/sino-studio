@@ -1,6 +1,6 @@
 // Tracker email templates (plan §3.7): plain JSX, inline styles, Vietnamese only.
 import type {CSSProperties, ReactElement, ReactNode} from 'react';
-import type {ShareLink as Link} from '@/lib/tracker/shareShape';
+import {fixSuffix, type ShareLink as Link} from '@/lib/tracker/shareShape';
 import type {MailTask, RemovedMailTask} from '@/lib/tracker/mailPlan';
 
 export type Mail = {subject: string; element: ReactElement};
@@ -8,6 +8,8 @@ export type Mail = {subject: string; element: ReactElement};
 const RED = '#e03131';
 const dmy = (d: string) => d.split('-').reverse().join('/');
 const range = (a: string, b: string) => (a === b ? dmy(a) : `${dmy(a)} – ${dmy(b)}`);
+/** "LO · Layout", a fix "LO · Fix · Layout". */
+const stage = (t: {type_code: string; type_label: string; is_fix: boolean}) => `${t.type_code}${fixSuffix(t)} · ${t.type_label}`;
 
 const s = {
     page: {fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif", backgroundColor: '#f4f4f4', padding: '32px 16px', margin: 0},
@@ -71,7 +73,7 @@ function TaskTable({tasks, project = true}: {tasks: MailTask[]; project?: boolea
                     <tr key={t.id}>
                         {project && <td style={s.td}>{t.project_name}</td>}
                         <td style={s.td}><b>{t.cut_code}</b></td>
-                        <td style={s.td}>{t.type_code} · {t.type_label}</td>
+                        <td style={s.td}>{stage(t)}</td>
                         <td style={s.td}>{range(t.start_date, t.end_date)}</td>
                         <td style={s.td}>{t.progress}%</td>
                     </tr>
@@ -89,7 +91,7 @@ export type ResourcesProps = {
     staffName: string;
     projectName: string;
     cutCode: string;
-    stages: {type_code: string; type_label: string; start_date: string; end_date: string; links: Link[]}[];
+    stages: {id: string; type_code: string; type_label: string; is_fix: boolean; start_date: string; end_date: string; links: Link[]}[];
     cutLinks: Link[];
     projectLinks: Link[];
 };
@@ -102,8 +104,8 @@ export function resourcesMail(p: ResourcesProps): Mail {
                 <Hello name={p.staffName}/>
                 <p style={{margin: 0}}>Tài liệu cho <b>{p.cutCode}</b> — dự án <b>{p.projectName}</b>:</p>
                 {p.stages.map((st) => (
-                    <div key={st.type_code}>
-                        <p style={s.h}>{st.type_code} · {st.type_label} — {range(st.start_date, st.end_date)}</p>
+                    <div key={st.id}>
+                        <p style={s.h}>{stage(st)} — {range(st.start_date, st.end_date)}</p>
                         {st.links.length ? (
                             <ul style={{margin: 0, paddingLeft: '20px'}}>
                                 {st.links.map((l) => <li key={l.url}><a href={l.url} style={s.link}>{l.label}</a></li>)}
@@ -167,7 +169,7 @@ function RemovedTable({tasks}: {tasks: RemovedMailTask[]}) {
                     <tr key={t.task_id}>
                         <td style={s.td}>{t.project_name}</td>
                         <td style={s.td}><b>{t.cut_code}</b></td>
-                        <td style={s.td}>{t.type_code} · {t.type_label}</td>
+                        <td style={s.td}>{stage(t)}</td>
                         <td style={s.td}>{range(t.start_date, t.end_date)}</td>
                     </tr>
                 ))}

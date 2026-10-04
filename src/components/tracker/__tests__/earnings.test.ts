@@ -1,8 +1,8 @@
 import {describe, expect, it} from 'vitest';
 import {earnings, effectiveMonths, formatVnd, parseMonthFilter, staffRows, totalsByProject, type Adjustment} from '../earnings';
 
-const task = (id: string, project: string, cut: string, type: string, staff: string, progress: number, end: string) =>
-    ({id, project_id: project, cut_id: cut, work_type_id: type, staff_id: staff, progress, end_date: end});
+const task = (id: string, project: string, cut: string, type: string, staff: string, progress: number, end: string, is_fix = false) =>
+    ({id, project_id: project, cut_id: cut, work_type_id: type, staff_id: staff, progress, end_date: end, is_fix});
 const adj = (id: string, a: Partial<Adjustment>): Adjustment => ({
     id, project_id: 'p1', cut_id: 'c1', work_type_id: 'LO', staff_id: 's1', amount: 0,
     created_at: '2026-10-15T00:00:00+00:00', reverses_id: null, ...a,
@@ -29,6 +29,22 @@ describe('effectiveMonths', () => {
         expect(Object.fromEntries(m)).toEqual({
             withTask: '2026-09', noTask: '2026-11', noTaskUtc: '2026-10', rev: '2026-09', revNoTask: '2026-11',
         });
+    });
+
+    it('fix tasks (v2.6 D9): latest fix of the adjustment staff, end month, else the stage month', () => {
+        const stageA = task('lo', 'p1', 'F1', 'LO', 'A', 100, '2026-10-30');
+        const fixB = task('fx1', 'p1', 'F1', 'LO', 'B', 0, '2026-11-20', true);
+        const fixBEarly = task('fx2', 'p1', 'F1', 'LO', 'B', 0, '2026-10-28', true);
+        const adjs = [
+            adj('bonusB', {cut_id: 'F1', staff_id: 'B', amount: 100}),
+            adj('penaltyA', {cut_id: 'F1', staff_id: 'A', amount: -100}),
+            adj('revB', {cut_id: 'F1', staff_id: 'B', reverses_id: 'bonusB', created_at: '2027-01-05T00:00:00Z'}),
+        ];
+        const expected = {bonusB: '2026-11', penaltyA: '2026-10', revB: '2026-11'};
+        expect(Object.fromEntries(effectiveMonths([stageA, fixB], adjs))).toEqual(expected);
+        expect(Object.fromEntries(effectiveMonths([fixB, stageA, fixBEarly], adjs))).toEqual(expected);
+        expect(Object.fromEntries(effectiveMonths([fixBEarly, fixB], adjs))) // orphan fixes: no stage task
+            .toEqual({bonusB: '2026-11', penaltyA: '2026-10', revB: '2026-11'}); // penaltyA → created_at month
     });
 });
 

@@ -1,7 +1,7 @@
 'use client';
 
 import {useState, type CSSProperties, type ReactElement} from 'react';
-import {Autocomplete, Button, NumberInput, Popover, Select, Text, UnstyledButton} from '@mantine/core';
+import {Autocomplete, Button, NumberInput, Popover, Select, Switch, Text, UnstyledButton} from '@mantine/core';
 import {DateInput} from '@mantine/dates';
 import {useDictionary} from '@/i18n/DictionaryProvider';
 import {normalizeCutCode} from '../cuts';
@@ -18,9 +18,10 @@ export type CreateInput = {
     staff_id?: string;
     start_date?: string;
     end_date?: string;
+    is_fix?: boolean;
 };
 
-type Stage = Pick<StageRow, 'id' | 'cut_id' | 'work_type_id' | 'start_date' | 'end_date'>;
+type Stage = Pick<StageRow, 'id' | 'cut_id' | 'work_type_id' | 'start_date' | 'end_date' | 'is_fix'>;
 
 interface Props {
     opened: boolean;
@@ -58,6 +59,9 @@ export default function CreateTaskPopover(props: Props) {
     const [code, setCode] = useState(cutMode?.cut.code ?? '');
     const [typeId, setTypeId] = useState<string | null>(cutMode?.workType.id ?? null);
     const [budget, setBudget] = useState<number | string>('');
+    // fix of an existing stage (board only)
+    const [fixOn, setFixOn] = useState(false);
+    const fix = fixOn && !cutMode;
     const [staffId, setStaffId] = useState<string | null>(null);
     // board: dates follow the ghost (props); cut mode: editable drafts seeded from props
     const [startDraft, setStart] = useState(props.start);
@@ -73,16 +77,20 @@ export default function CreateTaskPopover(props: Props) {
     const listVisible = listOpen && cuts.some((c) => c.code.toLowerCase().includes(query));
 
     const cut = cutMode ? cutMode.cut : cuts.find((c) => c.code === code);
-    const used = new Set(cut ? stages.filter((s) => s.cut_id === cut.id).map((s) => s.work_type_id) : []);
-    const type = typeId && !used.has(typeId) ? typeId : null;
+    // stage tasks of the cut (fixes never take a stage); a fix picks among them, a stage task avoids them
+    const used = new Set(cut ? stages.filter((s) => s.cut_id === cut.id && !s.is_fix).map((s) => s.work_type_id) : []);
+    const pickable = (id: string) => (fix ? used.has(id) : !used.has(id));
+    const type = typeId && pickable(typeId) ? typeId : null;
     const validCode = isValidCutCode(code);
     const validDates = !!start && !!end && end >= start;
-    const conflict = cut && type && validDates
-        ? orderConflict(stages, typeRule, {id: '', cut_id: cut.id, work_type_id: type, start_date: start, end_date: end})
+    const noStage = fix && !!code && validCode && used.size === 0;
+    // a fix has no date rule (D2)
+    const conflict = !fix && cut && type && validDates
+        ? orderConflict(stages, typeRule, {id: '', cut_id: cut.id, work_type_id: type, start_date: start, end_date: end, is_fix: false})
         : null;
     const message = error
-        ?? (code && !validCode ? t.invalidCut : conflict && type ? describeConflict(conflict.task.id, type) : null);
-    const ready = !!type && validCode && !conflict && (!cutMode || (!!staffId && validDates));
+        ?? (code && !validCode ? t.invalidCut : noStage ? t.fixNoStage : conflict && type ? describeConflict(conflict.task.id, type) : null);
+    const ready = !!type && validCode && !conflict && (!fix || !!cut) && (!cutMode || (!!staffId && validDates));
 
     const submit = async () => {
         if (!ready || !type) return;
@@ -90,7 +98,8 @@ export default function CreateTaskPopover(props: Props) {
         const err = await onSubmit({
             cut_code: code,
             work_type_id: type,
-            budget: !cut && typeof budget === 'number' ? budget : undefined,
+            budget: !cut && !fix && typeof budget === 'number' ? budget : undefined,
+            ...(fix ? {is_fix: true} : {}),
             ...(cutMode && staffId ? {staff_id: staffId, start_date: start, end_date: end} : {}),
         });
         setBusy(false);
@@ -160,12 +169,20 @@ export default function CreateTaskPopover(props: Props) {
                                     setCode(normalizeCutCode(v));
                                     setError(null);
                                 }}
-                                description={code && validCode && !cut ? fill(t.create.newCut, {code}) : undefined}
+                                description={code && validCode && !cut && !fix ? fill(t.create.newCut, {code}) : undefined}
                                 comboboxProps={INSIDE}
                                 openOnFocus={false}
                                 maxDropdownHeight={180}
                                 onDropdownOpen={() => setListOpen(true)}
                                 onDropdownClose={() => setListOpen(false)}
+                            />
+                            <Switch
+                                label={t.fixSwitch}
+                                checked={fixOn}
+                                onChange={(e) => {
+                                    setFixOn(e.currentTarget.checked);
+                                    setError(null);
+                                }}
                             />
                             <div>
                                 <Text size="sm" fw={500} mb={6}>{t.panel.type}</Text>
@@ -175,7 +192,7 @@ export default function CreateTaskPopover(props: Props) {
                                             key={w.id}
                                             role="radio"
                                             aria-checked={w.id === type}
-                                            disabled={used.has(w.id)}
+                                            disabled={!pickable(w.id)}
                                             className={`${styles.typeChip} ${w.id === type ? styles.typeChipActive : ''}`}
                                             onClick={() => {
                                                 setTypeId(w.id);
@@ -187,7 +204,7 @@ export default function CreateTaskPopover(props: Props) {
                                     ))}
                                 </div>
                             </div>
-                            {code && !cut && (
+                            {code && !cut && !fix && (
                                 <NumberInput
                                     label={t.create.budget}
                                     value={budget}

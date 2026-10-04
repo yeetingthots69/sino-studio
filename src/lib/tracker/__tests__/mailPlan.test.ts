@@ -1,7 +1,8 @@
-import {describe, expect, it} from 'vitest';
+import {describe, expect, it, vi} from 'vitest';
 import {nowICT} from '@/components/tracker/dates';
 import {
-    bearerOk, chunk, completionPatch, digestKey, payloadOk, planDigest, reminderDue, reminderKey, reminderTargets, shouldRetry,
+    bearerOk, chunk, completionPatch, digestKey, parseRemoved, payloadOk, planDigest, reminderDue, reminderKey, reminderTargets, shouldRetry,
+    toMailTask,
     type MailStaff, type MailTask, type NoticeRow, type RemovedMailTask,
 } from '../mailPlan';
 
@@ -9,12 +10,12 @@ const staff = (over: Partial<MailStaff> = {}): MailStaff =>
     ({id: 's1', name: 'Tôm', email: 'tom@example.com', archived_at: null, ...over});
 const task = (over: Partial<MailTask> = {}): MailTask => ({
     id: 't1', staff_id: 's1', start_date: '2026-10-01', end_date: '2026-10-05', progress: 0,
-    project_name: 'Demo', project_archived: false, cut_code: 'C1', type_code: 'LO', type_label: 'Layout', ...over,
+    project_name: 'Demo', project_archived: false, cut_code: 'C1', type_code: 'LO', type_label: 'Layout', is_fix: false, ...over,
 });
 const notice: NoticeRow = {staff_id: 's1', cycle_id: 'c', generation: 3, task_ids: ['t1', 't2'], removed: []};
 const snap = (over: Partial<RemovedMailTask> = {}): RemovedMailTask => ({
     task_id: 't9', project_name: 'Demo', cut_code: 'C9', type_code: 'LO', type_label: 'Layout',
-    start_date: '2026-10-01', end_date: '2026-10-03', ...over,
+    start_date: '2026-10-01', end_date: '2026-10-03', is_fix: false, ...over,
 });
 const TODAY = '2026-10-01';
 
@@ -161,5 +162,36 @@ describe('bearerOk', () => {
         expect(bearerOk('s3cret', 's3cret')).toBe(false);
         expect(bearerOk(null, 's3cret')).toBe(false);
         expect(bearerOk('Bearer ', '')).toBe(false);
+    });
+});
+
+describe('v2.6 fix tasks', () => {
+    it('parseRemoved: old snapshot → is_fix false, new → true, missing string field dropped', () => {
+        const old: Record<string, unknown> = {...snap()};
+        delete old.is_fix; // pre-v2.6 queue row
+        expect(parseRemoved([old, {...old, task_id: 't8', is_fix: true}, {...old, task_id: 't7', is_fix: 'yes'}, {...old, cut_code: 1}, null]))
+            .toEqual([snap(), snap({task_id: 't8', is_fix: true}), snap({task_id: 't7'})]);
+        expect(parseRemoved(null)).toEqual([]);
+    });
+
+    it('toMailTask carries is_fix from a DB row', () => {
+        expect(toMailTask({
+            id: 't1', staff_id: 's1', start_date: '2026-10-01', end_date: '2026-10-05', progress: 0, is_fix: true,
+            project: {name: 'Demo', archived_at: null}, cut: {code: 'C1'}, type: {code: 'LO', label: 'Layout'},
+        })).toEqual(task({is_fix: true}));
+    });
+
+    it('digest labels a fix and renders stage + fix of one cut without a key warning', async () => {
+        const {assignmentMail} = await import('@/components/tracker/emails/TrackerEmails');
+        const {render} = await import('@react-email/render');
+        const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+        const html = await render(assignmentMail({
+            staffName: 'Tôm', changed: [task(), task({id: 't2', is_fix: true})], others: [],
+            removed: [snap({is_fix: true})],
+        }).element);
+        expect(html).toContain('LO · Fix');
+        expect(html.match(/LO · Fix/g)).toHaveLength(2);
+        expect(error).not.toHaveBeenCalled();
+        error.mockRestore();
     });
 });
