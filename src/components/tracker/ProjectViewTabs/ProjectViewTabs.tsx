@@ -6,14 +6,14 @@ import styles from './ProjectViewTabs.module.css';
 
 interface Props {
     projectId: string;
-    active: 'board' | 'cuts' | 'people';
+    active: 'board' | 'cuts' | 'tasks' | 'members' | 'people';
     /** Viewed month (`YYYY-MM`), carried over as `?m=`. */
     month?: string;
 }
 
-const SUFFIX = {board: '', cuts: '/cuts', people: '/people'} as const;
+const SUFFIX = {board: '', cuts: '/cuts', tasks: '/tasks', members: '/members', people: '/people'} as const;
 
-/** "Lịch | Cut | Nhân sự" switcher shared by the project views. */
+/** "Lịch | Cut | Công việc | Thành viên | Thu nhập" switcher shared by the project views. */
 export default function ProjectViewTabs({projectId, active, month}: Props) {
     const t = useDictionary().tracker.views;
     const locale = useLocale();

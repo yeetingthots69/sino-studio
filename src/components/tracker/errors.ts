@@ -9,10 +9,11 @@ export const STAFF_ARCHIVED = 'staff_archived'; // migration tracker_v23_move_ta
 export const OVERLAP_IN_USE = 'overlap_in_use'; // migration tracker_v25_overlap
 export const FIX_NO_STAGE = 'fix_no_stage'; // migration tracker_v26_fix
 export const FIX_IMMUTABLE = 'fix_immutable'; // migration tracker_v26_fix
+export const STAFF_NOT_MEMBER = 'staff_not_member'; // migration tracker_v27_members
 
 export type TrackerError =
     | 'network' | 'unauthenticated' | 'invalid' | 'duplicate' | 'not_found'
-    | 'in_use' | 'order_conflict' | 'overlap_in_use' | 'pct_total' | 'staff_archived' | 'fix_no_stage' | 'generic';
+    | 'in_use' | 'order_conflict' | 'overlap_in_use' | 'pct_total' | 'staff_archived' | 'fix_no_stage' | 'staff_not_member' | 'generic';
 
 /** What a 23503 (foreign key) means: unknown id on insert/update, still referenced on delete. */
 export type FkError = 'invalid' | 'in_use';
@@ -30,6 +31,8 @@ const P0001: Record<string, TrackerError> = {
     [OVERLAP_IN_USE]: 'overlap_in_use',
     [FIX_NO_STAGE]: 'fix_no_stage',
     [FIX_IMMUTABLE]: 'invalid',
+    [STAFF_NOT_MEMBER]: 'staff_not_member',
+    invalid: 'invalid', // tracker_v27_members RPC argument checks
 };
 const BY_CODE: Record<string, TrackerError> = {
     '23505': 'duplicate',

@@ -1,13 +1,14 @@
 import {describe, expect, it} from 'vitest';
-import {DEFAULT_PREFS, isValidCutCode, orderConflictText, parsePrefs} from '../boardHelpers';
+import {DEFAULT_PREFS, EMPTY_PROJECT_FILTER, isValidCutCode, orderConflictText, parsePrefs, parseProjectFilter, projectFilterKey} from '../boardHelpers';
 import {typeRule} from '../../pipeline';
 
 describe('parsePrefs', () => {
     it('defaults for missing / corrupt / wrong-typed values', () => {
         expect(parsePrefs(null)).toEqual(DEFAULT_PREFS);
         expect(parsePrefs('{oops')).toEqual(DEFAULT_PREFS);
-        expect(parsePrefs('{"sort":"zz","filter":[1,"a"],"hideStrengths":"yes"}')).toEqual({sort: 'studio', filter: ['a'], hideStrengths: false});
-        expect(parsePrefs('{"sort":"za","filter":["x"],"hideStrengths":true}')).toEqual({sort: 'za', filter: ['x'], hideStrengths: true});
+        expect(parsePrefs('{"sort":"zz","hideStrengths":"yes"}')).toEqual({sort: 'studio', hideStrengths: false});
+        // the old global strength filter is ignored (moved to the per-project filter)
+        expect(parsePrefs('{"sort":"za","filter":["x"],"hideStrengths":true}')).toEqual({sort: 'za', hideStrengths: true});
     });
 });
 
@@ -43,5 +44,20 @@ describe('orderConflictText', () => {
     it('generic when the stage is unknown', () => {
         expect(orderConflictText(t, 'nope', 'ge', stages, cuts, types, rule())).toBe('G');
         expect(orderConflictText(t, undefined, 'ge', stages, cuts, types, rule())).toBe('G');
+    });
+});
+
+describe('parseProjectFilter', () => {
+    it('keeps only string arrays; junk falls back to empty', () => {
+        expect(parseProjectFilter(null)).toEqual(EMPTY_PROJECT_FILTER);
+        expect(parseProjectFilter('{oops')).toEqual(EMPTY_PROJECT_FILTER);
+        expect(parseProjectFilter('"str"')).toEqual(EMPTY_PROJECT_FILTER);
+        expect(parseProjectFilter('{"strengths":"lo","departments":[1,"an",null]}')).toEqual({strengths: [], departments: ['an']});
+        expect(parseProjectFilter('{"strengths":["lo"],"departments":["an"],"x":1}')).toEqual({strengths: ['lo'], departments: ['an']});
+    });
+
+    it('keys are per project', () => {
+        expect(projectFilterKey('p1')).toBe('tracker.board.filter.p1');
+        expect(projectFilterKey('p1')).not.toBe(projectFilterKey('p2'));
     });
 });

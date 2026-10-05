@@ -120,6 +120,41 @@ export type Database = {
           },
         ]
       }
+      tracker_departments: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          name: string
+          project_id: string
+          sort_order: number
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          id?: string
+          name: string
+          project_id: string
+          sort_order?: number
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          name?: string
+          project_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tracker_departments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "tracker_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tracker_email_log: {
         Row: {
           attempts: number
@@ -184,6 +219,52 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "tracker_email_log_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "tracker_staff"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tracker_member_departments: {
+        Row: {
+          created_at: string
+          department_id: string
+          id: number
+          project_id: string
+          staff_id: string
+        }
+        Insert: {
+          created_at?: string
+          department_id: string
+          id?: never
+          project_id: string
+          staff_id: string
+        }
+        Update: {
+          created_at?: string
+          department_id?: string
+          id?: never
+          project_id?: string
+          staff_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tracker_member_departments_project_id_department_id_fkey"
+            columns: ["project_id", "department_id"]
+            isOneToOne: false
+            referencedRelation: "tracker_departments"
+            referencedColumns: ["project_id", "id"]
+          },
+          {
+            foreignKeyName: "tracker_member_departments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "tracker_projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tracker_member_departments_staff_id_fkey"
             columns: ["staff_id"]
             isOneToOne: false
             referencedRelation: "tracker_staff"
@@ -709,6 +790,10 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      tracker_copy_members: {
+        Args: { p_from: string; p_to: string }
+        Returns: Json
+      }
       tracker_create_project: {
         Args: { p_color: string; p_name: string; p_types: Json }
         Returns: {
@@ -793,6 +878,10 @@ export type Database = {
         }
       }
       tracker_normalize_cut: { Args: { raw: string }; Returns: string }
+      tracker_remove_member: {
+        Args: { p_project: string; p_staff: string }
+        Returns: Json
+      }
       tracker_save_work_types: {
         Args: { p_project: string; p_types: Json }
         Returns: {
@@ -829,6 +918,27 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "tracker_cuts"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      tracker_set_member_departments: {
+        Args: {
+          p_departments: string[]
+          p_mode?: string
+          p_project: string
+          p_staff: string[]
+        }
+        Returns: {
+          created_at: string
+          department_id: string
+          id: number
+          project_id: string
+          staff_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "tracker_member_departments"
           isOneToOne: false
           isSetofReturn: true
         }

@@ -27,7 +27,7 @@ export default async function BoardPage({params, searchParams}: Props) {
 
     const supabase = await createClient();
     // growing tables are keyset-paged (PostgREST caps a response at 1000 rows); selectAll throws on error
-    const [project, workTypes, allStaff, strengths, staffStrengths, cuts, tasks, stages, shares] = await Promise.all([
+    const [project, workTypes, staff, strengths, staffStrengths, cuts, tasks, stages, shares, departments, members] = await Promise.all([
         supabase.from('tracker_projects').select('*').eq('id', projectId).is('archived_at', null).maybeSingle().then(must),
         supabase.from('tracker_work_types').select('*').eq('project_id', projectId).order('sort_order').then(must),
         supabase.from('tracker_staff').select('*').order('sort_order').order('name').then(must),
@@ -45,14 +45,14 @@ export default async function BoardPage({params, searchParams}: Props) {
         // active share links (ShareModal)
         supabase.from('tracker_shares').select('*').eq('project_id', projectId).is('revoked_at', null)
             .order('created_at', {ascending: false}).then(must),
+        supabase.from('tracker_departments').select('id, name, color, sort_order').eq('project_id', projectId)
+            .order('sort_order').order('name').then(must),
+        selectAll(() => supabase.from('tracker_member_departments').select('id, project_id, staff_id, department_id').eq('project_id', projectId)),
     ]);
     if (!project) notFound();
 
-    // active staff first, then archived staff that still own a loaded task
-    const taskStaffIds = new Set(tasks.map((t) => t.staff_id));
-    const staff = allStaff;
-    const activeStaff = staff.filter((s) => s.archived_at == null);
-    const archivedStaff = staff.filter((s) => s.archived_at != null && taskStaffIds.has(s.id));
+    // every staff (archived too) is passed: the board picks its rows (members ∪ month owners) and names come from here
+    const memberIds = [...new Set(members.map((m) => m.staff_id))];
 
     return (
         // month navigation remounts the board: task sync state is per project + month
@@ -61,14 +61,24 @@ export default async function BoardPage({params, searchParams}: Props) {
             project={project}
             month={month}
             locale={locale}
-            staff={[...activeStaff, ...archivedStaff]}
+            staff={staff}
             workTypes={workTypes}
             strengths={strengths}
             staffStrengths={staffStrengths}
             cuts={cuts}
             tasks={tasks}
             stages={stages}
-            shareSlot={<ShareModal key="share" projectId={projectId} locale={locale} month={month} staff={staff.map(({id, name, email, archived_at}) => ({id, name, email, archived_at}))} shares={shares}/>}
+            departments={departments}
+            members={members}
+            shareSlot={<ShareModal
+                key="share"
+                projectId={projectId}
+                locale={locale}
+                month={month}
+                staff={staff.map(({id, name, email, archived_at, sort_order}) => ({id, name, email, archived_at, sort_order}))}
+                memberIds={memberIds}
+                shares={shares}
+            />}
         />
     );
 }

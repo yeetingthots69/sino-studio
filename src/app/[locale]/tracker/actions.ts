@@ -300,6 +300,77 @@ export async function deleteStrength(input: {id: string}): Promise<ActionResult<
         supabase.from('tracker_strengths').delete().eq('id', id).select('id').single(), {fk: 'in_use'});
 }
 
+/* ── Departments + members (per project, v2.7) ─────────────────── */
+
+type Department = Tables<'tracker_departments'>;
+type MemberDepartment = Tables<'tracker_member_departments'>;
+
+const departmentName = z.string().trim().min(1).max(40);
+const createDepartmentSchema = z.object({projectId: z.uuid(), name: departmentName, color: hexColor});
+const updateDepartmentSchema = z.object({id: z.uuid(), name: departmentName, color: hexColor});
+const setMemberDepartmentsSchema = z.object({
+    projectId: z.uuid(),
+    staffIds: z.array(z.uuid()).min(1).max(500),
+    departmentIds: z.array(z.uuid()).min(1).max(100),
+    mode: z.enum(['set', 'add']),
+});
+const memberSchema = z.object({projectId: z.uuid(), staffId: z.uuid()});
+const copyMembersSchema = z.object({fromId: z.uuid(), toId: z.uuid()}).refine((d) => d.fromId !== d.toId);
+
+/** Appended after the project's last department (sort_order = max + 10); a name taken (case/space-insensitive) → 'duplicate'. */
+export async function createDepartment(
+    input: {projectId: string; name: string; color: string},
+): Promise<ActionResult<Department>> {
+    return writeRow(input, createDepartmentSchema, async (supabase, {projectId, name, color}) => {
+        const last = await supabase.from('tracker_departments').select('sort_order')
+            .eq('project_id', projectId).order('sort_order', {ascending: false}).limit(1).maybeSingle();
+        if (last.error) return {data: null, error: last.error};
+        return supabase.from('tracker_departments')
+            .insert({project_id: projectId, name, color, sort_order: (last.data?.sort_order ?? 0) + 10})
+            .select().single();
+    });
+}
+
+export async function updateDepartment(input: {id: string; name: string; color: string}): Promise<ActionResult<Department>> {
+    return writeRow(input, updateDepartmentSchema, (supabase, {id, name, color}) =>
+        supabase.from('tracker_departments').update({name, color}).eq('id', id).select().single());
+}
+
+/** Refused (23503 → 'in_use') while the department has members. */
+export async function deleteDepartment(input: {id: string}): Promise<ActionResult<{id: string}>> {
+    return writeRow(input, idSchema, (supabase, {id}) =>
+        supabase.from('tracker_departments').delete().eq('id', id).select('id').single(), {fk: 'in_use'});
+}
+
+/**
+ * 'add' (add members): staff gain `departmentIds`, nothing is removed. 'set' (edit member): each staff's set becomes
+ * exactly `departmentIds`; a staff who is no longer a member is refused (`staff_not_member`), never re-added.
+ */
+export async function setMemberDepartments(
+    input: {projectId: string; staffIds: string[]; departmentIds: string[]; mode: 'set' | 'add'},
+): Promise<ActionResult<MemberDepartment[]>> {
+    return writeRow(input, setMemberDepartmentsSchema, (supabase, d) =>
+        supabase.rpc('tracker_set_member_departments', {
+            p_project: d.projectId, p_staff: d.staffIds, p_departments: d.departmentIds, p_mode: d.mode,
+        }), {fk: 'invalid'});
+}
+
+/** Removes every department row of the staff in the project; their tasks stay. */
+export async function removeMember(input: {projectId: string; staffId: string}): Promise<ActionResult<{removed: number}>> {
+    return writeRow(input, memberSchema, async (supabase, d) => {
+        const {data, error} = await supabase.rpc('tracker_remove_member', {p_project: d.projectId, p_staff: d.staffId});
+        return {data: data as {removed: number} | null, error};
+    });
+}
+
+/** Additive copy of another project's departments and active members; `added` = new (staff, department) rows. */
+export async function copyMembers(input: {fromId: string; toId: string}): Promise<ActionResult<{added: number}>> {
+    return writeRow(input, copyMembersSchema, async (supabase, d) => {
+        const {data, error} = await supabase.rpc('tracker_copy_members', {p_from: d.fromId, p_to: d.toId});
+        return {data: data as {added: number} | null, error};
+    });
+}
+
 /* ── Cuts ──────────────────────────────────────────────────────── */
 
 type Cut = Tables<'tracker_cuts'>;

@@ -7,10 +7,11 @@ import {useDictionary} from '@/i18n/DictionaryProvider';
 import {createShare, revokeShare, sendSchedule, type ActionResult} from '@/app/[locale]/tracker/actions';
 import SendMailButton from '../SendMailButton/SendMailButton';
 import type {Tables} from '@/types/database.types';
+import {shareGroups} from '../members';
 import styles from './ShareModal.module.css';
 
 type Share = Tables<'tracker_shares'>;
-type StaffLite = Pick<Tables<'tracker_staff'>, 'id' | 'name' | 'email' | 'archived_at'>;
+type StaffLite = Pick<Tables<'tracker_staff'>, 'id' | 'name' | 'email' | 'archived_at' | 'sort_order'>;
 
 // Fixed locale + zone so server and client render the same string.
 const dateFmt = new Intl.DateTimeFormat('en-GB', {timeZone: 'Asia/Ho_Chi_Minh'});
@@ -83,8 +84,8 @@ function ShareRow({share, staffById, locale, month}: {
     );
 }
 
-export default function ShareModal({projectId, locale, month, staff, shares}: {
-    projectId: string; locale: string; month: string; staff: StaffLite[]; shares: Share[];
+export default function ShareModal({projectId, locale, month, staff, memberIds, shares}: {
+    projectId: string; locale: string; month: string; staff: StaffLite[]; /** Staff ids of the project's members. */ memberIds: string[]; shares: Share[];
 }) {
     const {share: t, common} = useDictionary().tracker;
     const [opened, setOpened] = useState(false);
@@ -110,7 +111,7 @@ export default function ShareModal({projectId, locale, month, staff, shares}: {
                 <MultiSelect
                     label={t.staff}
                     placeholder={t.staffPlaceholder}
-                    data={staff.filter((s) => s.archived_at == null).map((s) => ({value: s.id, label: s.name}))}
+                    data={shareGroups(staff, new Map(memberIds.map((id) => [id, true])), {members: t.shareMembers, others: t.shareOthers})}
                     value={staffIds}
                     onChange={setStaffIds}
                     maxValues={50}

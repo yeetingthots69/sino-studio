@@ -1,0 +1,198 @@
+diff --git a/.omc/drafts/tracker-v2.7-plan-r1-snapshot.md b/.omc/plans/tracker-v2.7-members.md
+index 1e2501b..67c89cb 100644
+--- a/.omc/drafts/tracker-v2.7-plan-r1-snapshot.md
++++ b/.omc/plans/tracker-v2.7-members.md
+@@ -1,6 +1,6 @@
+ # Tracker v2.7: project departments, members, board filters, task list
+ 
+-Status: **DRAFT r1 — pending owner review (step 2), then Architect (orchestrator) + fable-critic + Codex.** Consensus planning (`/plan --consensus --interactive`). Owner answers: `.omc/drafts/tracker-v2.7-decisions.md` (decision page https://claude.ai/artifact/VnMib6viVKgs6cD9EZFHje). Execution after approval runs through `/orchestrate-with-subagents`, at most 3 subagents at a time. No git writes: the owner commits. One migration; applied live only with the owner's OK (Gate A), by the main session (subagents get `apply_migration` denied).
++Status: **r2 — Architect + fable-critic + Codex round 1 merged (review log `.omc/drafts/tracker-v2.7-review-r1.md`); pending approval.** Consensus planning (`/plan --consensus --interactive`). Owner answers: `.omc/drafts/tracker-v2.7-decisions.md` (decision page https://claude.ai/artifact/VnMib6viVKgs6cD9EZFHje). Execution after approval runs through `/orchestrate-with-subagents`, at most 3 subagents at a time. No git writes: the owner commits. One migration; applied live only with the owner's OK (Gate A), by the main session (subagents get `apply_migration` denied).
+ 
+ Paths: `TR/` = `src/components/tracker/`, `GB/` = `TR/GanttBoard/`, `CV/` = `TR/CutsView/`, `PID/` = `src/app/[locale]/tracker/(app)/[projectId]/`, `ACT` = `src/app/[locale]/tracker/actions.ts`, `V1` = `supabase/migrations/20260927090805_tracker.sql`, `V23` = `…/20261002034325_tracker_v23_move_task.sql`, `V26` = `…/20261004081552_tracker_v26_fix.sql`, `DICT` = `src/i18n/dictionaries/{en,vi}.json`.
+ 
+@@ -40,7 +40,7 @@ Paths: `TR/` = `src/components/tracker/`, `GB/` = `TR/GanttBoard/`, `CV/` = `TR/
+ - S1-d Date range shown as `dd/mm/yyyy – dd/mm/yyyy` (tasks can span years); progress as a thin bar + "NN%". A count line "N tasks" above the table. Read-only; no row actions.
+ 
+ **Current state (evidence, from fact passes):**
+-- RLS: every tracker table has one `FOR ALL to authenticated using/with check ((select public.is_tracker_user()))` policy (V1:55, :77, :79). No per-project scoping. `tracker_users.role` is never read except in `(app)/layout.tsx:23`.
++- RLS: mutable configuration tables (staff, tasks, strengths, …) have one `FOR ALL to authenticated using/with check ((select public.is_tracker_user()))` policy (V1:55, :77, :79); specialised policies exist for `tracker_users` (self-select, V1:71-74), append-only adjustments (V2:630-634), email log (hardening:54-57) and the notice queue — all preserved. No per-project scoping. Supabase default ACL grants ALL/EXECUTE to `anon`; every migration revokes first (V1:66-69, V26:136-137). `tracker_users.role` is never read except in `(app)/layout.tsx:23`.
+ - No helper for the advisory lock: rule triggers/RPCs call `pg_advisory_xact_lock(hashtextextended(<project_id>::text, 0))` inline.
+ - `tracker_create_task` (V26:115-135) has **no staff check**; `tracker_move_task` checks `staff_archived` (V23:56-59).
+ - Realtime publication: 9 tables listed in CLAUDE.md (live-verified).
+@@ -93,12 +93,14 @@ Contract (executor writes the SQL; names fixed):
+ - `public.tracker_departments`
+   - `id uuid pk default gen_random_uuid()`, `project_id uuid not null references tracker_projects(id) on delete cascade`, `name text not null check (char_length(btrim(name)) between 1 and 40)`, `color text not null default '#868e96' check (color ~ '^#[0-9a-fA-F]{6}$')`, `sort_order int not null default 0`, `created_at timestamptz not null default now()`.
+   - `unique (project_id, id)` (target of the composite FK); unique index `(project_id, lower(btrim(name)))` → 23505 = name taken.
+-  - BEFORE UPDATE trigger: `project_id` change raises `project_immutable` (same key as tasks/types/cuts).
++  - `project_id` immutable via column grants: authenticated gets `update (name, color, sort_order)` only (no trigger).
+ - `public.tracker_member_departments`
+-  - `project_id uuid not null references tracker_projects(id) on delete cascade`, `staff_id uuid not null references tracker_staff(id) on delete cascade`, `department_id uuid not null`, `created_at timestamptz not null default now()`.
+-  - `primary key (project_id, staff_id, department_id)`; `foreign key (project_id, department_id) references tracker_departments(project_id, id)` **no action** (D11: deleting a department with members fails with 23503); index on `(department_id)` and `(project_id, staff_id)` is covered by the PK prefix.
++  - `id bigint generated always as identity primary key` (surrogate, so `selectAll` keyset paging works), `project_id uuid not null references tracker_projects(id) on delete cascade`, `staff_id uuid not null references tracker_staff(id) on delete cascade`, `department_id uuid not null`, `created_at timestamptz not null default now()`.
++  - `unique (project_id, staff_id, department_id)`; `foreign key (project_id, department_id) references tracker_departments(project_id, id)` **no action** (D11: deleting a department with members fails with 23503); index on `(department_id)`; `(project_id, staff_id)` is covered by the unique index prefix.
+   - No UPDATE: rows are inserted/deleted only (revoke `update` from authenticated).
+-- RLS on both: enable; one `FOR ALL to authenticated` policy `using/with check ((select public.is_tracker_user()))`, same shape as V1:77. Grants: departments `select, insert, update, delete`; member_departments `select, insert, delete` to authenticated. Nothing to `anon`.
++- RLS on both: enable; one `FOR ALL to authenticated` policy `using/with check ((select public.is_tracker_user()))`, same shape as V1:77.
++- Grants (explicit, like V1:66-69): `revoke all on both tables from public, anon, authenticated`; then departments `grant select, insert, delete` + `grant update (name, color, sort_order)` to authenticated; member_departments `grant select, insert, delete` to authenticated. Both RPCs: `revoke execute … from public, anon; grant execute … to authenticated` (as V26:136-137).
++- The archived-staff rule on adding a member lives in the RPC only; a direct PostgREST insert could add an archived staff. Accepted: harmless (archived rows are greyed and never assignable) and the client only uses the RPC.
+ - Realtime: `alter publication supabase_realtime add table tracker_departments, tracker_member_departments`.
+ - **Membership trigger** `private.tracker_task_member()` BEFORE INSERT OR UPDATE OF `staff_id` ON `tracker_tasks`:
+   - fires the check only when `TG_OP = 'INSERT'` or `new.staff_id is distinct from old.staff_id`;
+@@ -107,13 +109,14 @@ Contract (executor writes the SQL; names fixed):
+   - Covers `tracker_create_task` (incl. fixes), `tracker_move_task`, plain updates and undo re-creates. Archived check in `tracker_move_task` stays first.
+ - **RPC `tracker_set_member_departments(p_project uuid, p_staff uuid[], p_departments uuid[]) returns setof tracker_member_departments`** (SECURITY INVOKER, authenticated, `set search_path = ''`):
+   - advisory lock on `p_project`;
+-  - for each staff in `p_staff`: delete rows not in `p_departments`, insert missing ones (`on conflict do nothing`). Empty `p_departments` = remove the staff from the project (D5: tasks untouched);
++  - empty `p_staff` or empty `p_departments` raises `invalid` (removal is a separate action, see §3.3, so an accidental empty edit can never drop a member);
++  - for each staff in `p_staff`: delete rows not in `p_departments`, insert missing ones (`on conflict do nothing`);
+   - adding a staff who is not yet a member and is archived raises `staff_archived`; a department not in `p_project` fails the composite FK (23503 → `invalid`);
+   - returns the project's rows for those staff.
+-  - Used by: add members (many staff, one set), edit member (one staff, new set), remove member (one staff, empty set).
+-- **RPC `tracker_copy_members(p_from uuid, p_to uuid) returns integer`** (SECURITY INVOKER, `set search_path = ''`): advisory lock on `p_to` (then `p_from` reads need no lock); for each department of `p_from` that has members: find the `p_to` department by `lower(btrim(name))` or create it (copy colour, `sort_order` appended); insert links for **non-archived** staff `on conflict do nothing`. Additive; returns the number of new (staff, department) rows. `p_from = p_to` raises `invalid`.
+-- **Backfill (D6)**, in the migration, before the trigger is created: for every project (archived included) with ≥1 task, insert department `Chung` (colour `#868e96`, sort_order 10) and one link per distinct `staff_id` of its tasks (archived staff included — harmless, they are greyed anyway).
+-- Error keys added: `staff_not_member`. `TR/errors.ts`: add to the constants and `P0001` map; FK 23503 is mapped per action (department delete → `department_in_use`; set-members → `invalid`).
++  - Used by: add members (many staff, one set), edit member (one staff, new set). Removal = `removeMember` action: `delete from tracker_member_departments where project_id = … and staff_id = …` (D5: tasks untouched).
++- **RPC `tracker_copy_members(p_from uuid, p_to uuid) returns jsonb`** (`{"added": n}`; an integer 0 would hit `writeRow`'s `!data` → `not_found`, ACT:118) (SECURITY INVOKER, `set search_path = ''`): advisory lock on `p_to` (then `p_from` reads need no lock); for each department of `p_from` that has members: find the `p_to` department by `lower(btrim(name))` or create it (copy colour, `sort_order` appended); insert links for **non-archived** staff `on conflict do nothing`. Additive; `added` = number of new (staff, department) rows. `p_from = p_to` raises `invalid`.
++- **Backfill (D6)**, in the migration (one transaction): first `lock table public.tracker_tasks in share row exclusive mode` (blocks task writes until commit, so no owner can appear between the backfill read and the trigger install), then for every project (archived included) with ≥1 task, insert department `Chung` (colour `#868e96`, sort_order 10) and one link per distinct `staff_id` of its tasks (archived staff included — harmless, they are greyed anyway).
++- Error keys added: `staff_not_member`: `TR/errors.ts` constants, `P0001` map **and** the `TrackerError` union (`:13-15`). FK 23503 uses the existing `FkError` per action: `deleteDepartment` `{fk: 'in_use'}` (precedent `deleteStrength`, ACT:298-301), `setMemberDepartments` `{fk: 'invalid'}`.
+ - After apply: regen types (`database.types.ts` + supazod), `get_advisors` security must stay empty.
+ 
+ ### 3.2 Pure modules (+ Vitest)
+@@ -123,7 +126,7 @@ Contract (executor writes the SQL; names fixed):
+   - `viewStaff(staff, strengthsByStaff, prefs, f: {name: string; departments: string[]; deptsByStaff: Map<string, string[]>})` — keeps today's strength rule (any-of, `all_rounder` matches) and adds: name = `foldName(staff.name).includes(foldName(f.name))` when the query is non-empty; departments = any-of against `deptsByStaff`. All three ANDed. Unknown ids are dropped before use (as today `:295`).
+ - `TR/members.ts` (new)
+   - `memberSet(rows): Map<staffId, departmentId[]>` (departments ordered by department `sort_order`, name).
+-  - `boardStaff(allStaff, members, monthOwnerIds): {staff: Staff[]; assignable: Set<string>}` — staff = (members ∩ non-archived) ∪ month task owners; `assignable` = non-archived members. Order unchanged (staff `sort_order`, name).
++  - `boardStaff(allStaff, members, ownerIds): {rows: Staff[]; assignable: Set<string>}`: rows = (members ∩ non-archived) ∪ `ownerIds`; `assignable` = non-archived members. Order unchanged (staff `sort_order`, name). Computed **on the client** in GanttBoard from the synced store's current-month tasks (`ownerIds` = staff ids of `shown`), so deleting/moving/reassigning a former member's last task (own write, undo/redo, or remote event) drops their row without a refresh (D3).
+   - `pickerStaff(allStaff, members, currentOwner?)` — non-archived members + the current owner (TaskPanel, cut-mode create).
+   - `shareGroups(allStaff, members, labels)` → Mantine grouped data `[{group: members, items}, {group: others, items}]`, non-archived only, empty groups omitted.
+ - `GB/boardHelpers.ts`
+@@ -136,40 +139,40 @@ Contract (executor writes the SQL; names fixed):
+ 
+ ### 3.3 Members tab "Thành viên" (`PID/members/page.tsx` + `TR/MembersView/`)
+ 
+-- Server page (pattern of `PID/cuts/page.tsx`, `must()` + `selectAll`): project (non-archived, else `notFound`), departments of the project (`sort_order`, name), member rows, all staff (id, name, archived_at, sort_order), strengths + staff_strengths, task `staff_id`s of the project (`selectAll`, for counts), other non-archived projects (id, name) for copy.
++- Server page (pattern of `PID/cuts/page.tsx`, `must()` + `selectAll`): project (non-archived, else `notFound`), departments of the project (`sort_order`, name), member rows, all staff (id, name, archived_at, sort_order), strengths + staff_strengths, tasks of the project (`selectAll`, columns `id, staff_id`, for counts); member rows via `selectAll` (surrogate `id`), other non-archived projects (id, name) for copy.
+ - Layout like CutsView: header (title, hint, `ProjectViewTabs active="members"`), toolbar (Add members, Copy from project…), then two blocks:
+   1. **Departments**: one row per department — colour swatch, name, member count; inline rename + colour (Mantine `ColorInput` with swatches), Add department (name + colour), Delete enabled only when count = 0 (tooltip otherwise). New `sort_order` = max + 10. No reordering UI.
+   2. **Members** table (plain `<table>`, CutsView styles): name (+ "archived" badge), department chips (colour), strengths text, task count in this project, actions Edit / Remove.
+-- Modals: **Add members** — staff MultiSelect (non-archived non-members, accent-insensitive `filter` using `foldName`), departments MultiSelect (required ≥1) → `setMemberDepartments`. **Edit** — departments MultiSelect (≥1; save disabled when empty) → same action, one staff. **Remove** — confirm; when the staff owns tasks here the text says the N tasks stay (D5) → action with empty set. **Copy from project** — project Select → `copyMembers`; notice "Added N".
+-- Server actions in ACT (all via `writeRow` pattern, zod, `getUser()` guard, `refresh()`): `createDepartment`, `updateDepartment` (name/colour only), `deleteDepartment` (23503 → `department_in_use`; 23505 → name taken), `setMemberDepartments(projectId, staffIds[], departmentIds[])`, `copyMembers(fromId, toId)`.
++- Modals: **Add members** — staff MultiSelect (non-archived non-members, accent-insensitive `filter` using `foldName`), departments MultiSelect (required ≥1) → `setMemberDepartments`. **Edit** — departments MultiSelect (≥1; save disabled when empty) → same action, one staff. **Remove** — confirm; when the staff owns tasks here the text says the N tasks stay (D5) → `removeMember`. **Copy from project** — project Select → `copyMembers`; notice "Added N".
++- Server actions in ACT (all via `writeRow` pattern, zod, `getUser()` guard, `refresh()`): `createDepartment`, `updateDepartment` (name/colour only), `deleteDepartment` (23503 → `department_in_use`; 23505 → name taken), `setMemberDepartments(projectId, staffIds[], departmentIds[])` (zod: both arrays ≥1), `removeMember(projectId, staffId)` (`.delete().select('id')`, ok with any row count, not `.single()`), `copyMembers(fromId, toId)` (returns `{added}`). The Members view localizes `in_use` as "department still has members" and `duplicate` as "name taken".
+ - Realtime: `RealtimeRefresh` on `tracker_departments`, `tracker_member_departments`, `tracker_staff`, `tracker_staff_strengths`, `tracker_tasks`; `useRealtimeBusy` while a modal is open.
+ 
+ ### 3.4 Board (`PID/page.tsx`, `GB/GanttBoard.tsx`, `GB/TaskPanel.tsx`)
+ 
+-- Page also loads the project's departments + member rows; computes `boardStaff` (D3) and passes `departments`, `members`, `assignable`.
++- Page also loads the project's departments + member rows (`selectAll`) and passes **all** staff (archived included; the list is small) instead of today's non-archived ∪ month-owners filter (`PID/page.tsx:49-52`). The full list stays the source for name lookups (TaskPanel, MoveDialog, presence, ShareModal "Others"). GanttBoard computes `boardStaff` (§3.2) for the rows only; `viewStaff` (single caller `GB/GanttBoard.tsx:296`) filters those rows. The realtime "unknown staff" refresh (`:229-234`) stays for staff created after load.
+ - Rows: non-assignable rows (archived or non-member) render greyed like archived rows today: no `data-drop`, no "+" button, no drag-create. Assignable = `data-drop` as today (when the project has work types).
+ - Staff cell: department chips (colour dot + name, truncated). Chips always show; `hideStrengths` keeps hiding strengths only.
+-- Staff column header filter row: name `TextInput` (clear button, not persisted), department MultiSelect, strength MultiSelect (moved to per-project storage), and a "Clear filters" action when any filter is active; a "x / y" shown count.
++- Staff column header filter row: name `TextInput` (clear button, not persisted), department MultiSelect, strength MultiSelect (moved to per-project storage via `useProjectFilter(projectId)`; the `useBoardPrefs` store (useSyncExternalStore + memory fallback + `storage` event) is generalised to a keyed store, not copied), and a "Clear filters" action when any filter is active; a "x / y" shown count.
+ - `BOARD_TABLES` adds `tracker_departments`, `tracker_member_departments`.
+-- Empty state (D13): when the project has no members and no month owners, the grid area shows a message with a link to the Thành viên tab.
++- Empty state (D13): when the project has no members and no current-month owners, the grid area shows a message with a link to the Thành viên tab.
+ - TaskPanel assignee Select uses `pickerStaff` (members + current owner). Error switch (`:304-320`) adds `staff_not_member` → dictionary message. Undo of a delete/move to a removed member fails with that message through the existing undo error path (no undo-specific code).
+ 
+ ### 3.5 Cut page, Share modal
+ 
+-- `PID/cuts/page.tsx` loads member rows; `CV/CutsView.tsx` passes `pickerStaff` (no current owner) to cut-mode create instead of `activeStaff`. BulkModal keeps `activeStaff` (D10).
++- `PID/cuts/page.tsx` loads member rows (`selectAll`) and adds `tracker_staff`, `tracker_member_departments` to its `RealtimeRefresh` tables (`PAY_TABLES`, `:9`). `CV/CutsView.tsx` passes `pickerStaff` (no current owner) to cut-mode create instead of `activeStaff`; its `errorText` (`:100-120`) adds `staff_not_member` (create uses it, `:134`). BulkModal/CutDrawer keep `activeStaff` (D10).
+ - `TR/ShareModal/ShareModal.tsx` takes member ids and uses `shareGroups` (members first, "Others" below). Its callers (board) pass members.
+ 
+ ### 3.6 Task list "Công việc" (S1: `PID/tasks/page.tsx` + `TR/TaskListView/`)
+ 
+ - Server page like `PID/cuts/page.tsx`: project, work types (`sort_order`), cuts (`selectAll`), tasks (`selectAll`, columns id, cut_id, work_type_id, staff_id, start_date, end_date, progress, is_fix), staff (id, name, archived_at).
+ - Layout like CutsView: header + tabs `active="tasks"`, a toolbar with three MultiSelects (Staff, Work type, Cut; placeholder "All"; searchable; staff uses `foldName` filter), a count line, then a plain `<table>` with columns Cut | Work type | Staff | Dates | Progress. Fix rows: type cell `LO · Fix`. Archived staff: name + muted "(archived)". Empty result: one row "No tasks match".
+-- Uses `filterTasks`, `sortTasks`, `fmtRange`. Realtime: `RealtimeRefresh` on `tracker_tasks`, `tracker_cuts`, `tracker_work_types`, `tracker_staff`.
++- Uses `filterTasks`, `sortTasks`, `fmtRange`. Realtime: `RealtimeRefresh` on `tracker_tasks`, `tracker_cuts`, `tracker_work_types`, `tracker_staff`. Task query = `selectAll` (has `id`).
+ 
+ ### 3.7 Tabs + dictionaries (`DICT`, same keys in both)
+ 
+ - `TR/ProjectViewTabs/ProjectViewTabs.tsx`: `SUFFIX` adds `tasks: '/tasks'`, `members: '/members'`; order board, cuts, tasks, members, people.
+-- `tracker.views`: `tasks` (Tasks / Công việc), `members` (Members / Thành viên), `people` → "Earnings" / "Thu nhập". Page titles of the earnings pages that say "Nhân sự"/"People" are renamed the same way.
+-- New blocks `tracker.members.*` (titles, hints, buttons, modal labels, confirm texts, notices, errors `departmentInUse`, `nameTaken`), `tracker.taskList.*`, `tracker.board.filters.*` (name placeholder, departments, clear, shown count, empty-state text + link), error `staffNotMember`.
++- `tracker.views`: `tasks` (Tasks / Công việc), `members` (Members / Thành viên), `people` → "Earnings" / "Thu nhập" (only this key; `tracker.people.title` is already "Thu nhập"/"Earnings", and `tracker.people.name` "Nhân sự" is a column header that stays).
++- New blocks `tracker.members.*` (titles, hints, buttons, modal labels, confirm texts, notices, errors `departmentInUse` (for `in_use`), `nameTaken` (for `duplicate`)), `tracker.taskList.*`, `tracker.board.filters.*` (name placeholder, departments, clear, shown count, empty-state text + link), error `staffNotMember`.
+ - `CLAUDE.md` Tracker section updated (tables, RPCs, error keys, migration name, routes, tests).
+ 
+ ---
+@@ -182,9 +185,10 @@ Data / SQL (checked with `execute_sql` as an authenticated tracker user where RL
+ - AC3 `tracker_move_task` to a non-member raises `staff_not_member`; to an archived staff still raises `staff_archived`.
+ - AC4 Updating dates/progress of an existing task whose staff is no longer a member succeeds.
+ - AC5 Deleting a department with members fails (23503); without members succeeds. Duplicate name (case/space-insensitive) in one project fails (23505); same name in another project succeeds.
+-- AC6 `tracker_set_member_departments` with an empty set removes the staff's rows and leaves their tasks; adding an archived non-member raises `staff_archived`; a department from another project fails.
+-- AC7 `tracker_copy_members` creates missing departments by name, adds non-archived staff only, is idempotent (second run returns 0); `p_from = p_to` raises.
+-- AC8 `anon` cannot select either new table; `get_advisors` (security) is empty; both tables are in `supabase_realtime`.
++- AC6 `tracker_set_member_departments` with an empty staff or department array raises `invalid`; it replaces a member's set exactly; adding an archived non-member raises `staff_archived`; a department from another project fails (23503). `removeMember` deletes the staff's rows and leaves their tasks.
++- AC7 `tracker_copy_members` creates missing departments by name, adds non-archived staff only, is idempotent (second run returns `{"added":0}`); `p_from = p_to` raises. The `copyMembers` action returns ok with `added: 0` on a repeat and on an empty source project.
++- AC8 Privileges: `information_schema.role_table_grants` / `has_table_privilege` show no grants to `anon`/`public` on both tables, no TRUNCATE/UPDATE for authenticated on member_departments, column UPDATE only on (name, color, sort_order) for departments; `has_function_privilege('anon', …)` is false for both RPCs. As `authenticated` with the JWT email of a non-allow-listed user: select returns 0 rows, insert fails RLS. `get_advisors` (security) empty; both tables in `supabase_realtime`.
++- AC8b RLS checks run inside `begin … rollback` with `set local role authenticated|anon` and `select set_config('request.jwt.claims', '{"email":"…"}', true)` (execute_sql runs as `postgres` and bypasses RLS otherwise).
+ 
+ Unit:
+ - AC9 `npm test` passes, including the new cases listed in 3.2; `npx.cmd tsc --noEmit` and `npm run lint` are clean.
+@@ -193,12 +197,13 @@ UI (E2E in the debug Chrome on :9222):
+ - AC10 Tabs show Lịch | Cut | Công việc | Thành viên | Thu nhập (vi) and Schedule | Cuts | Tasks | Members | Earnings (en); each opens its page with the right active tab.
+ - AC11 Members tab: add a department, rename it, change colour; add two staff into two departments at once; edit one to a single department; Save disabled with zero departments; Delete department disabled while it has members, works when empty; remove a member who owns tasks — tasks still on the board in that month, row greyed.
+ - AC12 Copy members from another project adds the expected people and departments; notice shows the count.
+-- AC13 Board shows members + greyed month owners only; a non-member cannot be a vertical drop target and has no "+"; TaskPanel assignee list shows members (+ current owner) only.
++- AC13 Board shows members + greyed month owners only; a non-member cannot be a vertical drop target and has no "+"; TaskPanel assignee list shows members (+ current owner) only. Deleting (own, undo, or from another tab) or moving out of the month the last task of a former member removes their row without a page reload.
+ - AC14 Board filters: "tuan" matches "Tuấn"; department + strength + name combine with AND; department/strength survive reload per project (another project keeps its own); name search is empty after reload; "Clear filters" resets all three.
+ - AC15 Undo of a reassign back to a staff who was removed from the project shows the "not a member" message and leaves the task as is.
+-- AC16 Cut page cut-mode create lists members only; Share modal shows members first, others under "Others"; Bulk bonus/penalty lists all non-archived staff.
++- AC16 Cut page cut-mode create lists members only and updates when another tab adds/removes a member; creating for a member removed meanwhile shows the "not a member" message; Share modal shows members first, others under "Others"; Bulk bonus/penalty lists all non-archived staff.
+ - AC17 Task list: default shows all project tasks (count equals SQL count); each filter and their combination narrows correctly; fix rows labelled "· Fix"; sort per S1-c; dates `dd/mm/yyyy – dd/mm/yyyy`; a realtime task edit on the board appears after refresh.
+-- AC18 Project with no members: board shows the empty state with a link to Thành viên.
++- AC18a Project with no members and no tasks in the month: board shows the empty state with a link to Thành viên.
++- AC18b Project whose members were all removed but who still own tasks this month: greyed owner rows with their tasks, no empty state.
+ 
+ ---
+ 
+@@ -206,7 +211,7 @@ UI (E2E in the debug Chrome on :9222):
+ 
+ | ID | Deps | Task | Agent | Acceptance |
+ |----|------|------|-------|-----------|
+-| W1.1 | — | Migration file (3.1) + SQL test script (AC1–AC8 as `begin … rollback` blocks) | opus-executor | File reviewed; script ready |
++| W1.1 | — | Migration file (3.1) + SQL test script (AC1–AC8b as `begin … rollback` blocks, role/JWT setup per AC8b) | opus-executor | File reviewed; script ready |
+ | W1.2 | — | Pure modules + tests (3.2) on local minimal types | opus-executor | AC9 for these modules |
+ | W1.3 | — | Tabs + dictionary keys + tab rename (3.7, no CLAUDE.md yet) | sonnet-executor | AC10 labels in both files; tsc clean |
+ | Gate A | W1.1 | Owner OK → main session applies migration, runs SQL test script, regen types + supazod, advisors | orchestrator | AC1–AC8 |
+@@ -227,6 +232,8 @@ UI (E2E in the debug Chrome on :9222):
+ - R5 Board filter moved to per-project storage: users lose their current global strength filter once. Accepted; noted in the changelog.
+ - R6 Copy members into a project concurrently with a manual edit. Mitigation: advisory lock on the target project; `on conflict do nothing`.
+ - R7 Subagent `apply_migration` denied. Mitigation: Gate A runs in the main session.
++- R8 The migration's `share row exclusive` lock on `tracker_tasks` blocks task writes for the migration's duration (sub-second on 156 rows). Accepted; a blocked client write just waits.
++- R9 Trigger order: BEFORE triggers fire alphabetically (`tracker_bump_version`, `tracker_task_member`, `tracker_task_order`), so an insert with an unknown `staff_id` reports `staff_not_member` before 23503. Harmless; no client path does this.
+ 
+ ## 7. Verification steps
+ 
+@@ -237,8 +244,27 @@ UI (E2E in the debug Chrome on :9222):
+ 
+ ## ADR
+ 
+-_(filled after consensus)_
++- **Decision:** Membership = a staff with ≥1 row in `tracker_member_departments(project, staff, department)`; departments in `tracker_departments` per project. A BEFORE trigger on `tracker_tasks` refuses new owners who are not members (`staff_not_member`). Set/copy go through two SECURITY INVOKER RPCs; removal and department CRUD are plain RLS-guarded writes. Board rows are derived on the client from membership plus the synced month tasks. Filters are combined with AND, stored per project (name search not stored). There is a new read-only task list tab.
++- **Drivers:** owner decisions D1–D14 + S1; correctness under concurrent edits; no regression on the live 155-task board; smallest schema.
++- **Alternatives considered:**
++  - (B) A members table plus a link table: rejected, because it needs a deferred "≥1 department" trigger and a second write path for no requested benefit.
++  - (C) UI-only membership: rejected by D4.
++  - URL-stored filters: rejected by D9 and by the router-cache rule.
++  - Server-computed board rows: rejected (Codex 5), because they go stale after task changes.
++- **Why chosen:** the "≥1 department" rule holds by construction, and D11 is a plain FK. The trigger covers every write path (create, fix, move, undo) without touching the existing RPCs.
++- **Consequences:**
++  - Undo onto a removed member is refused, with a clear message.
++  - Users lose their current global strength filter once, because it moves to per-project storage.
++  - The backfill locks task writes briefly.
++  - The archived-staff check on adding a member is enforced by the RPC only.
++- **Follow-ups:**
++  - Accent-insensitive search in the other staff pickers (ShareModal, BulkModal).
++  - Clicking a task-list row to jump to the board month.
++  - URL-shareable task-list filters.
++  - Department reordering UI.
++  - Optional audit of membership changes.
+ 
+ ## Changelog
+ 
+ - r1 (2026-10-05): first draft from owner answers D1–D14 + S1.
++- r2 (2026-10-05): merged Architect A1–A5, Critic 1–7, Codex 1–8 (verdicts in the review log): explicit revoke/grant contract; copy RPC returns jsonb; empty-set guard + separate `removeMember`; surrogate `id` on the link table for keyset paging, task counts select `id`; board rows computed client-side from the synced store; Cuts page realtime + error case; table lock during backfill; `in_use` reused instead of a new key; rename scoped to `views.people`; RLS test setup; AC18 split; policy claim corrected; column grants replace the immutability trigger.

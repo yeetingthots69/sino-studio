@@ -7,8 +7,8 @@ type Task = Tables<'tracker_tasks'>;
 
 /* ── Staff column prefs (localStorage `tracker.board.v1`) ─────── */
 
-export type BoardPrefs = {sort: StaffSort; filter: string[]; hideStrengths: boolean};
-export const DEFAULT_PREFS: BoardPrefs = {sort: 'studio', filter: [], hideStrengths: false};
+export type BoardPrefs = {sort: StaffSort; hideStrengths: boolean};
+export const DEFAULT_PREFS: BoardPrefs = {sort: 'studio', hideStrengths: false};
 export const NEXT_SORT: Record<StaffSort, StaffSort> = {studio: 'az', az: 'za', za: 'studio'};
 
 /** Stored JSON → prefs; anything malformed falls back to the default for that field. */
@@ -22,9 +22,27 @@ export function parsePrefs(raw: string | null): BoardPrefs {
     }
     return {
         sort: v.sort === 'az' || v.sort === 'za' ? v.sort : 'studio',
-        filter: Array.isArray(v.filter) ? v.filter.filter((x): x is string => typeof x === 'string') : [],
         hideStrengths: v.hideStrengths === true,
     };
+}
+
+/* ── Per-project staff filter (localStorage `tracker.board.filter.<projectId>`) ── */
+
+export type ProjectFilter = {strengths: string[]; departments: string[]};
+export const EMPTY_PROJECT_FILTER: ProjectFilter = {strengths: [], departments: []};
+export const projectFilterKey = (projectId: string) => `tracker.board.filter.${projectId}`;
+
+/** Stored JSON → filter; non-arrays and non-string items are dropped. */
+export function parseProjectFilter(raw: string | null): ProjectFilter {
+    let v: Partial<Record<keyof ProjectFilter, unknown>> = {};
+    try {
+        const parsed: unknown = raw ? JSON.parse(raw) : null;
+        if (parsed && typeof parsed === 'object') v = parsed;
+    } catch {
+        // corrupt value → empty
+    }
+    const strings = (x: unknown) => Array.isArray(x) ? x.filter((y): y is string => typeof y === 'string') : [];
+    return {strengths: strings(v.strengths), departments: strings(v.departments)};
 }
 
 /* ── Messages ─────────────────────────────────────────────────── */

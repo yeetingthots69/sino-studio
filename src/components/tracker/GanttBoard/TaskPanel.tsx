@@ -12,6 +12,7 @@ import SendMailButton from '../SendMailButton/SendMailButton';
 import {sendResources} from '@/app/[locale]/tracker/actions';
 import {isValidCutCode, parseDMY} from './boardHelpers';
 import {fill, type Cut, type Staff, type Task, type TaskPatch, type WorkType} from './GanttBoard';
+import {pickerStaff} from '../members';
 import styles from './GanttBoard.module.css';
 
 interface Props {
@@ -21,7 +22,10 @@ interface Props {
     cutCode: string;
     /** Project cuts in natural order. */
     cuts: Cut[];
+    /** Every staff (archived too): name lookups. */
     staff: Staff[];
+    /** Project members (staff id → department ids): assignee options. */
+    members: Map<string, unknown>;
     strengthLabels: Map<string, string>;
     workTypes: WorkType[];
     /** Work types already used by other tasks of this task's cut (one task per cut per type). */
@@ -46,7 +50,7 @@ interface Props {
 
 // Mounted with key={task.id}: drafts reset whenever the selection changes.
 export default function TaskPanel(props: Props) {
-    const {task, style, cutCode, cuts, staff, strengthLabels, workTypes, usedTypeIds, projectLinks, panelDirtyRef, settle, onUpdate, onReassign, onDelete, onInvalidCut, onClose, discardPrompt, onResolveDiscard} = props;
+    const {task, style, cutCode, cuts, staff, members, strengthLabels, workTypes, usedTypeIds, projectLinks, panelDirtyRef, settle, onUpdate, onReassign, onDelete, onInvalidCut, onClose, discardPrompt, onResolveDiscard} = props;
     const {board, common, links: tl, mail} = useDictionary().tracker;
     const t = board.panel;
     // discard prompt: focus "Keep editing" when it appears
@@ -83,7 +87,7 @@ export default function TaskPanel(props: Props) {
 
     const owner = staff.find((s) => s.id === task.staff_id);
     const type = workTypes.find((w) => w.id === task.work_type_id);
-    const assignees = staff.filter((s) => !s.archived_at || s.id === task.staff_id);
+    const assignees = pickerStaff(staff, members, task.staff_id);
     // change events (chips, selects, dates): baseline = the version shown right now
     const update = (patch: TaskPatch & Partial<Task>) => onUpdate(patch, patch, task.version);
 

@@ -113,6 +113,7 @@
 
 .dayHead {
     flex-direction: column;
+    justify-content: flex-end;
     align-items: center;
     gap: 4px;
     padding: 8px 0;
@@ -478,4 +479,78 @@
     line-height: 14px;
     white-space: nowrap;
     pointer-events: none;
+}
+
+/* toolbar staff filters (name, departments, clear); wraps on narrow widths */
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.deptFilter {
+    min-width: 160px;
+    max-width: 280px;
+}
+
+/* staff header: "{shown} / {total}" beside the sort button */
+.shownCount {
+    margin-left: auto;
+    white-space: nowrap;
+    font-weight: 400;
+}
+
+/* staff cell: name over department chips */
+.nameBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.chips {
+    display: flex;
+    gap: 4px;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    min-width: 0;
+    max-width: 100%;
+    padding: 0 5px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    font-size: 10px;
+    line-height: 16px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.chipDot {
+    flex: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.chipName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 24px 16px;
+}
+
+.empty a {
+    color: var(--color-red);
 }

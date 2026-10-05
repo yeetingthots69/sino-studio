@@ -129,6 +129,43 @@ export const publicTrackerCutsRelationshipsSchema = z.tuple([
   }),
 ]);
 
+export const publicTrackerDepartmentsRowSchema = z.object({
+  color: z.string(),
+  created_at: z.string(),
+  id: z.string(),
+  name: z.string(),
+  project_id: z.string(),
+  sort_order: z.number(),
+});
+
+export const publicTrackerDepartmentsInsertSchema = z.object({
+  color: z.string().optional(),
+  created_at: z.string().optional(),
+  id: z.string().optional(),
+  name: z.string(),
+  project_id: z.string(),
+  sort_order: z.number().optional(),
+});
+
+export const publicTrackerDepartmentsUpdateSchema = z.object({
+  color: z.string().optional(),
+  created_at: z.string().optional(),
+  id: z.string().optional(),
+  name: z.string().optional(),
+  project_id: z.string().optional(),
+  sort_order: z.number().optional(),
+});
+
+export const publicTrackerDepartmentsRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("tracker_departments_project_id_fkey"),
+    columns: z.tuple([z.literal("project_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_projects"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
 export const publicTrackerEmailLogRowSchema = z.object({
   attempts: z.number(),
   claim_token: z.string().nullable(),
@@ -195,6 +232,56 @@ export const publicTrackerEmailLogUpdateSchema = z.object({
 export const publicTrackerEmailLogRelationshipsSchema = z.tuple([
   z.object({
     foreignKeyName: z.literal("tracker_email_log_staff_id_fkey"),
+    columns: z.tuple([z.literal("staff_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_staff"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
+export const publicTrackerMemberDepartmentsRowSchema = z.object({
+  created_at: z.string(),
+  department_id: z.string(),
+  id: z.number(),
+  project_id: z.string(),
+  staff_id: z.string(),
+});
+
+export const publicTrackerMemberDepartmentsInsertSchema = z.object({
+  created_at: z.string().optional(),
+  department_id: z.string(),
+  id: z.never().optional(),
+  project_id: z.string(),
+  staff_id: z.string(),
+});
+
+export const publicTrackerMemberDepartmentsUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  department_id: z.string().optional(),
+  id: z.never().optional(),
+  project_id: z.string().optional(),
+  staff_id: z.string().optional(),
+});
+
+export const publicTrackerMemberDepartmentsRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal(
+      "tracker_member_departments_project_id_department_id_fkey",
+    ),
+    columns: z.tuple([z.literal("project_id"), z.literal("department_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_departments"),
+    referencedColumns: z.tuple([z.literal("project_id"), z.literal("id")]),
+  }),
+  z.object({
+    foreignKeyName: z.literal("tracker_member_departments_project_id_fkey"),
+    columns: z.tuple([z.literal("project_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_projects"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+  z.object({
+    foreignKeyName: z.literal("tracker_member_departments_staff_id_fkey"),
     columns: z.tuple([z.literal("staff_id")]),
     isOneToOne: z.literal(false),
     referencedRelation: z.literal("tracker_staff"),
@@ -726,6 +813,13 @@ export const publicTrackerClaimNoticesReturnsSchema = z.array(
   }),
 );
 
+export const publicTrackerCopyMembersArgsSchema = z.object({
+  p_from: z.string(),
+  p_to: z.string(),
+});
+
+export const publicTrackerCopyMembersReturnsSchema = jsonSchema;
+
 export const publicTrackerCreateProjectArgsSchema = z.object({
   p_color: z.string(),
   p_name: z.string(),
@@ -806,6 +900,13 @@ export const publicTrackerNormalizeCutArgsSchema = z.object({
 
 export const publicTrackerNormalizeCutReturnsSchema = z.string();
 
+export const publicTrackerRemoveMemberArgsSchema = z.object({
+  p_project: z.string(),
+  p_staff: z.string(),
+});
+
+export const publicTrackerRemoveMemberReturnsSchema = jsonSchema;
+
 export const publicTrackerSaveWorkTypesArgsSchema = z.object({
   p_project: z.string(),
   p_types: jsonSchema,
@@ -842,5 +943,22 @@ export const publicTrackerSetCutSplitsReturnsSchema = z.array(
     pay_split: jsonSchema.nullable(),
     project_id: z.string(),
     updated_at: z.string(),
+  }),
+);
+
+export const publicTrackerSetMemberDepartmentsArgsSchema = z.object({
+  p_departments: z.array(z.string()),
+  p_mode: z.string().optional(),
+  p_project: z.string(),
+  p_staff: z.array(z.string()),
+});
+
+export const publicTrackerSetMemberDepartmentsReturnsSchema = z.array(
+  z.object({
+    created_at: z.string(),
+    department_id: z.string(),
+    id: z.number(),
+    project_id: z.string(),
+    staff_id: z.string(),
   }),
 );

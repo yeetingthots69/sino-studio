@@ -197,50 +197,50 @@
   "hotPaths": [
     {
       "path": "src/components/tracker/GanttBoard/GanttBoard.tsx",
-      "accessCount": 105,
-      "lastAccessed": 1791102556962,
+      "accessCount": 127,
+      "lastAccessed": 1791184679752,
       "type": "file"
     },
     {
       "path": "src/app/[locale]/tracker/actions.ts",
-      "accessCount": 66,
-      "lastAccessed": 1791100592524,
+      "accessCount": 71,
+      "lastAccessed": 1791184845918,
       "type": "file"
     },
     {
       "path": "src/components/tracker/GanttBoard/TaskPanel.tsx",
-      "accessCount": 34,
-      "lastAccessed": 1791102579846,
-      "type": "file"
-    },
-    {
-      "path": "src/i18n/dictionaries/en.json",
-      "accessCount": 21,
-      "lastAccessed": 1790922136849,
-      "type": "file"
-    },
-    {
-      "path": "CLAUDE.md",
-      "accessCount": 21,
-      "lastAccessed": 1791103248970,
+      "accessCount": 36,
+      "lastAccessed": 1791184077342,
       "type": "file"
     },
     {
       "path": "src/i18n/dictionaries/vi.json",
+      "accessCount": 24,
+      "lastAccessed": 1791184229161,
+      "type": "file"
+    },
+    {
+      "path": "src/i18n/dictionaries/en.json",
+      "accessCount": 22,
+      "lastAccessed": 1791184227663,
+      "type": "file"
+    },
+    {
+      "path": "CLAUDE.md",
+      "accessCount": 22,
+      "lastAccessed": 1791185131357,
+      "type": "file"
+    },
+    {
+      "path": "src/types/database.types.ts",
       "accessCount": 20,
-      "lastAccessed": 1790922138699,
+      "lastAccessed": 1791183871711,
       "type": "file"
     },
     {
       "path": "src/components/tracker/ProjectsTable/ProjectsTable.tsx",
       "accessCount": 19,
       "lastAccessed": 1790941856174,
-      "type": "file"
-    },
-    {
-      "path": "src/types/database.types.ts",
-      "accessCount": 19,
-      "lastAccessed": 1791101923001,
       "type": "file"
     },
     {
@@ -316,6 +316,12 @@
       "type": "file"
     },
     {
+      "path": "supabase/migrations/20260927090805_tracker.sql",
+      "accessCount": 6,
+      "lastAccessed": 1791181010412,
+      "type": "file"
+    },
+    {
       "path": "src/components/language-switcher/LanguageSwitcher.tsx",
       "accessCount": 4,
       "lastAccessed": 1790502119331,
@@ -325,12 +331,6 @@
       "path": "src/utils/supabase/proxy.ts",
       "accessCount": 4,
       "lastAccessed": 1790517822562,
-      "type": "file"
-    },
-    {
-      "path": "supabase/migrations/20260927090805_tracker.sql",
-      "accessCount": 4,
-      "lastAccessed": 1790920645815,
       "type": "file"
     },
     {
@@ -391,6 +391,12 @@
       "path": "src/components/tracker/TrackerShell/TrackerShell.module.css",
       "accessCount": 2,
       "lastAccessed": 1790910413655,
+      "type": "file"
+    },
+    {
+      "path": "src/components/tracker/TrackerShell/TrackerShell.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1791180341650,
       "type": "file"
     },
     {
@@ -457,12 +463,6 @@
       "path": "src/components/tracker/ProjectSwitcher.tsx",
       "accessCount": 1,
       "lastAccessed": 1790500831700,
-      "type": "file"
-    },
-    {
-      "path": "src/components/tracker/TrackerShell/TrackerShell.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1790500832939,
       "type": "file"
     },
     {

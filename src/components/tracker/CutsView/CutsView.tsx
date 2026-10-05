@@ -8,6 +8,7 @@ import {useDictionary} from '@/i18n/DictionaryProvider';
 import {createTask, deleteCut, updateCut, type ActionResult} from '@/app/[locale]/tracker/actions';
 import type {Tables} from '@/types/database.types';
 import {compareCutCodes} from '../cuts';
+import {memberSet, pickerStaff, type Department, type MemberRow} from '../members';
 import {formatVnd} from '../earnings';
 import {sanitizeLinks} from '../links';
 import {cutSplit, payLines, stagePct} from '../pay';
@@ -28,7 +29,7 @@ export type Cut = Tables<'tracker_cuts'>;
 export type WorkType = Tables<'tracker_work_types'>;
 export type Task = Pick<Tables<'tracker_tasks'>,
     'id' | 'project_id' | 'cut_id' | 'work_type_id' | 'staff_id' | 'progress' | 'start_date' | 'end_date' | 'is_fix'>;
-export type Staff = Pick<Tables<'tracker_staff'>, 'id' | 'name' | 'email' | 'archived_at'>;
+export type Staff = Pick<Tables<'tracker_staff'>, 'id' | 'name' | 'email' | 'sort_order' | 'archived_at'>;
 export type Adjustment = Pick<Tables<'tracker_pay_adjustments'>,
     'id' | 'batch_id' | 'project_id' | 'cut_id' | 'work_type_id' | 'staff_id' | 'amount' | 'reason' | 'reverses_id' | 'created_by' | 'created_at'>;
 export type AuditRow = Tables<'tracker_audit_log'>;
@@ -48,13 +49,16 @@ interface Props {
     audit: AuditRow[];
     /** Studio-wide pay split presets, by name. */
     presets: PayPreset[];
+    /** The project's member rows and departments: cut-mode create lists members only (D10). */
+    memberRows: MemberRow[];
+    departments: Department[];
 }
 
 export const stageKey = (cutId: string, typeId: string) => `${cutId}:${typeId}`;
 
 const todayICT = () => new Intl.DateTimeFormat('en-CA', {timeZone: 'Asia/Ho_Chi_Minh'}).format(new Date());
 
-export default function CutsView({project, month, workTypes, cuts, tasks, staff, adjustments, audit, presets}: Props) {
+export default function CutsView({project, month, workTypes, cuts, tasks, staff, adjustments, audit, presets, memberRows, departments}: Props) {
     const {cuts: t, board, common} = useDictionary().tracker;
     const router = useRouter();
     // success notices are neutral (role=status), errors red (role=alert)
@@ -77,6 +81,7 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
     const cutCodes = new Map(cuts.map((c) => [c.id, c.code]));
     const staffById = new Map(staff.map((s) => [s.id, s]));
     const activeStaff = staff.filter((s) => !s.archived_at);
+    const memberStaff = pickerStaff(staff, memberSet(memberRows, departments));
     const taskByStage = new Map(tasks.filter((x) => !x.is_fix).map((x) => [stageKey(x.cut_id, x.work_type_id), x]));
     const fixCount = new Map<string, number>();
     for (const x of tasks) {
@@ -103,6 +108,8 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                 return orderConflictText(board, r.detail, typeId, tasks, cutCodes, typeById, rule);
             case 'duplicate':
                 return board.duplicateStage;
+            case 'staff_not_member':
+                return board.staffNotMember;
             case 'fix_no_stage':
                 return board.fixNoStageError;
             case 'in_use':
@@ -359,7 +366,7 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                                                                             workTypes={workTypes}
                                                                             stages={tasks}
                                                                             typeRule={rule}
-                                                                            cutMode={{cut, workType: w, staff: activeStaff}}
+                                                                            cutMode={{cut, workType: w, staff: memberStaff}}
                                                                             describeConflict={(id, typeId) =>
                                                                                 orderConflictText(board, id, typeId, tasks, cutCodes, typeById, rule)}
                                                                             onClose={() => setCreateAt(null)}

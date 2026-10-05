@@ -1,0 +1,158 @@
+/* Members view (plan v2.7 §3.3): same shell as CutsView */
+.page {
+    --line: rgba(255, 255, 255, 0.1);
+    --surface: var(--color-dark);
+    --surface-2: #1a1a1a;
+    --dim: rgba(255, 255, 255, 0.45);
+    padding: 24px 16px;
+}
+
+.intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.title {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 28px;
+    margin: 4px 0;
+}
+
+.heading {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 18px;
+    margin: 24px 0 8px;
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-bottom: 12px;
+}
+
+.toolbarEnd {
+    margin-left: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.block {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    max-width: 640px;
+}
+
+.deptRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    min-height: 44px;
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--line);
+}
+
+.deptRow:last-child {
+    border-bottom: 0;
+}
+
+.deptName {
+    font-weight: 500;
+}
+
+.rowEnd {
+    margin-left: auto;
+    display: flex;
+    gap: 4px;
+}
+
+.color {
+    width: 130px;
+}
+
+.swatch {
+    width: 14px;
+    height: 14px;
+    flex: none;
+}
+
+.scroll {
+    overflow: auto;
+    border: 1px solid var(--line);
+    background: var(--surface);
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    min-width: 640px;
+}
+
+.table th,
+.table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.table thead th {
+    background: var(--surface-2);
+    font-weight: 500;
+}
+
+.table tbody th {
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.archived th,
+.archived td {
+    color: var(--dim);
+}
+
+.num {
+    text-align: right !important;
+    font-variant-numeric: tabular-nums;
+}
+
+.dim {
+    color: var(--dim);
+    font-size: 13px;
+}
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 8px;
+    border: 1px solid var(--line);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex: none;
+}
+
+.actions {
+    text-align: right !important;
+}

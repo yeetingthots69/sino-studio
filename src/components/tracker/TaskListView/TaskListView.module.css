@@ -1,0 +1,99 @@
+/* Task list (plan §3.6); look follows CutsView */
+.page {
+    --line: rgba(255, 255, 255, 0.1);
+    --surface: var(--color-dark);
+    --surface-2: #1a1a1a;
+    padding: 24px 16px;
+}
+
+.intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.title {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 28px;
+    margin: 4px 0;
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 8px 12px;
+    margin-bottom: 12px;
+}
+
+.scroll {
+    overflow: auto;
+    max-height: calc(100vh - 300px);
+    border: 1px solid var(--line);
+    background: var(--surface);
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    min-width: 640px;
+    font-size: 14px;
+}
+
+.table th,
+.table td {
+    padding: 8px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--surface-2);
+    font-weight: 500;
+}
+
+.cut {
+    font-family: var(--font-heading), sans-serif;
+    font-weight: 700;
+}
+
+.type {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.swatch {
+    width: 10px;
+    height: 10px;
+    flex: none;
+}
+
+.dim {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+}
+
+.num {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.progress {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.empty {
+    color: rgba(255, 255, 255, 0.45);
+    text-align: center;
+}

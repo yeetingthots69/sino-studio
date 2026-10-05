@@ -440,7 +440,9 @@
                 "details": "Chi tiết",
                 "noTasks": "Không có công việc trong tháng này.",
                 "links": "Tài liệu"
-            }
+            },
+            "shareMembers": "Thành viên",
+            "shareOthers": "Khác"
         },
         "board": {
             "fix": "Fix",
@@ -448,7 +450,6 @@
             "fixNoStage": "Cut này chưa có công đoạn nào để sửa",
             "fixNoStageError": "Công đoạn cần sửa chưa có task",
             "kicker": "Lịch sản xuất",
-            "title": "Lịch phân công Animator",
             "hint": "Bấm hoặc kéo trên ngày trống để tạo công việc. Kéo thanh để dời ngày, kéo hai mép để đổi độ dài, chọn một thanh để sửa.",
             "prevMonth": "Tháng trước",
             "nextMonth": "Tháng sau",
@@ -548,13 +549,25 @@
                     "deleted": "Xoá {cut} {type}"
                 },
                 "moveReason": "Hoàn tác/làm lại: chuyển {cut} {type} sang {name}"
-            }
+            },
+            "filters": {
+                "name": "Tìm tên",
+                "departments": "Bộ phận",
+                "clear": "Xoá bộ lọc",
+                "shown": "{shown} / {total}",
+                "emptyTitle": "Dự án chưa có thành viên",
+                "emptyLink": "Thêm thành viên",
+                "clearName": "Xoá tìm tên"
+            },
+            "staffNotMember": "Người này không phải thành viên của dự án."
         },
         "views": {
             "label": "Chế độ xem",
             "board": "Lịch",
             "cuts": "Cut",
-            "people": "Nhân sự"
+            "people": "Thu nhập",
+            "tasks": "Công việc",
+            "members": "Thành viên"
         },
         "cuts": {
             "fixCount": "{n} fix",
@@ -798,6 +811,55 @@
             "reversal": "hoàn tác",
             "reversed": "đã hoàn tác",
             "noAdjustments": "Không có thưởng/phạt trong khoảng này."
+        },
+        "members": {
+            "title": "Thành viên",
+            "hint": "Bộ phận và nhân sự được phân công vào dự án. Chỉ thành viên mới được giao việc.",
+            "departments": "Bộ phận",
+            "addDepartment": "Thêm bộ phận",
+            "departmentName": "Tên bộ phận",
+            "color": "Màu",
+            "memberCount": "{count} thành viên",
+            "deleteDepartment": "Xoá bộ phận",
+            "deleteBlocked": "Hãy chuyển thành viên ra trước",
+            "noDepartments": "Chưa có bộ phận. Hãy thêm bộ phận trước khi thêm thành viên.",
+            "addMembers": "Thêm thành viên",
+            "copyFrom": "Sao chép thành viên từ dự án…",
+            "copySource": "Sao chép từ",
+            "copied": "Đã thêm {count} lượt phân công",
+            "colName": "Họ tên",
+            "colDepartments": "Bộ phận",
+            "colStrengths": "Điểm mạnh",
+            "colTasks": "Công việc",
+            "edit": "Sửa",
+            "remove": "Gỡ",
+            "staffPick": "Nhân sự",
+            "departmentsPick": "Bộ phận",
+            "departmentsRequired": "Chọn ít nhất một bộ phận",
+            "removeTitle": "Gỡ {name} khỏi dự án?",
+            "removeKeepsTasks": "{count} công việc của họ trong dự án vẫn được giữ nguyên.",
+            "noMembers": "Chưa có thành viên.",
+            "departmentInUse": "Bộ phận này vẫn còn thành viên.",
+            "nameTaken": "Đã có bộ phận trùng tên.",
+            "staffArchived": "Nhân sự này đã lưu trữ, không thể thêm.",
+            "actions": "Thao tác",
+            "departmentGone": "Một bộ phận bạn chọn đã bị xoá. Hãy mở lại hộp thoại."
+        },
+        "taskList": {
+            "title": "Công việc",
+            "hint": "Tất cả công việc của dự án. Bỏ trống bộ lọc để xem tất cả.",
+            "staff": "Nhân sự",
+            "workType": "Loại công việc",
+            "cut": "Cut",
+            "all": "Tất cả",
+            "count": "{count} công việc",
+            "colCut": "Cut",
+            "colType": "Loại công việc",
+            "colStaff": "Nhân sự",
+            "colDates": "Thời gian",
+            "colProgress": "Tiến độ",
+            "empty": "Không có công việc phù hợp.",
+            "archived": "Đã lưu trữ"
         }
     }
 }

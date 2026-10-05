@@ -3,7 +3,7 @@
 import {useEffect, useRef, useState, useSyncExternalStore, useTransition, type CSSProperties, type PointerEvent, type ReactNode} from 'react';
 import Link from 'next/link';
 import {usePathname, useRouter} from 'next/navigation';
-import {ActionIcon, Avatar, CloseButton, MultiSelect, Skeleton, Text, Tooltip, Transition, UnstyledButton, VisuallyHidden} from '@mantine/core';
+import {ActionIcon, Avatar, Button, CloseButton, MultiSelect, Skeleton, Text, TextInput, Tooltip, Transition, UnstyledButton, VisuallyHidden} from '@mantine/core';
 import {IconArrowBackUp, IconArrowForwardUp, IconArrowsSort, IconEye, IconEyeOff, IconSortAscendingLetters, IconSortDescendingLetters} from '@tabler/icons-react';
 import {useDictionary} from '@/i18n/DictionaryProvider';
 import {createTask, deleteTask, moveTask, updateTask, type ActionResult, type TaskPatch as ActionTaskPatch} from '@/app/[locale]/tracker/actions';
@@ -13,6 +13,7 @@ import {compareCutCodes} from '../cuts';
 import {sanitizeLinks} from '../links';
 import {addDays, assignLanes, daysBetween, isWeekend, monthRange, weekdayLabel} from '../dates';
 import {viewStaff} from '../staffView';
+import {boardStaff, memberSet, type Department, type MemberRow} from '../members';
 import {typeRule} from '../pipeline';
 import ProjectViewTabs from '../ProjectViewTabs/ProjectViewTabs';
 import AddTaskButton from './AddTaskButton';
@@ -26,7 +27,7 @@ import {createCommitChain, planCommit} from './taskSync';
 import {createTaskStore, NEXT_SORT, orderConflictText} from './boardHelpers';
 import {cssColor} from './presence';
 import {useBoardPresence} from './useBoardPresence';
-import {useBoardPrefs} from './useBoardPrefs';
+import {useBoardPrefs, useProjectFilter} from './useBoardPrefs';
 import {useDragCreate} from './useDragCreate';
 import {useRefreshScheduler} from './useRefreshScheduler';
 import {useTaskRealtime} from './useTaskRealtime';
@@ -90,7 +91,12 @@ interface Props {
     project: Tables<'tracker_projects'>;
     month: string;
     locale: string;
+    /** Every staff, archived included (name lookups); rows are picked by `boardStaff`. */
     staff: Staff[];
+    /** The project's departments by sort_order, name. */
+    departments: Department[];
+    /** The project's member rows (staff × department). */
+    members: MemberRow[];
     /** The project's work types by sort_order. */
     workTypes: WorkType[];
     strengths: Tables<'tracker_strengths'>[];
@@ -104,10 +110,13 @@ interface Props {
     shareSlot?: ReactNode;
 }
 
-const BOARD_TABLES = ['tracker_projects', 'tracker_work_types', 'tracker_staff', 'tracker_strengths', 'tracker_staff_strengths', 'tracker_shares'];
+const BOARD_TABLES = [
+    'tracker_projects', 'tracker_work_types', 'tracker_staff', 'tracker_strengths', 'tracker_staff_strengths', 'tracker_shares',
+    'tracker_departments', 'tracker_member_departments',
+];
 
 export default function GanttBoard(props: Props) {
-    const {project, month, locale, staff, workTypes, strengths, staffStrengths, cuts: cutRows, tasks, stages: stageRows} = props;
+    const {project, month, locale, staff, workTypes, strengths, staffStrengths, cuts: cutRows, tasks, stages: stageRows, departments, members} = props;
     const {board: t, common} = useDictionary().tracker;
     // Confirmed rows live in an external store updated synchronously on every input (commits read it at
     // send time inside the chain); React renders it through useSyncExternalStore.
@@ -145,6 +154,8 @@ export default function GanttBoard(props: Props) {
     // toast buttons call the latest runUndo (fresh barrier and lookups), not the one of the render that made the toast
     const runUndoRef = useRef<(dir: Dir) => void>(() => {});
     const [prefs, setPrefs] = useBoardPrefs();
+    const [savedFilter, setSavedFilter] = useProjectFilter(project.id);
+    const [nameQuery, setNameQuery] = useState('');
     const {start: monthStart, end: monthEnd, days} = monthRange(month);
 
     // month navigation: the header switches at once, rows show skeletons until the new board mounts.
@@ -292,8 +303,15 @@ export default function GanttBoard(props: Props) {
         strengths.filter((s) => ids.includes(s.id)).map((s) => s.label).join(', '),
     ]));
     const allRounderIds = new Set(strengths.filter((s) => s.all_rounder).map((s) => s.id));
-    const filter = prefs.filter.filter((id) => strengthById.has(id));
-    const rows = viewStaff(staff, strengthIdsByStaff, allRounderIds, {sort: prefs.sort, filter});
+    // rows: active members ∪ owners of a displayed task (optimistic state included); only members are assignable
+    const deptsByStaff = memberSet(members, departments);
+    const deptById = new Map(departments.map((d) => [d.id, d]));
+    const {rows: boardRows, assignable} = boardStaff(staff, deptsByStaff, shown.map((x) => x.staff_id));
+    // saved ids of deleted strengths/departments are ignored
+    const filter = savedFilter.strengths.filter((id) => strengthById.has(id));
+    const deptFilter = savedFilter.departments.filter((id) => deptById.has(id));
+    const filtered = filter.length > 0 || deptFilter.length > 0 || nameQuery.trim() !== '';
+    const rows = viewStaff(boardRows, strengthIdsByStaff, allRounderIds, {sort: prefs.sort, filter}, {name: nameQuery, departments: deptFilter, deptsByStaff});
     const lead = hide ? 2 : 3; // fixed columns before the day columns
     const SortIcon = SORT_ICON[prefs.sort];
 
@@ -314,6 +332,8 @@ export default function GanttBoard(props: Props) {
                 return t.moveArchived;
             case 'fix_no_stage':
                 return t.fixNoStageError;
+            case 'staff_not_member':
+                return t.staffNotMember;
             case 'network':
                 return common.error.network;
             default:
@@ -441,6 +461,10 @@ export default function GanttBoard(props: Props) {
     };
 
     const draft = drag.draft;
+    // the draft's row stopped being assignable (e.g. removed from the project in another tab): drop the popover
+    useEffect(() => {
+        if (draft && !assignable.has(draft.staffId)) drag.close();
+    });
     const create = async (input: CreateInput): Promise<string | null> => {
         if (!draft) return null;
         createBusyRef.current = true;
@@ -696,7 +720,7 @@ export default function GanttBoard(props: Props) {
             <header className={styles.intro}>
                 <div>
                     <Text size="sm" c="dimmed">{t.kicker}</Text>
-                    <h1 className={styles.title}>{t.title}</h1>
+                    <h1 className={styles.title}>{project.name}</h1>
                     <Text size="sm" c="dimmed">{t.hint}</Text>
                 </div>
                 <div className={styles.headerActions}>
@@ -726,6 +750,36 @@ export default function GanttBoard(props: Props) {
                                 </span>
                             </Tooltip>
                         </ActionIcon.Group>
+                        {/* staff filters: name (not saved), departments (saved per project); strengths sit in their column header */}
+                        <div className={styles.filters}>
+                            <TextInput
+                                size="xs"
+                                aria-label={t.filters.name}
+                                placeholder={t.filters.name}
+                                value={nameQuery}
+                                onChange={(e) => setNameQuery(e.currentTarget.value)}
+                                rightSectionPointerEvents="all"
+                                rightSection={nameQuery && <CloseButton size="xs" aria-label={t.filters.clearName} onClick={() => setNameQuery('')}/>}
+                            />
+                            <MultiSelect
+                                className={styles.deptFilter}
+                                size="xs"
+                                aria-label={t.filters.departments}
+                                placeholder={deptFilter.length ? undefined : t.filters.departments}
+                                data={departments.map((d) => ({value: d.id, label: d.name}))}
+                                value={deptFilter}
+                                onChange={(v) => setSavedFilter({strengths: filter, departments: v})}
+                                clearable
+                            />
+                            {filtered && (
+                                <Button size="compact-xs" variant="subtle" color="gray" onClick={() => {
+                                    setNameQuery('');
+                                    setSavedFilter({strengths: [], departments: []});
+                                }}>
+                                    {t.filters.clear}
+                                </Button>
+                            )}
+                        </div>
                         <Legend workTypes={workTypes}/>
                         {presence.people.length > 0 && (
                             <Avatar.Group className={styles.presence} aria-label={t.presence.label}>
@@ -765,6 +819,9 @@ export default function GanttBoard(props: Props) {
                                     {t.staff}
                                     <SortIcon size={14}/>
                                 </UnstyledButton>
+                                <span className={`${styles.muted} ${styles.shownCount}`} role="status">
+                                    {fill(t.filters.shown, {shown: rows.length, total: boardRows.length})}
+                                </span>
                                 {hide && (
                                     <ActionIcon
                                         variant="subtle"
@@ -787,7 +844,7 @@ export default function GanttBoard(props: Props) {
                                         placeholder={filter.length ? undefined : t.strengths}
                                         data={strengths.map((s) => ({value: s.id, label: s.label}))}
                                         value={filter}
-                                        onChange={(v) => setPrefs({...prefs, filter: v})}
+                                        onChange={(v) => setSavedFilter({strengths: v, departments: deptFilter})}
                                         clearable
                                     />
                                     <ActionIcon
@@ -817,7 +874,10 @@ export default function GanttBoard(props: Props) {
                                 const lanes = assignLanes(rowTasks);
                                 const laneCount = Math.max(1, ...[...lanes.values()].map((l) => l + 1));
                                 const height = laneCount * LANE_H + 8;
-                                const active = !s.archived_at && workTypes.length > 0;
+                                // archived or non-member rows are greyed and accept no drop / "+" / drag-create
+                                const assignableRow = assignable.has(s.id);
+                                const active = assignableRow && workTypes.length > 0;
+                                const depts = (deptsByStaff.get(s.id) ?? []).flatMap((id) => deptById.get(id) ?? []);
                                 const row = idx + 2; // explicit placement so weekend overlays never displace cells
                                 return (
                                     <div key={s.id} className={styles.row}>
@@ -825,12 +885,24 @@ export default function GanttBoard(props: Props) {
                                             {idx + 1}
                                         </div>
                                         <div className={`${styles.cell} ${styles.stickyName} ${hide ? styles.stickyLast : ''}`} style={{height, gridArea: `${row} / 2`}}>
-                                            <Link
-                                                href={`/${locale}/tracker/${project.id}/people/${s.id}`}
-                                                className={`${styles.name} ${s.archived_at ? styles.muted : ''}`}
-                                            >
-                                                {s.name}
-                                            </Link>
+                                            <div className={styles.nameBlock}>
+                                                <Link
+                                                    href={`/${locale}/tracker/${project.id}/people/${s.id}`}
+                                                    className={`${styles.name} ${assignableRow ? '' : styles.muted}`}
+                                                >
+                                                    {s.name}
+                                                </Link>
+                                                {depts.length > 0 && (
+                                                    <span className={styles.chips} title={depts.map((d) => d.name).join(', ')}>
+                                                        {depts.map((d) => (
+                                                            <span key={d.id} className={styles.chip}>
+                                                                <span className={styles.chipDot} style={{background: d.color}}/>
+                                                                <span className={styles.chipName}>{d.name}</span>
+                                                            </span>
+                                                        ))}
+                                                    </span>
+                                                )}
+                                            </div>
                                             {active && <AddTaskButton label={fill(t.addTask, {name: s.name})} onClick={() => openAdd(s.id)}/>}
                                         </div>
                                         {!hide && (
@@ -906,6 +978,13 @@ export default function GanttBoard(props: Props) {
                                 );
                             })}
                         </div>
+                        {boardRows.length === 0 && !skeleton && (
+                            // no active members and nobody owns a task this month
+                            <div className={styles.empty}>
+                                <Text size="sm" c="dimmed">{t.filters.emptyTitle}</Text>
+                                <Link href={`/${locale}/tracker/${project.id}/members`}>{t.filters.emptyLink}</Link>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -919,6 +998,7 @@ export default function GanttBoard(props: Props) {
                             cutCode={cutCodes.get(panelTask.cut_id) ?? ''}
                             cuts={cutList}
                             staff={staff}
+                            members={deptsByStaff}
                             strengthLabels={strengthLabels}
                             workTypes={workTypes}
                             usedTypeIds={new Set(stages

@@ -1,6 +1,6 @@
 import {describe, expect, it, vi} from 'vitest';
 import {
-    ADJUSTMENT_INVALID, FIX_IMMUTABLE, FIX_NO_STAGE, ORDER_CONFLICT, OVERLAP_IN_USE, PCT_TOTAL, PROJECT_IMMUTABLE, SHARE_REVOKED, STAFF_ARCHIVED, TYPE_IN_USE, mapDbError, retryDeadlock,
+    ADJUSTMENT_INVALID, FIX_IMMUTABLE, FIX_NO_STAGE, ORDER_CONFLICT, OVERLAP_IN_USE, PCT_TOTAL, PROJECT_IMMUTABLE, SHARE_REVOKED, STAFF_ARCHIVED, STAFF_NOT_MEMBER, TYPE_IN_USE, mapDbError, retryDeadlock,
 } from '../errors';
 
 describe('mapDbError', () => {
@@ -16,6 +16,7 @@ describe('mapDbError', () => {
         [{code: 'P0001', message: STAFF_ARCHIVED}, {error: 'staff_archived'}],
         [{code: 'P0001', message: FIX_NO_STAGE}, {error: 'fix_no_stage'}],
         [{code: 'P0001', message: FIX_IMMUTABLE}, {error: 'invalid'}],
+        [{code: 'P0001', message: STAFF_NOT_MEMBER}, {error: 'staff_not_member'}],
         [{code: 'P0001', message: 'something_else'}, {error: 'generic'}],
         [{code: '23503'}, {error: 'invalid'}],
         [{code: '23505'}, {error: 'duplicate'}],

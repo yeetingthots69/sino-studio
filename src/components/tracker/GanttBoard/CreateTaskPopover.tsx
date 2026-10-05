@@ -62,7 +62,9 @@ export default function CreateTaskPopover(props: Props) {
     // fix of an existing stage (board only)
     const [fixOn, setFixOn] = useState(false);
     const fix = fixOn && !cutMode;
-    const [staffId, setStaffId] = useState<string | null>(null);
+    const [pickedStaff, setStaffId] = useState<string | null>(null);
+    // a person removed from the project meanwhile (realtime refresh) is no longer a valid pick
+    const staffId = cutMode?.staff.some((s) => s.id === pickedStaff) ? pickedStaff : null;
     // board: dates follow the ghost (props); cut mode: editable drafts seeded from props
     const [startDraft, setStart] = useState(props.start);
     const [endDraft, setEnd] = useState(props.end);
