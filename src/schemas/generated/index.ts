@@ -87,7 +87,6 @@ export const publicTrackerAuditLogUpdateSchema = z.object({
 });
 
 export const publicTrackerCutsRowSchema = z.object({
-  budget: z.number(),
   budgets: jsonSchema,
   code: z.string(),
   created_at: z.string(),
@@ -99,7 +98,6 @@ export const publicTrackerCutsRowSchema = z.object({
 });
 
 export const publicTrackerCutsInsertSchema = z.object({
-  budget: z.number().optional(),
   budgets: jsonSchema.optional(),
   code: z.string(),
   created_at: z.string().optional(),
@@ -111,7 +109,6 @@ export const publicTrackerCutsInsertSchema = z.object({
 });
 
 export const publicTrackerCutsUpdateSchema = z.object({
-  budget: z.number().optional(),
   budgets: jsonSchema.optional(),
   code: z.string().optional(),
   created_at: z.string().optional(),
@@ -714,21 +711,18 @@ export const publicTrackerUsersRowSchema = z.object({
   created_at: z.string(),
   display_name: z.string().nullable(),
   email: z.string(),
-  role: z.string(),
 });
 
 export const publicTrackerUsersInsertSchema = z.object({
   created_at: z.string().optional(),
   display_name: z.string().optional().nullable(),
   email: z.string(),
-  role: z.string().optional(),
 });
 
 export const publicTrackerUsersUpdateSchema = z.object({
   created_at: z.string().optional(),
   display_name: z.string().optional().nullable(),
   email: z.string().optional(),
-  role: z.string().optional(),
 });
 
 export const publicTrackerWorkTypesRowSchema = z.object({
@@ -873,8 +867,7 @@ export const publicTrackerCopyMembersReturnsSchema = jsonSchema;
 export const publicTrackerCreateProjectArgsSchema = z.object({
   p_color: z.string(),
   p_name: z.string(),
-  p_phases: jsonSchema.optional(),
-  p_types: jsonSchema.optional(),
+  p_phases: jsonSchema,
 });
 
 export const publicTrackerCreateProjectReturnsSchema = z.object({
@@ -888,7 +881,6 @@ export const publicTrackerCreateProjectReturnsSchema = z.object({
 });
 
 export const publicTrackerCreateTaskArgsSchema = z.object({
-  p_budget: z.number().optional(),
   p_budgets: jsonSchema.optional(),
   p_cut_code: z.string(),
   p_end: z.string(),
@@ -907,7 +899,6 @@ export const publicTrackerEnsureCutArgsSchema = z.object({
 });
 
 export const publicTrackerEnsureCutReturnsSchema = z.object({
-  budget: z.number(),
   budgets: jsonSchema,
   code: z.string(),
   created_at: z.string(),
@@ -988,7 +979,6 @@ export const publicTrackerSetCutBudgetArgsSchema = z.object({
 });
 
 export const publicTrackerSetCutBudgetReturnsSchema = z.object({
-  budget: z.number(),
   budgets: jsonSchema,
   code: z.string(),
   created_at: z.string(),
@@ -1001,14 +991,13 @@ export const publicTrackerSetCutBudgetReturnsSchema = z.object({
 
 export const publicTrackerSetCutSplitsArgsSchema = z.object({
   p_cuts: z.array(z.string()),
-  p_phase: z.string().optional(),
+  p_phase: z.string(),
   p_project: z.string(),
   p_split: jsonSchema,
 });
 
 export const publicTrackerSetCutSplitsReturnsSchema = z.array(
   z.object({
-    budget: z.number(),
     budgets: jsonSchema,
     code: z.string(),
     created_at: z.string(),

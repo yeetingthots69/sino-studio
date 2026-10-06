@@ -81,7 +81,6 @@ export type Database = {
       }
       tracker_cuts: {
         Row: {
-          budget: number
           budgets: Json
           code: string
           created_at: string
@@ -92,7 +91,6 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          budget?: number
           budgets?: Json
           code: string
           created_at?: string
@@ -103,7 +101,6 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          budget?: number
           budgets?: Json
           code?: string
           created_at?: string
@@ -684,19 +681,16 @@ export type Database = {
           created_at: string
           display_name: string | null
           email: string
-          role: string
         }
         Insert: {
           created_at?: string
           display_name?: string | null
           email: string
-          role?: string
         }
         Update: {
           created_at?: string
           display_name?: string | null
           email?: string
-          role?: string
         }
         Relationships: []
       }
@@ -843,12 +837,7 @@ export type Database = {
         Returns: Json
       }
       tracker_create_project: {
-        Args: {
-          p_color: string
-          p_name: string
-          p_phases?: Json
-          p_types?: Json
-        }
+        Args: { p_color: string; p_name: string; p_phases: Json }
         Returns: {
           archived_at: string | null
           color: string
@@ -867,7 +856,6 @@ export type Database = {
       }
       tracker_create_task: {
         Args: {
-          p_budget?: number
           p_budgets?: Json
           p_cut_code: string
           p_end: string
@@ -882,7 +870,6 @@ export type Database = {
       tracker_ensure_cut: {
         Args: { p_code: string; p_project: string }
         Returns: {
-          budget: number
           budgets: Json
           code: string
           created_at: string
@@ -962,7 +949,6 @@ export type Database = {
       tracker_set_cut_budget: {
         Args: { p_budget: number; p_cut: string; p_phase: string }
         Returns: {
-          budget: number
           budgets: Json
           code: string
           created_at: string
@@ -982,12 +968,11 @@ export type Database = {
       tracker_set_cut_splits: {
         Args: {
           p_cuts: string[]
-          p_phase?: string
+          p_phase: string
           p_project: string
           p_split: Json
         }
         Returns: {
-          budget: number
           budgets: Json
           code: string
           created_at: string
