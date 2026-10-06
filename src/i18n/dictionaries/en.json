@@ -397,6 +397,8 @@
             "fixNoStage": "This cut has no stage task to fix",
             "fixNoStageError": "The stage to fix has no task",
             "staffNotMember": "This person is not a member of the project.",
+            "phaseLocked": "Phases, stages and their order are fixed after the project is created.",
+            "phaseInvalid": "The phase setup is invalid: check names and prerequisites.",
             "filters": {
                 "name": "Search name",
                 "departments": "Departments",
@@ -431,6 +433,8 @@
             "orderLater": "Can't schedule: {stage} has already started",
             "orderEarly": "Can't schedule: starts before {stage} starts",
             "orderLate": "Can't schedule: must start no later than {stage}",
+            "orderPhaseBefore": "Can't schedule: must start after phase {phase} is done ({stage})",
+            "orderPhaseAfter": "Can't schedule: phase {phase} has already started ({stage})",
             "orderGeneric": "Can't schedule: this breaks the cut's stage order",
             "duplicateStage": "This cut already has a task of this work type",
             "dismiss": "Dismiss",
@@ -572,7 +576,7 @@
             "hint": "Click a coloured cell to see its pay. Budgets and pay splits are editable in place.",
             "cut": "Cut",
             "budget": "budget",
-            "budgetLabel": "Budget of {code} (VND)",
+            "budgetLabel": "Budget of {code}, {phase} (VND)",
             "splitLabel": "Pay split of {code}",
             "splitDefault": "Project default pay split",
             "splitCustom": "Own pay split of this cut",
@@ -604,11 +608,16 @@
             "cellLabel": "{cut} · {type}: {name}, {progress}%",
             "assign": "Assign {cut} · {type}",
             "total": "Total",
+            "allPhases": "All phases: {amount}",
+            "phaseSwitch": "Phase",
+            "phaseDone": "done",
+            "phaseStarted": "in progress",
+            "phaseEmpty": "not started",
             "addCuts": "Add cuts",
             "addCutsTitle": "Add cuts in bulk",
             "from": "From",
             "to": "To",
-            "addBudget": "Budget per cut (VND, optional)",
+            "addBudget": "Budget per cut ({phase}, VND, optional)",
             "addCutsHint": "Creates C{from}…C{to}; existing cuts are kept. At most 200 cuts at a time.",
             "added": "Added {n} cuts.",
             "invalidRange": "Invalid range (1 ≤ from ≤ to, at most 200 cuts).",
@@ -658,6 +667,7 @@
             "auditDelete": "deleted",
             "auditFields": {
                 "budget": "Budget",
+                "budgets": "Budget",
                 "code": "Code",
                 "links": "Links",
                 "label": "Label",
@@ -677,7 +687,7 @@
             "signOut": "Sign out",
             "notAuthorized": {
                 "title": "Not authorized",
-                "body": "This account does not have access to the tracker. Ask an admin to add you."
+                "body": "This account does not have access to the tracker. Ask a teammate to add you."
             },
             "errorDomain": "Please sign in with your @sinostudio.vn account.",
             "errorAuth": "Sign-in failed. Please try again."
@@ -706,7 +716,7 @@
             "open": "Open",
             "archived": "Archived",
             "empty": "No projects yet.",
-            "workTypes": "Work types"
+            "workTypes": "Phases and stages"
         },
         "workTypesEditor": {
             "code": "Code",
@@ -721,8 +731,6 @@
             "locked": "Has tasks: cannot be deleted or moved",
             "lastType": "A project needs at least one work type",
             "noRoom": "No free position here. Move an unlocked row first.",
-            "total": "Total",
-            "totalHint": "Pay % must add up to exactly 100.",
             "defaultHint": "These % are the default split for every cut. A cut can override them on the Cuts page.",
             "overlapsPrev": "Overlaps previous",
             "overlapsPrevHint": "This stage may start once the stage before it has started (same day or later, never earlier) and may end at any time. Example: shiage during douga.",
@@ -732,6 +740,34 @@
                 "duplicate": "Each work type needs a different code.",
                 "invalid": "Some values are invalid. Check codes, names, colors and pay %.",
                 "overlapInUse": "Can't save: cut {cut} has stages that overlap under this setting."
+            }
+        },
+        "phasesEditor": {
+            "help": "Phases in one column run in parallel. A phase starts after every phase connected to it from the left. Drag the red dot onto another phase to link them, click a line to remove it, drag the grip to reorder a column.",
+            "fixed": "Phases, stages and their order are fixed after creation.",
+            "name": "Phase name",
+            "namePlaceholder": "e.g. Background",
+            "unnamed": "(unnamed)",
+            "addPhase": "Add phase",
+            "removePhase": "Remove phase",
+            "payTotal": "Pay % total of this phase",
+            "startsAfter": "Starts after",
+            "noOther": "No other phase",
+            "cycle": "Would create a loop: {name} already waits for this phase",
+            "grip": "Drag to reorder within this column",
+            "handle": "Drag onto another phase to make it start after this one",
+            "removeLink": "Remove prerequisite",
+            "crossColumn": "Columns follow prerequisites. Drag a connector instead.",
+            "level": "Level {n}",
+            "noPrerequisite": "no prerequisite",
+            "issues": {
+                "phaseCount": "A project needs 1 to 8 phases.",
+                "phaseName": "Each phase needs a name of 1 to 40 characters.",
+                "phaseNameDup": "Each phase needs a different name.",
+                "typeCount": "A project can have at most 50 stages.",
+                "fields": "Every stage needs a code and a name.",
+                "codeDup": "Each stage needs a different code, across all phases.",
+                "pctTotal": "In each phase, pay % must add up to exactly 100."
             }
         },
         "shell": {

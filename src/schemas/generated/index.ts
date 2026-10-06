@@ -88,6 +88,7 @@ export const publicTrackerAuditLogUpdateSchema = z.object({
 
 export const publicTrackerCutsRowSchema = z.object({
   budget: z.number(),
+  budgets: jsonSchema,
   code: z.string(),
   created_at: z.string(),
   id: z.string(),
@@ -99,6 +100,7 @@ export const publicTrackerCutsRowSchema = z.object({
 
 export const publicTrackerCutsInsertSchema = z.object({
   budget: z.number().optional(),
+  budgets: jsonSchema.optional(),
   code: z.string(),
   created_at: z.string().optional(),
   id: z.string().optional(),
@@ -110,6 +112,7 @@ export const publicTrackerCutsInsertSchema = z.object({
 
 export const publicTrackerCutsUpdateSchema = z.object({
   budget: z.number().optional(),
+  budgets: jsonSchema.optional(),
   code: z.string().optional(),
   created_at: z.string().optional(),
   id: z.string().optional(),
@@ -438,6 +441,43 @@ export const publicTrackerPayPresetsUpdateSchema = z.object({
   pcts: z.array(z.number()).optional(),
 });
 
+export const publicTrackerPhasesRowSchema = z.object({
+  after: z.array(z.string()),
+  created_at: z.string(),
+  id: z.string(),
+  name: z.string(),
+  project_id: z.string(),
+  sort_order: z.number(),
+});
+
+export const publicTrackerPhasesInsertSchema = z.object({
+  after: z.array(z.string()).optional(),
+  created_at: z.string().optional(),
+  id: z.string().optional(),
+  name: z.string(),
+  project_id: z.string(),
+  sort_order: z.number(),
+});
+
+export const publicTrackerPhasesUpdateSchema = z.object({
+  after: z.array(z.string()).optional(),
+  created_at: z.string().optional(),
+  id: z.string().optional(),
+  name: z.string().optional(),
+  project_id: z.string().optional(),
+  sort_order: z.number().optional(),
+});
+
+export const publicTrackerPhasesRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("tracker_phases_project_id_fkey"),
+    columns: z.tuple([z.literal("project_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_projects"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
 export const publicTrackerProjectsRowSchema = z.object({
   archived_at: z.string().nullable(),
   color: z.string(),
@@ -699,6 +739,7 @@ export const publicTrackerWorkTypesRowSchema = z.object({
   label: z.string(),
   overlaps_prev: z.boolean(),
   pay_pct: z.number(),
+  phase_id: z.string(),
   project_id: z.string(),
   sort_order: z.number(),
   updated_at: z.string(),
@@ -712,6 +753,7 @@ export const publicTrackerWorkTypesInsertSchema = z.object({
   label: z.string(),
   overlaps_prev: z.boolean().optional(),
   pay_pct: z.number().optional(),
+  phase_id: z.string(),
   project_id: z.string(),
   sort_order: z.number().optional(),
   updated_at: z.string().optional(),
@@ -725,12 +767,20 @@ export const publicTrackerWorkTypesUpdateSchema = z.object({
   label: z.string().optional(),
   overlaps_prev: z.boolean().optional(),
   pay_pct: z.number().optional(),
+  phase_id: z.string().optional(),
   project_id: z.string().optional(),
   sort_order: z.number().optional(),
   updated_at: z.string().optional(),
 });
 
 export const publicTrackerWorkTypesRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("tracker_work_types_phase_fk"),
+    columns: z.tuple([z.literal("phase_id"), z.literal("project_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("tracker_phases"),
+    referencedColumns: z.tuple([z.literal("id"), z.literal("project_id")]),
+  }),
   z.object({
     foreignKeyName: z.literal("tracker_work_types_project_id_fkey"),
     columns: z.tuple([z.literal("project_id")]),
@@ -823,7 +873,8 @@ export const publicTrackerCopyMembersReturnsSchema = jsonSchema;
 export const publicTrackerCreateProjectArgsSchema = z.object({
   p_color: z.string(),
   p_name: z.string(),
-  p_types: jsonSchema,
+  p_phases: jsonSchema.optional(),
+  p_types: jsonSchema.optional(),
 });
 
 export const publicTrackerCreateProjectReturnsSchema = z.object({
@@ -838,6 +889,7 @@ export const publicTrackerCreateProjectReturnsSchema = z.object({
 
 export const publicTrackerCreateTaskArgsSchema = z.object({
   p_budget: z.number().optional(),
+  p_budgets: jsonSchema.optional(),
   p_cut_code: z.string(),
   p_end: z.string(),
   p_is_fix: z.boolean().optional(),
@@ -856,6 +908,7 @@ export const publicTrackerEnsureCutArgsSchema = z.object({
 
 export const publicTrackerEnsureCutReturnsSchema = z.object({
   budget: z.number(),
+  budgets: jsonSchema,
   code: z.string(),
   created_at: z.string(),
   id: z.string(),
@@ -921,14 +974,34 @@ export const publicTrackerSaveWorkTypesReturnsSchema = z.array(
     label: z.string(),
     overlaps_prev: z.boolean(),
     pay_pct: z.number(),
+    phase_id: z.string(),
     project_id: z.string(),
     sort_order: z.number(),
     updated_at: z.string(),
   }),
 );
 
+export const publicTrackerSetCutBudgetArgsSchema = z.object({
+  p_budget: z.number(),
+  p_cut: z.string(),
+  p_phase: z.string(),
+});
+
+export const publicTrackerSetCutBudgetReturnsSchema = z.object({
+  budget: z.number(),
+  budgets: jsonSchema,
+  code: z.string(),
+  created_at: z.string(),
+  id: z.string(),
+  links: jsonSchema,
+  pay_split: jsonSchema.nullable(),
+  project_id: z.string(),
+  updated_at: z.string(),
+});
+
 export const publicTrackerSetCutSplitsArgsSchema = z.object({
   p_cuts: z.array(z.string()),
+  p_phase: z.string().optional(),
   p_project: z.string(),
   p_split: jsonSchema,
 });
@@ -936,6 +1009,7 @@ export const publicTrackerSetCutSplitsArgsSchema = z.object({
 export const publicTrackerSetCutSplitsReturnsSchema = z.array(
   z.object({
     budget: z.number(),
+    budgets: jsonSchema,
     code: z.string(),
     created_at: z.string(),
     id: z.string(),

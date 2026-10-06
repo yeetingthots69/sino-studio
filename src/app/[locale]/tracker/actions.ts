@@ -16,7 +16,7 @@ import {
 } from '@/schemas/generated';
 import type {Tables, TablesInsert} from '@/types/database.types';
 import {mapDbError, retryDeadlock, type DbError, type FkError, type TrackerError} from '@/components/tracker/errors';
-import {DEFAULT_WORK_TYPES} from '@/components/tracker/defaults';
+import {MAX_PHASE_NAME, MAX_PHASES, MAX_TYPES, phaseNameKey} from '@/components/tracker/PhasesEditor/phaseDraft';
 import {cutRange, normalizeCutCode} from '@/components/tracker/cuts';
 import {isValidMonth, monthRange} from '@/components/tracker/dates';
 import {sanitizeLinks} from '@/components/tracker/links';
@@ -166,9 +166,18 @@ const projectFields = publicTrackerProjectsInsertSchema.pick({name: true, color:
 const updateProjectSchema = projectFields.extend({links}).partial().extend({id: z.uuid()})
     .refine(nonEmptyPatch);
 
-export async function createProject(input: {name: string; color: string}): Promise<ActionResult<Project>> {
-    return writeRow(input, projectFields, (supabase, d) =>
-        supabase.rpc('tracker_create_project', {p_name: d.name, p_color: d.color, p_types: DEFAULT_WORK_TYPES}));
+export type PhaseInput = {
+    name: string;
+    after: number[]; // indexes of earlier entries (the client sends phases in topological order)
+    types: {code: string; label: string; color: string; pay_pct: number; overlaps_prev: boolean}[];
+};
+
+// createProjectSchema is declared below the work-type helpers it uses (payPct, pctSum).
+export async function createProject(
+    input: {name: string; color: string; phases: PhaseInput[]},
+): Promise<ActionResult<Project>> {
+    return writeRow(input, createProjectSchema, (supabase, d) =>
+        supabase.rpc('tracker_create_project', {p_name: d.name, p_color: d.color, p_phases: d.phases}));
 }
 
 export async function updateProject(
@@ -192,33 +201,53 @@ const unique = (xs: unknown[]) => new Set(xs).size === xs.length;
 const payPct = z.number().min(0).max(100).refine((p) => Math.abs(p * 100 - hundredths(p)) < 1e-6);
 const pctSum = (pcts: number[]) => pcts.reduce((sum, p) => sum + hundredths(p), 0) === 10000;
 
+const createProjectSchema = projectFields.extend({
+    phases: z.array(z.object({
+        name: z.string().trim().min(1).max(MAX_PHASE_NAME),
+        after: z.array(z.number().int().min(0)),
+        types: z.array(z.object({
+            code: z.string().trim().min(1).max(20),
+            label: z.string().trim().min(1).max(80),
+            color: hexColor,
+            pay_pct: payPct,
+            overlaps_prev: z.boolean(),
+        })).min(1),
+    })).min(1).max(MAX_PHASES),
+}).refine(({phases}) => {
+    const types = phases.flatMap((p) => p.types);
+    return types.length <= MAX_TYPES
+        && unique(phases.map((p) => phaseNameKey(p.name)))
+        && unique(types.map((t) => t.code))
+        && phases.every((p, i) => pctSum(p.types.map((t) => t.pay_pct)) && unique(p.after) && p.after.every((a) => a < i));
+});
+
+// Edit only (D2/O9): label / colour / pay % / overlaps of the existing set; the RPC refuses any other change.
 const saveWorkTypesSchema = z.object({
     project_id: z.uuid(),
     types: z.array(z.object({
-        id: z.uuid().optional(),
-        code: z.string().trim().min(1).max(20),
+        id: z.uuid(),
         label: z.string().trim().min(1).max(80),
         color: hexColor,
         pay_pct: payPct,
-        sort_order: z.number().int(),
         overlaps_prev: z.boolean(),
-    })).min(1),
-}).refine(({types}) =>
-    pctSum(types.map((t) => t.pay_pct))
-    && unique(types.map((t) => t.code))
-    && unique(types.map((t) => t.sort_order))
-    && unique(types.flatMap((t) => (t.id ? [t.id] : []))));
+    })).min(1).max(MAX_TYPES),
+}).refine(({types}) => unique(types.map((t) => t.id)));
 
 export async function saveWorkTypes(input: {
     project_id: string;
-    types: {id?: string; code: string; label: string; color: string; pay_pct: number; sort_order: number; overlaps_prev: boolean}[];
+    types: {id: string; label: string; color: string; pay_pct: number; overlaps_prev: boolean}[];
 }): Promise<ActionResult<WorkType[]>> {
     return writeRow(input, saveWorkTypesSchema, async (supabase, d) => {
-        // The RPC silently skips ids of other projects; refuse them instead (23514 → 'invalid').
-        const current = await supabase.from('tracker_work_types').select('id').eq('project_id', d.project_id);
+        const current = await supabase.from('tracker_work_types').select('id, phase_id').eq('project_id', d.project_id);
         if (current.error) return {data: null, error: current.error};
-        const known = new Set(current.data.map((t) => t.id));
-        if (d.types.some((t) => t.id && !known.has(t.id))) return {data: null, error: {code: '23514'}};
+        // The RPC silently skips ids of other projects; refuse them instead (23514 → 'invalid').
+        const phaseOf = new Map(current.data.map((t) => [t.id, t.phase_id]));
+        if (d.types.some((t) => !phaseOf.has(t.id))) return {data: null, error: {code: '23514'}};
+        // 100 % per phase (D6); a missing / extra type is the RPC's phase_locked.
+        const phases = new Set(d.types.map((t) => phaseOf.get(t.id)));
+        if (![...phases].every((ph) => pctSum(d.types.filter((t) => phaseOf.get(t.id) === ph).map((t) => t.pay_pct)))) {
+            return {data: null, error: {code: 'P0001', message: 'pct_total'}};
+        }
         return supabase.rpc('tracker_save_work_types', {p_project: d.project_id, p_types: d.types});
     });
 }
@@ -381,18 +410,24 @@ const createCutsSchema = z.object({
     project_id: z.uuid(),
     from: z.number().int().min(1),
     to: z.number().int(),
+    // the budget goes to one phase (v2.8 O5)
+    phase_id: z.uuid().optional(),
     budget: money.optional(),
-}).refine((d) => d.to >= d.from && d.to - d.from < 200);
+}).refine((d) => d.to >= d.from && d.to - d.from < 200 && (d.budget === undefined || d.phase_id !== undefined));
 
 const updateCutSchema = z.object({
     id: z.uuid(),
-    patch: publicTrackerCutsInsertSchema.pick({budget: true, links: true, code: true})
-        .extend({budget: money, links, code: cutCode}).partial().refine(nonEmpty),
+    patch: publicTrackerCutsInsertSchema.pick({links: true, code: true})
+        .extend({links, code: cutCode}).partial().refine(nonEmpty),
 });
+
+const setCutBudgetSchema = z.object({cut_id: z.uuid(), phase_id: z.uuid(), budget: money});
 
 const setCutSplitsSchema = z.object({
     project_id: z.uuid(),
     cut_ids: z.array(z.uuid()).min(1).max(5000),
+    // only this phase's keys are replaced (v2.8 D6b)
+    phase_id: z.uuid(),
     // {work_type_id: pct} totalling 100 (keys checked against the project in SQL); null = project default
     pay_split: z.record(z.uuid(), payPct).refine((s) => pctSum(Object.values(s))).nullable(),
 });
@@ -405,10 +440,11 @@ const payPresetSchema = z.object({
 }).refine((d) => d.codes.length === d.pcts.length);
 
 export async function createCuts(
-    input: {project_id: string; from: number; to: number; budget?: number},
+    input: {project_id: string; from: number; to: number; phase_id?: string; budget?: number},
 ): Promise<ActionResult<Cut[]>> {
-    return writeRow(input, createCutsSchema, (supabase, {project_id, from, to, budget}) => {
-        const rows = cutRange(from, to).map((code) => ({project_id, code, ...(budget === undefined ? {} : {budget})}));
+    return writeRow(input, createCutsSchema, (supabase, {project_id, from, to, phase_id, budget}) => {
+        const budgets = budget === undefined || !phase_id ? {} : {budgets: {[phase_id]: budget}};
+        const rows = cutRange(from, to).map((code) => ({project_id, code, ...budgets}));
         return supabase.from('tracker_cuts')
             .upsert(rows, {onConflict: 'project_id,code', ignoreDuplicates: true})
             .select();
@@ -416,18 +452,26 @@ export async function createCuts(
 }
 
 export async function updateCut(
-    input: {id: string; patch: {budget?: number; links?: Link[]; code?: string}},
+    input: {id: string; patch: {links?: Link[]; code?: string}},
 ): Promise<ActionResult<Cut>> {
     return writeRow(input, updateCutSchema, (supabase, {id, patch}) =>
         supabase.from('tracker_cuts').update(patch).eq('id', id).select().single());
 }
 
-/** One pay split (null = project default) for many cuts at once; all or nothing. */
+/** One phase's budget of a cut (merged server-side into `budgets`). */
+export async function setCutBudget(
+    input: {cut_id: string; phase_id: string; budget: number},
+): Promise<ActionResult<Cut>> {
+    return writeRow(input, setCutBudgetSchema, (supabase, {cut_id, phase_id, budget}) =>
+        supabase.rpc('tracker_set_cut_budget', {p_cut: cut_id, p_phase: phase_id, p_budget: budget}));
+}
+
+/** One phase's pay split (null = that phase's defaults) for many cuts at once; all or nothing. */
 export async function setCutSplits(
-    input: {project_id: string; cut_ids: string[]; pay_split: Record<string, number> | null},
+    input: {project_id: string; cut_ids: string[]; phase_id: string; pay_split: Record<string, number> | null},
 ): Promise<ActionResult<Cut[]>> {
-    return writeRow(input, setCutSplitsSchema, (supabase, {project_id, cut_ids, pay_split}) =>
-        supabase.rpc('tracker_set_cut_splits', {p_project: project_id, p_cuts: cut_ids, p_split: pay_split}));
+    return writeRow(input, setCutSplitsSchema, (supabase, {project_id, cut_ids, phase_id, pay_split}) =>
+        supabase.rpc('tracker_set_cut_splits', {p_project: project_id, p_cuts: cut_ids, p_split: pay_split, p_phase: phase_id}));
 }
 
 /* ── Pay presets (studio-wide, by work-type position) ─────────── */
@@ -462,7 +506,7 @@ const createTaskSchema = z.object({
     cut_code: cutCodeInput,
     start_date: isoDate,
     end_date: isoDate,
-    budget: money.optional(),
+    budgets: z.record(z.uuid(), money).optional(),
     is_fix: z.boolean().optional(),
 }).refine(datesOrdered);
 
@@ -489,7 +533,7 @@ export async function createTask(input: {
     cut_code: string;
     start_date: string;
     end_date: string;
-    budget?: number;
+    budgets?: Record<string, number>;
     is_fix?: boolean;
 }): Promise<ActionResult<{task: Task; cut: Cut}>> {
     return writeRow(input, createTaskSchema, async (supabase, d) => {
@@ -500,8 +544,8 @@ export async function createTask(input: {
             p_cut_code: d.cut_code,
             p_start: d.start_date,
             p_end: d.end_date,
-            p_budget: d.budget,
             p_is_fix: d.is_fix ?? false,
+            p_budgets: d.budgets,
         });
         return {data: data as {task: Task; cut: Cut} | null, error};
     }, NO_REVALIDATE);

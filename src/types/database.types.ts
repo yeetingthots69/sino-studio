@@ -82,6 +82,7 @@ export type Database = {
       tracker_cuts: {
         Row: {
           budget: number
+          budgets: Json
           code: string
           created_at: string
           id: string
@@ -92,6 +93,7 @@ export type Database = {
         }
         Insert: {
           budget?: number
+          budgets?: Json
           code: string
           created_at?: string
           id?: string
@@ -102,6 +104,7 @@ export type Database = {
         }
         Update: {
           budget?: number
+          budgets?: Json
           code?: string
           created_at?: string
           id?: string
@@ -415,6 +418,41 @@ export type Database = {
         }
         Relationships: []
       }
+      tracker_phases: {
+        Row: {
+          after: string[]
+          created_at: string
+          id: string
+          name: string
+          project_id: string
+          sort_order: number
+        }
+        Insert: {
+          after?: string[]
+          created_at?: string
+          id?: string
+          name: string
+          project_id: string
+          sort_order: number
+        }
+        Update: {
+          after?: string[]
+          created_at?: string
+          id?: string
+          name?: string
+          project_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tracker_phases_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "tracker_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tracker_projects: {
         Row: {
           archived_at: string | null
@@ -671,6 +709,7 @@ export type Database = {
           label: string
           overlaps_prev: boolean
           pay_pct: number
+          phase_id: string
           project_id: string
           sort_order: number
           updated_at: string
@@ -683,6 +722,7 @@ export type Database = {
           label: string
           overlaps_prev?: boolean
           pay_pct?: number
+          phase_id: string
           project_id: string
           sort_order?: number
           updated_at?: string
@@ -695,11 +735,19 @@ export type Database = {
           label?: string
           overlaps_prev?: boolean
           pay_pct?: number
+          phase_id?: string
           project_id?: string
           sort_order?: number
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "tracker_work_types_phase_fk"
+            columns: ["phase_id", "project_id"]
+            isOneToOne: false
+            referencedRelation: "tracker_phases"
+            referencedColumns: ["id", "project_id"]
+          },
           {
             foreignKeyName: "tracker_work_types_project_id_fkey"
             columns: ["project_id"]
@@ -795,7 +843,12 @@ export type Database = {
         Returns: Json
       }
       tracker_create_project: {
-        Args: { p_color: string; p_name: string; p_types: Json }
+        Args: {
+          p_color: string
+          p_name: string
+          p_phases?: Json
+          p_types?: Json
+        }
         Returns: {
           archived_at: string | null
           color: string
@@ -815,6 +868,7 @@ export type Database = {
       tracker_create_task: {
         Args: {
           p_budget?: number
+          p_budgets?: Json
           p_cut_code: string
           p_end: string
           p_is_fix?: boolean
@@ -829,6 +883,7 @@ export type Database = {
         Args: { p_code: string; p_project: string }
         Returns: {
           budget: number
+          budgets: Json
           code: string
           created_at: string
           id: string
@@ -892,6 +947,7 @@ export type Database = {
           label: string
           overlaps_prev: boolean
           pay_pct: number
+          phase_id: string
           project_id: string
           sort_order: number
           updated_at: string
@@ -903,10 +959,36 @@ export type Database = {
           isSetofReturn: true
         }
       }
-      tracker_set_cut_splits: {
-        Args: { p_cuts: string[]; p_project: string; p_split: Json }
+      tracker_set_cut_budget: {
+        Args: { p_budget: number; p_cut: string; p_phase: string }
         Returns: {
           budget: number
+          budgets: Json
+          code: string
+          created_at: string
+          id: string
+          links: Json
+          pay_split: Json | null
+          project_id: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "tracker_cuts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      tracker_set_cut_splits: {
+        Args: {
+          p_cuts: string[]
+          p_phase?: string
+          p_project: string
+          p_split: Json
+        }
+        Returns: {
+          budget: number
+          budgets: Json
           code: string
           created_at: string
           id: string

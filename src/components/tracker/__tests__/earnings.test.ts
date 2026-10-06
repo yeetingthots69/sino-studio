@@ -13,8 +13,8 @@ const tasks = [
     task('t2', 'p1', 'c1', 'GE', 's2', 40, '2026-10-10'),
     task('t3', 'p2', 'c2', 'LO', 's1', 100, '2026-10-02'),
 ];
-const cuts = [{id: 'c1', budget: 1_000_000, pay_split: null}, {id: 'c2', budget: 2_000_000, pay_split: null}];
-const types = [{id: 'LO', pay_pct: 30}, {id: 'GE', pay_pct: 70}];
+const cuts = [{id: 'c1', budgets: {P: 1_000_000}, pay_split: null}, {id: 'c2', budgets: {P: 2_000_000}, pay_split: null}];
+const types = [{id: 'LO', pay_pct: 30, phase_id: 'P'}, {id: 'GE', pay_pct: 70, phase_id: 'P'}];
 
 describe('effectiveMonths', () => {
     it('stage task end month, else created_at month in Asia/Ho_Chi_Minh, reversal = original', () => {

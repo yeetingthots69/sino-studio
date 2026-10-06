@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1791096500114,
+  "lastScanned": 1791286833764,
   "projectRoot": "D:\\WORK\\SINO STUDIO\\sino-studio",
   "techStack": {
     "languages": [
@@ -85,7 +85,7 @@
       "path": "public",
       "purpose": "Public files",
       "fileCount": 4,
-      "lastAccessed": 1791096500040,
+      "lastAccessed": 1791286833696,
       "keyFiles": [
         "favicon.png",
         "sino-studio-face.png",
@@ -97,7 +97,7 @@
       "path": "src",
       "purpose": "Source code",
       "fileCount": 1,
-      "lastAccessed": 1791096500041,
+      "lastAccessed": 1791286833696,
       "keyFiles": [
         "proxy.ts"
       ]
@@ -106,14 +106,14 @@
       "path": "supabase",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1791096500041,
+      "lastAccessed": 1791286833708,
       "keyFiles": []
     },
     "src\\app": {
       "path": "src\\app",
       "purpose": "Application code",
       "fileCount": 6,
-      "lastAccessed": 1791096500055,
+      "lastAccessed": 1791286833710,
       "keyFiles": [
         "favicon.ico",
         "global-not-found.tsx",
@@ -124,14 +124,14 @@
       "path": "src\\components",
       "purpose": "UI components",
       "fileCount": 0,
-      "lastAccessed": 1791096500056,
+      "lastAccessed": 1791286833710,
       "keyFiles": []
     },
     "src\\data": {
       "path": "src\\data",
       "purpose": "Data files",
       "fileCount": 4,
-      "lastAccessed": 1791096500057,
+      "lastAccessed": 1791286833710,
       "keyFiles": [
         "EmailTemplate.tsx",
         "ip-data.ts",
@@ -142,7 +142,7 @@
       "path": "src\\lib",
       "purpose": "Library code",
       "fileCount": 2,
-      "lastAccessed": 1791096500057,
+      "lastAccessed": 1791286833711,
       "keyFiles": [
         "json-ld.ts",
         "seo.ts"
@@ -152,14 +152,14 @@
       "path": "src\\schemas",
       "purpose": "Schema definitions",
       "fileCount": 0,
-      "lastAccessed": 1791096500058,
+      "lastAccessed": 1791286833712,
       "keyFiles": []
     },
     "src\\services": {
       "path": "src\\services",
       "purpose": "Business logic services",
       "fileCount": 2,
-      "lastAccessed": 1791096500059,
+      "lastAccessed": 1791286833712,
       "keyFiles": [
         "mailServices.ts",
         "trackerMail.ts"
@@ -169,7 +169,7 @@
       "path": "src\\types",
       "purpose": "Type definitions",
       "fileCount": 2,
-      "lastAccessed": 1791096500059,
+      "lastAccessed": 1791286833713,
       "keyFiles": [
         "database.types.ts",
         "youtube.d.ts"
@@ -179,14 +179,14 @@
       "path": "src\\utils",
       "purpose": "Utility functions",
       "fileCount": 0,
-      "lastAccessed": 1791096500060,
+      "lastAccessed": 1791286833713,
       "keyFiles": []
     },
     "supabase\\migrations": {
       "path": "supabase\\migrations",
       "purpose": "Database migrations",
-      "fileCount": 13,
-      "lastAccessed": 1791096500060,
+      "fileCount": 16,
+      "lastAccessed": 1791286833714,
       "keyFiles": [
         "20260927090805_tracker.sql",
         "20260927090827_tracker_users_self_initplan.sql",
@@ -197,14 +197,14 @@
   "hotPaths": [
     {
       "path": "src/components/tracker/GanttBoard/GanttBoard.tsx",
-      "accessCount": 127,
-      "lastAccessed": 1791184679752,
+      "accessCount": 128,
+      "lastAccessed": 1791291981623,
       "type": "file"
     },
     {
       "path": "src/app/[locale]/tracker/actions.ts",
-      "accessCount": 71,
-      "lastAccessed": 1791184845918,
+      "accessCount": 83,
+      "lastAccessed": 1791292577215,
       "type": "file"
     },
     {
@@ -215,32 +215,32 @@
     },
     {
       "path": "src/i18n/dictionaries/vi.json",
-      "accessCount": 24,
-      "lastAccessed": 1791184229161,
+      "accessCount": 32,
+      "lastAccessed": 1791292537256,
       "type": "file"
     },
     {
       "path": "src/i18n/dictionaries/en.json",
-      "accessCount": 22,
-      "lastAccessed": 1791184227663,
+      "accessCount": 30,
+      "lastAccessed": 1791292536195,
       "type": "file"
     },
     {
       "path": "CLAUDE.md",
-      "accessCount": 22,
-      "lastAccessed": 1791185131357,
+      "accessCount": 26,
+      "lastAccessed": 1791294962784,
       "type": "file"
     },
     {
       "path": "src/types/database.types.ts",
-      "accessCount": 20,
-      "lastAccessed": 1791183871711,
+      "accessCount": 24,
+      "lastAccessed": 1791292166567,
       "type": "file"
     },
     {
       "path": "src/components/tracker/ProjectsTable/ProjectsTable.tsx",
-      "accessCount": 19,
-      "lastAccessed": 1790941856174,
+      "accessCount": 20,
+      "lastAccessed": 1791292157716,
       "type": "file"
     },
     {
@@ -268,6 +268,12 @@
       "type": "file"
     },
     {
+      "path": "src/app/[locale]/tracker/(app)/layout.tsx",
+      "accessCount": 9,
+      "lastAccessed": 1791291928760,
+      "type": "file"
+    },
+    {
       "path": "src/components/tracker/GanttBoard/__tests__/dragMath.test.ts",
       "accessCount": 8,
       "lastAccessed": 1790912504667,
@@ -277,12 +283,6 @@
       "path": "src/components/music-player/MusicPlayer.tsx",
       "accessCount": 7,
       "lastAccessed": 1790753384080,
-      "type": "file"
-    },
-    {
-      "path": "src/app/[locale]/tracker/(app)/layout.tsx",
-      "accessCount": 7,
-      "lastAccessed": 1790763461468,
       "type": "file"
     },
     {
@@ -304,6 +304,12 @@
       "type": "file"
     },
     {
+      "path": "supabase/migrations/20260927090805_tracker.sql",
+      "accessCount": 7,
+      "lastAccessed": 1791290427755,
+      "type": "file"
+    },
+    {
       "path": "C:/Users/admgn/.claude/projects/D--WORK-SINO-STUDIO-sino-studio/memory/MEMORY.md",
       "accessCount": 6,
       "lastAccessed": 1790749935034,
@@ -313,12 +319,6 @@
       "path": "src/components/tracker/StaffTable/StaffTable.tsx",
       "accessCount": 6,
       "lastAccessed": 1790757562678,
-      "type": "file"
-    },
-    {
-      "path": "supabase/migrations/20260927090805_tracker.sql",
-      "accessCount": 6,
-      "lastAccessed": 1791181010412,
       "type": "file"
     },
     {
@@ -334,15 +334,21 @@
       "type": "file"
     },
     {
+      "path": "package.json",
+      "accessCount": 4,
+      "lastAccessed": 1791290703578,
+      "type": "file"
+    },
+    {
       "path": "src/app/robots.ts",
       "accessCount": 3,
       "lastAccessed": 1790753383452,
       "type": "file"
     },
     {
-      "path": "package.json",
+      "path": "src/app/[locale]/tracker/(app)/projects/page.tsx",
       "accessCount": 3,
-      "lastAccessed": 1790911486627,
+      "lastAccessed": 1791292587554,
       "type": "file"
     },
     {
@@ -463,12 +469,6 @@
       "path": "src/components/tracker/ProjectSwitcher.tsx",
       "accessCount": 1,
       "lastAccessed": 1790500831700,
-      "type": "file"
-    },
-    {
-      "path": "src/app/[locale]/tracker/(app)/projects/page.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1790500932050,
       "type": "file"
     },
     {

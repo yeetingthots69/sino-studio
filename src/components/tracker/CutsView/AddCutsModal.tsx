@@ -5,17 +5,20 @@ import {Button, Group, Modal, NumberInput, Text} from '@mantine/core';
 import {useDictionary} from '@/i18n/DictionaryProvider';
 import {createCuts} from '@/app/[locale]/tracker/actions';
 import {fill} from '../GanttBoard/GanttBoard';
+import type {Phase} from '../phases';
 import styles from './CutsView.module.css';
 
 interface Props {
     opened: boolean;
     projectId: string;
+    /** The switcher's phase: the optional budget goes to it (O5). */
+    phase: Phase | undefined;
     onClose: () => void;
     onDone: (inserted: number) => void;
 }
 
 /** "Thêm cut": C{from}…C{to} (+ optional budget) → createCuts; existing codes are skipped by the action. */
-export default function AddCutsModal({opened, projectId, onClose, onDone}: Props) {
+export default function AddCutsModal({opened, projectId, phase, onClose, onDone}: Props) {
     const {cuts: t, common} = useDictionary().tracker;
     const [from, setFrom] = useState<number | string>(1);
     const [to, setTo] = useState<number | string>(10);
@@ -37,7 +40,7 @@ export default function AddCutsModal({opened, projectId, onClose, onDone}: Props
             project_id: projectId,
             from,
             to,
-            ...(typeof budget === 'number' ? {budget} : {}),
+            ...(typeof budget === 'number' && phase ? {phase_id: phase.id, budget} : {}),
         }).catch(() => ({ok: false, error: 'network'}) as const);
         setBusy(false);
         if (r.ok) onDone(r.data.length);
@@ -59,7 +62,8 @@ export default function AddCutsModal({opened, projectId, onClose, onDone}: Props
                     <NumberInput label={t.to} value={to} onChange={setTo} min={1} max={99999} {...numberProps}/>
                 </Group>
                 <NumberInput
-                    label={t.addBudget}
+                    label={fill(t.addBudget, {phase: phase?.name ?? ''})}
+                    disabled={!phase}
                     value={budget}
                     onChange={setBudget}
                     min={0}

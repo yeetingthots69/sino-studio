@@ -7,7 +7,7 @@ type Task = Tables<'tracker_tasks'>;
 export type Fields = Partial<Pick<Task, 'start_date' | 'end_date' | 'progress' | 'links' | 'work_type_id'>> & {cut_code?: string};
 export type Placement = {staff_id: string; start_date: string; end_date: string};
 export type TaskSnapshot = {
-    project_id: string; staff_id: string; work_type_id: string; cut_code: string; budget: number | null;
+    project_id: string; staff_id: string; work_type_id: string; cut_code: string; budgets: Record<string, number> | null;
     start_date: string; end_date: string; progress: number; links: Task['links']; is_fix: boolean;
 };
 
@@ -57,6 +57,14 @@ export function rebase(s: UndoState, id: string, version: number): UndoState {
 /** Rewrite `from` → `to` (re-created task) and rebase it. */
 export function remap(s: UndoState, from: string, to: string, version: number): UndoState {
     return mapBoth(s, (e) => (e.id === from ? {...e, id: to, version} : e));
+}
+
+/** createTask input that re-creates a snapshot; the full budgets map applies only if the RPC has to re-create the cut. */
+export function restoreInput(s: TaskSnapshot) {
+    return {
+        project_id: s.project_id, staff_id: s.staff_id, work_type_id: s.work_type_id, cut_code: s.cut_code,
+        start_date: s.start_date, end_date: s.end_date, ...(s.budgets === null ? {} : {budgets: s.budgets}), is_fix: s.is_fix,
+    };
 }
 
 export type InverseOp =

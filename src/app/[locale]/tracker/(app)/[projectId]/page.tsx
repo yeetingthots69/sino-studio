@@ -27,9 +27,10 @@ export default async function BoardPage({params, searchParams}: Props) {
 
     const supabase = await createClient();
     // growing tables are keyset-paged (PostgREST caps a response at 1000 rows); selectAll throws on error
-    const [project, workTypes, staff, strengths, staffStrengths, cuts, tasks, stages, shares, departments, members] = await Promise.all([
+    const [project, workTypes, phases, staff, strengths, staffStrengths, cuts, tasks, stages, shares, departments, members] = await Promise.all([
         supabase.from('tracker_projects').select('*').eq('id', projectId).is('archived_at', null).maybeSingle().then(must),
         supabase.from('tracker_work_types').select('*').eq('project_id', projectId).order('sort_order').then(must),
+        supabase.from('tracker_phases').select('id, name, sort_order, after').eq('project_id', projectId).order('sort_order').then(must),
         supabase.from('tracker_staff').select('*').order('sort_order').order('name').then(must),
         supabase.from('tracker_strengths').select('*').order('sort_order').order('label').then(must),
         // composite key, no `id` to page on; one row per staff × strength
@@ -63,6 +64,7 @@ export default async function BoardPage({params, searchParams}: Props) {
             locale={locale}
             staff={staff}
             workTypes={workTypes}
+            phases={phases}
             strengths={strengths}
             staffStrengths={staffStrengths}
             cuts={cuts}

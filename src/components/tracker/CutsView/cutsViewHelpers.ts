@@ -1,6 +1,43 @@
 // Pure helpers for the Cuts view (N1 cells, drawer people rows, bulk net preview, audit diffs).
 import type {Json} from '@/types/database.types';
-import {staffTotals, type PayLine, type Totals} from '../pay';
+import {cutBudget, phaseSplit, stagePct, staffTotals, type PayLine, type Totals} from '../pay';
+
+/** Phase switcher: the saved phase when it still exists, else the first (phases in sort order). */
+export function pickPhase<P extends {id: string}>(phases: P[], saved: string | null): P | undefined {
+    return phases.find((p) => p.id === saved) ?? phases[0];
+}
+
+/** Footer (O8): assigned stage pay per type of one phase, that phase's total, and the total over all phases. */
+export function footerTotals(
+    lines: {work_type_id: string; amount: number}[],
+    phaseTypeIds: string[],
+): {byType: Map<string, number>; phase: number; all: number} {
+    const byType = new Map(phaseTypeIds.map((id) => [id, 0]));
+    let all = 0;
+    for (const l of lines) {
+        all += l.amount;
+        if (byType.has(l.work_type_id)) byType.set(l.work_type_id, byType.get(l.work_type_id)! + l.amount);
+    }
+    return {byType, phase: [...byType.values()].reduce((s, v) => s + v, 0), all};
+}
+
+/** Split button of one phase: its effective pcts ("30 · 70%") and whether the cut overrides that phase. */
+export function phaseSplitLabel(
+    cut: {pay_split: Json | null},
+    phaseTypes: {id: string; pay_pct: number}[],
+): {text: string; custom: boolean} {
+    const ids = phaseTypes.map((w) => w.id);
+    return {
+        text: `${phaseTypes.map((w) => stagePct(cut, w, ids)).join(' · ')}%`,
+        custom: phaseSplit(cut, ids) !== null,
+    };
+}
+
+/** An audit `budgets` value as [phase name, amount] in phase order (only phases present in the map). */
+export function budgetEntries(v: Json | undefined, phases: {id: string; name: string}[]): [string, number][] {
+    if (!v || typeof v !== 'object' || Array.isArray(v)) return [];
+    return phases.filter((p) => p.id in v).map((p) => [p.name, cutBudget({budgets: v}, p.id)]);
+}
 
 export type CellState = 'empty' | 'progress' | 'done';
 
@@ -9,16 +46,17 @@ export const cellState = (task: {progress: number} | undefined): CellState =>
 
 /**
  * "chờ <code>": the nearest earlier existing stage of the cut that is below 100 % (done ones are skipped), while this stage is not done.
- * `stages` = the cut's tasks in type order (undefined where the stage does not exist).
+ * `stages` = the cut's tasks in type order (undefined where the stage does not exist). v2.8: only stages of
+ * the same phase count.
  */
-export function waitingFor<T extends {code: string}>(
+export function waitingFor<T extends {code: string; phase_id: string}>(
     types: T[],
     stages: ({progress: number} | undefined)[],
     index: number,
 ): T | null {
     if (cellState(stages[index]) === 'done') return null;
     for (let i = index - 1; i >= 0; i--) {
-        if (cellState(stages[i]) === 'progress') return types[i];
+        if (types[i].phase_id === types[index].phase_id && cellState(stages[i]) === 'progress') return types[i];
     }
     return null;
 }

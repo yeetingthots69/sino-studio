@@ -474,6 +474,8 @@
             "orderLater": "Không thể xếp: {stage} đã bắt đầu",
             "orderEarly": "Không thể xếp: bắt đầu trước khi {stage} bắt đầu",
             "orderLate": "Không thể xếp: phải bắt đầu trước hoặc cùng ngày với {stage}",
+            "orderPhaseBefore": "Không thể xếp: phải bắt đầu sau khi giai đoạn {phase} xong ({stage})",
+            "orderPhaseAfter": "Không thể xếp: giai đoạn {phase} đã bắt đầu ({stage})",
             "orderGeneric": "Không thể xếp: sai thứ tự công đoạn của cut",
             "duplicateStage": "Cut này đã có công việc thuộc loại này",
             "dismiss": "Đóng",
@@ -559,7 +561,9 @@
                 "emptyLink": "Thêm thành viên",
                 "clearName": "Xoá tìm tên"
             },
-            "staffNotMember": "Người này không phải thành viên của dự án."
+            "staffNotMember": "Người này không phải thành viên của dự án.",
+            "phaseLocked": "Giai đoạn, công đoạn và thứ tự của chúng không thể sửa sau khi tạo dự án.",
+            "phaseInvalid": "Thiết lập giai đoạn không hợp lệ: kiểm tra tên và giai đoạn đi trước."
         },
         "views": {
             "label": "Chế độ xem",
@@ -576,7 +580,7 @@
             "hint": "Bấm vào ô có màu để xem thù lao. Ngân sách và tỉ lệ thù lao sửa trực tiếp được.",
             "cut": "Cut",
             "budget": "ngân sách",
-            "budgetLabel": "Ngân sách {code} (VND)",
+            "budgetLabel": "Ngân sách {code}, {phase} (VND)",
             "splitLabel": "Tỉ lệ thù lao {code}",
             "splitDefault": "Tỉ lệ thù lao mặc định của dự án",
             "splitCustom": "Tỉ lệ thù lao riêng của cut này",
@@ -608,11 +612,16 @@
             "cellLabel": "{cut} · {type}: {name}, {progress}%",
             "assign": "Giao việc {cut} · {type}",
             "total": "Tổng",
+            "allPhases": "Mọi giai đoạn: {amount}",
+            "phaseSwitch": "Giai đoạn",
+            "phaseDone": "xong",
+            "phaseStarted": "đang làm",
+            "phaseEmpty": "chưa bắt đầu",
             "addCuts": "Thêm cut",
             "addCutsTitle": "Thêm cut hàng loạt",
             "from": "Từ số",
             "to": "Đến số",
-            "addBudget": "Ngân sách mỗi cut (VND, tuỳ chọn)",
+            "addBudget": "Ngân sách mỗi cut ({phase}, VND, tuỳ chọn)",
             "addCutsHint": "Tạo C{from}…C{to}; cut đã có được giữ nguyên. Tối đa 200 cut mỗi lần.",
             "added": "Đã thêm {n} cut.",
             "invalidRange": "Khoảng không hợp lệ (1 ≤ từ ≤ đến, tối đa 200 cut).",
@@ -662,6 +671,7 @@
             "auditDelete": "xoá",
             "auditFields": {
                 "budget": "Ngân sách",
+                "budgets": "Ngân sách",
                 "code": "Mã",
                 "links": "Liên kết",
                 "label": "Tên",
@@ -681,7 +691,7 @@
             "signOut": "Đăng xuất",
             "notAuthorized": {
                 "title": "Không có quyền truy cập",
-                "body": "Tài khoản này chưa được cấp quyền truy cập tracker. Hãy nhờ quản trị viên thêm bạn."
+                "body": "Tài khoản này chưa được cấp quyền truy cập tracker. Hãy nhờ đồng nghiệp thêm bạn."
             },
             "errorDomain": "Vui lòng đăng nhập bằng tài khoản @sinostudio.vn.",
             "errorAuth": "Đăng nhập thất bại. Vui lòng thử lại."
@@ -710,7 +720,7 @@
             "open": "Mở",
             "archived": "Đã lưu trữ",
             "empty": "Chưa có dự án nào.",
-            "workTypes": "Loại công việc"
+            "workTypes": "Giai đoạn và công đoạn"
         },
         "workTypesEditor": {
             "code": "Mã",
@@ -725,8 +735,6 @@
             "locked": "Đã có công việc: không thể xóa hoặc đổi thứ tự",
             "lastType": "Dự án cần ít nhất một loại công việc",
             "noRoom": "Không còn chỗ trống ở đây. Hãy di chuyển một dòng chưa khóa trước.",
-            "total": "Tổng",
-            "totalHint": "Tổng % thù lao phải đúng bằng 100.",
             "defaultHint": "Các % này là tỉ lệ mặc định cho mọi cut. Từng cut có thể đặt tỉ lệ riêng ở trang Cut.",
             "overlapsPrev": "Chồng công đoạn trước",
             "overlapsPrevHint": "Công đoạn này có thể bắt đầu từ ngày công đoạn ngay trước bắt đầu trở đi (không sớm hơn) và kết thúc lúc nào cũng được. Ví dụ: shiage làm song song với douga.",
@@ -736,6 +744,34 @@
                 "duplicate": "Mỗi loại công việc cần một mã khác nhau.",
                 "invalid": "Có giá trị không hợp lệ. Hãy kiểm tra mã, tên, màu và % thù lao.",
                 "overlapInUse": "Không thể lưu: cut {cut} có các công đoạn đang chồng nhau theo thiết lập này."
+            }
+        },
+        "phasesEditor": {
+            "help": "Các giai đoạn cùng cột chạy song song. Một giai đoạn bắt đầu sau mọi giai đoạn nối vào nó từ bên trái. Kéo chấm đỏ thả lên giai đoạn khác để nối, bấm vào đường nối để xóa, kéo tay nắm để đổi thứ tự trong cột.",
+            "fixed": "Giai đoạn, công đoạn và thứ tự của chúng không thể sửa sau khi tạo.",
+            "name": "Tên giai đoạn",
+            "namePlaceholder": "VD: Background",
+            "unnamed": "(chưa đặt tên)",
+            "addPhase": "Thêm giai đoạn",
+            "removePhase": "Xóa giai đoạn",
+            "payTotal": "Tổng % thù lao của giai đoạn này",
+            "startsAfter": "Bắt đầu sau",
+            "noOther": "Chưa có giai đoạn khác",
+            "cycle": "Sẽ tạo vòng lặp: {name} đang chờ giai đoạn này",
+            "grip": "Kéo để đổi thứ tự trong cột",
+            "handle": "Kéo thả lên giai đoạn khác để giai đoạn đó bắt đầu sau giai đoạn này",
+            "removeLink": "Xóa giai đoạn đi trước",
+            "crossColumn": "Cột được xếp theo giai đoạn đi trước. Hãy kéo đường nối.",
+            "level": "Cấp {n}",
+            "noPrerequisite": "không cần chờ",
+            "issues": {
+                "phaseCount": "Dự án cần từ 1 đến 8 giai đoạn.",
+                "phaseName": "Mỗi giai đoạn cần tên dài 1 đến 40 ký tự.",
+                "phaseNameDup": "Mỗi giai đoạn cần một tên khác nhau.",
+                "typeCount": "Dự án có tối đa 50 công đoạn.",
+                "fields": "Mỗi công đoạn cần mã và tên.",
+                "codeDup": "Mỗi công đoạn cần một mã khác nhau, trên tất cả giai đoạn.",
+                "pctTotal": "Trong mỗi giai đoạn, tổng % thù lao phải đúng bằng 100."
             }
         },
         "shell": {

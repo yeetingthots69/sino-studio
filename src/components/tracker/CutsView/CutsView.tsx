@@ -1,17 +1,18 @@
 'use client';
 
-import {useState, type CSSProperties} from 'react';
+import {useState, useSyncExternalStore, type CSSProperties} from 'react';
 import {useRouter} from 'next/navigation';
-import {ActionIcon, Button, Checkbox, CloseButton, NumberInput, Text} from '@mantine/core';
+import {ActionIcon, Button, Checkbox, CloseButton, NumberInput, SegmentedControl, Text, VisuallyHidden} from '@mantine/core';
 import {IconPlus, IconTrash} from '@tabler/icons-react';
 import {useDictionary} from '@/i18n/DictionaryProvider';
-import {createTask, deleteCut, updateCut, type ActionResult} from '@/app/[locale]/tracker/actions';
+import {createTask, deleteCut, setCutBudget, type ActionResult} from '@/app/[locale]/tracker/actions';
 import type {Tables} from '@/types/database.types';
 import {compareCutCodes} from '../cuts';
 import {memberSet, pickerStaff, type Department, type MemberRow} from '../members';
 import {formatVnd} from '../earnings';
 import {sanitizeLinks} from '../links';
-import {cutSplit, payLines, stagePct} from '../pay';
+import {cutBudget, cutTotal, payLines, typeIdsByPhase} from '../pay';
+import {phaseState, sortPhases, type Phase} from '../phases';
 import {typeRule} from '../pipeline';
 import {useRealtimeBusy} from '../useRealtimeRefresh';
 import ProjectViewTabs from '../ProjectViewTabs/ProjectViewTabs';
@@ -22,7 +23,7 @@ import AddCutsModal from './AddCutsModal';
 import BulkModal, {type BulkStage} from './BulkModal';
 import CutDrawer from './CutDrawer';
 import SplitModal, {type PayPreset} from './SplitModal';
-import {cellState, waitingFor} from './cutsViewHelpers';
+import {cellState, footerTotals, phaseSplitLabel, pickPhase, waitingFor} from './cutsViewHelpers';
 import styles from './CutsView.module.css';
 
 export type Cut = Tables<'tracker_cuts'>;
@@ -40,6 +41,8 @@ interface Props {
     month?: string;
     /** By sort_order. */
     workTypes: WorkType[];
+    /** The project's phases (any order). */
+    phases: Phase[];
     cuts: Cut[];
     /** Every task of the project. */
     tasks: Task[];
@@ -58,7 +61,17 @@ export const stageKey = (cutId: string, typeId: string) => `${cutId}:${typeId}`;
 
 const todayICT = () => new Intl.DateTimeFormat('en-CA', {timeZone: 'Asia/Ho_Chi_Minh'}).format(new Date());
 
-export default function CutsView({project, month, workTypes, cuts, tasks, staff, adjustments, audit, presets, memberRows, departments}: Props) {
+// read once: a choice made in another tab must not switch this tab (a bulk selection would go stale)
+const subscribeNone = () => () => {};
+const readStorage = (key: string) => {
+    try {
+        return localStorage.getItem(key);
+    } catch {
+        return null; // storage blocked
+    }
+};
+
+export default function CutsView({project, month, workTypes, phases: rawPhases, cuts, tasks, staff, adjustments, audit, presets, memberRows, departments}: Props) {
     const {cuts: t, board, common} = useDictionary().tracker;
     const router = useRouter();
     // success notices are neutral (role=status), errors red (role=alert)
@@ -74,10 +87,29 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
     const [split, setSplit] = useState<{opId: string; cutIds: string[]} | null>(null);
     const openSplit = (cutIds: string[]) => setSplit({opId: crypto.randomUUID(), cutIds});
 
+    // phase switcher (O2): remembered per project; switching clears the bulk selection
+    const phases = sortPhases(rawPhases);
+    const phaseKey = `tracker.cuts.phase.${project.id}`;
+    const storedPhase = useSyncExternalStore(subscribeNone, () => readStorage(phaseKey), () => null);
+    const [chosenPhase, setChosenPhase] = useState<string | null>(null);
+    const activePhase = pickPhase(phases, chosenPhase ?? storedPhase);
+    const activeId = activePhase?.id ?? '';
+    const choosePhase = (id: string) => {
+        setChosenPhase(id);
+        try {
+            localStorage.setItem(phaseKey, id);
+        } catch {
+            // storage blocked → kept for this page only
+        }
+        setSelected([]);
+    };
+
     const cutList = [...cuts].sort((a, b) => compareCutCodes(a.code, b.code));
     const cutById = new Map(cuts.map((c) => [c.id, c]));
     const typeById = new Map(workTypes.map((w) => [w.id, w]));
-    const rule = typeRule(workTypes);
+    // full type list + phase graph: conflict text must see phases that are not shown
+    const rule = typeRule(workTypes, phases);
+    const phaseTypes = workTypes.filter((w) => w.phase_id === activeId);
     const cutCodes = new Map(cuts.map((c) => [c.id, c.code]));
     const staffById = new Map(staff.map((s) => [s.id, s]));
     const activeStaff = staff.filter((s) => !s.archived_at);
@@ -89,15 +121,15 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
         if (x.is_fix) fixCount.set(k, (fixCount.get(k) ?? 0) + 1);
     }
     const lines = payLines(tasks, cuts, workTypes);
+    const phaseTypeIds = typeIdsByPhase(workTypes);
     const lineByTask = new Map(lines.map((l) => [l.task_id, l]));
     const adjByStage = new Map<string, Adjustment[]>();
     for (const a of adjustments) {
         const k = stageKey(a.cut_id, a.work_type_id);
         adjByStage.set(k, [...(adjByStage.get(k) ?? []), a]);
     }
-    const typeTotals = new Map<string, number>();
-    for (const l of lines) typeTotals.set(l.work_type_id, (typeTotals.get(l.work_type_id) ?? 0) + l.amount);
-    const grandTotal = lines.reduce((s, l) => s + l.amount, 0);
+    const totals = footerTotals(lines, phaseTypeIds.get(activeId) ?? []);
+    const stateLabel = {done: t.phaseDone, started: t.phaseStarted, empty: t.phaseEmpty};
     // a cut with tasks or any bonus/penalty row (append-only, never deletable) cannot be deleted (FK restrict)
     const lockedCuts = new Set([...tasks, ...adjustments].map((x) => x.cut_id));
     const staffName = (id: string) => staffById.get(id)?.name ?? t.unknownStaff;
@@ -118,6 +150,10 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                 return t.invalid;
             case 'pct_total':
                 return t.splitTotal;
+            case 'phase_locked':
+                return board.phaseLocked;
+            case 'phase_invalid':
+                return board.phaseInvalid;
             case 'not_found':
                 return common.error.notFound;
             case 'network':
@@ -186,6 +222,14 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
             </header>
 
             <div className={styles.toolbar}>
+                {phases.length > 1 && (
+                    <SegmentedControl
+                        aria-label={t.phaseSwitch}
+                        data={phases.map((p) => ({value: p.id, label: p.name}))}
+                        value={activeId}
+                        onChange={choosePhase}
+                    />
+                )}
                 {notice && (
                     <Text
                         c={notice.ok ? 'dimmed' : 'red'}
@@ -212,7 +256,7 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                     ) : (
                         <>
                             <Button variant="default" onClick={() => setAddOpen(true)}>{t.addCuts}</Button>
-                            <Button variant="default" disabled={cutList.length === 0} onClick={() => openSplit([])}>{t.splitBulk}</Button>
+                            <Button variant="default" disabled={cutList.length === 0 || !activePhase} onClick={() => openSplit([])}>{t.splitBulk}</Button>
                             <Button
                                 variant="default"
                                 disabled={cutList.length === 0}
@@ -239,7 +283,7 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                                     {t.cut}
                                     <div className={styles.sub}>{t.budget}</div>
                                 </th>
-                                {workTypes.map((w) => (
+                                {phaseTypes.map((w) => (
                                     <th key={w.id} scope="col">
                                         <div className={styles.typeHead}>
                                             <span className={styles.swatch} style={{background: w.color}}/>
@@ -253,12 +297,29 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                         </thead>
                         <tbody>
                             {cutList.map((cut) => {
-                                const stages = workTypes.map((w) => taskByStage.get(stageKey(cut.id, w.id)));
+                                const stages = phaseTypes.map((w) => taskByStage.get(stageKey(cut.id, w.id)));
+                                const splitView = phaseSplitLabel(cut, phaseTypes);
+                                const squares = phases.map((p) => ({
+                                    p,
+                                    state: phaseState(phaseTypeIds.get(p.id) ?? [], (typeId) => taskByStage.get(stageKey(cut.id, typeId))),
+                                }));
                                 return (
                                     <tr key={cut.id}>
                                         <th scope="row" className={styles.sticky}>
                                             <div className={styles.cutHead}>
+                                                <span className={styles.phaseSquares} aria-hidden>
+                                                    {squares.map(({p, state}) => (
+                                                        <span
+                                                            key={p.id}
+                                                            title={`${p.name} · ${stateLabel[state]}`}
+                                                            className={`${styles.square} ${styles[`sq_${state}`]} ${p.id === activeId ? styles.sqActive : ''}`}
+                                                        />
+                                                    ))}
+                                                </span>
                                                 <span className={styles.cutCode}>{cut.code}</span>
+                                                <VisuallyHidden>
+                                                    {squares.map(({p, state}) => `${p.name}: ${stateLabel[state]}`).join(', ')}
+                                                </VisuallyHidden>
                                                 {!lockedCuts.has(cut.id) && (confirmDelete === cut.id ? (
                                                     <Button size="compact-xs" color="red" onClick={() => void removeCut(cut)}>
                                                         {fill(t.confirmDelete, {code: cut.code})}
@@ -275,24 +336,37 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                                                     </ActionIcon>
                                                 ))}
                                             </div>
-                                            <BudgetInput cut={cut} label={fill(t.budgetLabel, {code: cut.code})} onError={(r) => setNotice(errorText(r))}/>
+                                            {activePhase && (
+                                                <BudgetInput
+                                                    // remount on phase switch: a draft belongs to one phase
+                                                    key={activeId}
+                                                    cut={cut}
+                                                    phaseId={activeId}
+                                                    label={fill(t.budgetLabel, {code: cut.code, phase: activePhase.name})}
+                                                    onError={(r) => setNotice(errorText(r))}
+                                                />
+                                            )}
+                                            {phases.length > 1 && (
+                                                <Text size="xs" c="dimmed" mt={2}>{fill(t.allPhases, {amount: formatVnd(cutTotal(cut))})}</Text>
+                                            )}
                                             <Button
                                                 mt={4}
                                                 size="compact-xs"
-                                                variant={cutSplit(cut) ? 'light' : 'subtle'}
-                                                color={cutSplit(cut) ? undefined : 'gray'}
-                                                title={cutSplit(cut) ? t.splitCustom : t.splitDefault}
+                                                variant={splitView.custom ? 'light' : 'subtle'}
+                                                color={splitView.custom ? undefined : 'gray'}
+                                                title={splitView.custom ? t.splitCustom : t.splitDefault}
                                                 aria-label={fill(t.splitLabel, {code: cut.code})}
+                                                disabled={!activePhase}
                                                 onClick={() => openSplit([cut.id])}
                                             >
-                                                {workTypes.map((w) => stagePct(cut, w)).join(' · ')}%
+                                                {splitView.text}
                                             </Button>
                                         </th>
-                                        {workTypes.map((w, i) => {
+                                        {phaseTypes.map((w, i) => {
                                             const key = stageKey(cut.id, w.id);
                                             const task = stages[i];
                                             const state = cellState(task);
-                                            const wait = waitingFor(workTypes, stages, i);
+                                            const wait = waitingFor(phaseTypes, stages, i);
                                             const isSelected = selected.includes(key);
                                             const vars = {'--c': w.color, '--p': `${task?.progress ?? 0}%`} as CSSProperties;
                                             const adjSum = (adjByStage.get(key) ?? []).reduce((s, a) => s + a.amount, 0);
@@ -397,11 +471,14 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                             <tr>
                                 <th scope="row" className={styles.sticky}>
                                     {t.total}
-                                    <span className={styles.money}>{formatVnd(grandTotal)}</span>
+                                    <span className={styles.money}>{formatVnd(totals.phase)}</span>
+                                    {phases.length > 1 && (
+                                        <span className={styles.sub}>{fill(t.allPhases, {amount: formatVnd(totals.all)})}</span>
+                                    )}
                                 </th>
-                                {workTypes.map((w) => (
+                                {phaseTypes.map((w) => (
                                     <td key={w.id}>
-                                        <span className={styles.money}>{formatVnd(typeTotals.get(w.id) ?? 0)}</span>
+                                        <span className={styles.money}>{formatVnd(totals.byType.get(w.id) ?? 0)}</span>
                                         <span className={styles.sub}>{w.code}</span>
                                     </td>
                                 ))}
@@ -421,6 +498,7 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                 cut={dCut}
                 workType={dType}
                 workTypes={workTypes}
+                phases={phases}
                 task={dTask}
                 line={dTask ? lineByTask.get(dTask.id) : undefined}
                 adjustments={dAdjustments}
@@ -447,12 +525,13 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
                 />
             )}
 
-            {split && (
+            {split && activePhase && (
                 <SplitModal
                     key={split.opId}
                     projectId={project.id}
                     cuts={cutList}
-                    workTypes={workTypes}
+                    phase={activePhase}
+                    workTypes={phaseTypes}
                     presets={presets}
                     initialCutIds={split.cutIds}
                     onClose={() => setSplit(null)}
@@ -466,6 +545,7 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
             <AddCutsModal
                 opened={addOpen}
                 projectId={project.id}
+                phase={activePhase}
                 onClose={() => setAddOpen(false)}
                 onDone={(n) => {
                     setAddOpen(false);
@@ -476,18 +556,20 @@ export default function CutsView({project, month, workTypes, cuts, tasks, staff,
     );
 }
 
-/** Sticky-column budget: draft while typing, commit on blur / Enter → updateCut (the action refreshes the page); Escape reverts. */
-function BudgetInput({cut, label, onError}: {cut: Cut; label: string; onError: (r: {error: string}) => void}) {
+/** Sticky-column budget of one phase: draft while typing, commit on blur / Enter → setCutBudget (the action refreshes the page); Escape reverts. */
+function BudgetInput({cut, phaseId, label, onError}: {cut: Cut; phaseId: string; label: string; onError: (r: {error: string}) => void}) {
     const [draft, setDraft] = useState<number | string | null>(null);
-    useRealtimeBusy(draft !== null && draft !== cut.budget);
+    const saved = cutBudget(cut, phaseId);
+    useRealtimeBusy(draft !== null && draft !== saved);
     const commit = async () => {
         if (draft === null) return;
         const budget = typeof draft === 'number' ? draft : Number.NaN;
-        if (!Number.isInteger(budget) || budget === cut.budget) {
+        if (!Number.isInteger(budget) || budget === saved) {
             setDraft(null);
             return;
         }
-        const r = await updateCut({id: cut.id, patch: {budget}}).catch(() => ({ok: false, error: 'network'}) as const);
+        const r = await setCutBudget({cut_id: cut.id, phase_id: phaseId, budget})
+            .catch(() => ({ok: false, error: 'network'}) as const);
         if (!r.ok) onError(r);
         setDraft(null);
     };
@@ -496,7 +578,7 @@ function BudgetInput({cut, label, onError}: {cut: Cut; label: string; onError: (
             mt={6}
             size="xs"
             aria-label={label}
-            value={draft ?? cut.budget}
+            value={draft ?? saved}
             onChange={setDraft}
             onBlur={() => void commit()}
             onKeyDown={(e) => {

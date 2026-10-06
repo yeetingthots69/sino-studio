@@ -1,7 +1,7 @@
 import type {StaffSort} from '../staffView';
 import {initTaskState, reconcile, type SyncInput, type TaskState} from './taskSync';
 import type {Tables} from '@/types/database.types';
-import {isOverlapPair, type TypeRule} from '../pipeline';
+import {isOverlapPair, phaseRelation, type TypeRule} from '../pipeline';
 
 type Task = Tables<'tracker_tasks'>;
 
@@ -68,7 +68,7 @@ type Stage = {id: string; cut_id: string; work_type_id: string; start_date: stri
  * the generic text when the stage or its cut / type is unknown here.
  */
 export function orderConflictText(
-    t: {orderEarlier: string; orderLater: string; orderEarly: string; orderLate: string; orderGeneric: string},
+    t: {orderEarlier: string; orderLater: string; orderEarly: string; orderLate: string; orderPhaseBefore: string; orderPhaseAfter: string; orderGeneric: string},
     conflictId: string | undefined,
     candidateTypeId: string | undefined,
     stages: Stage[],
@@ -82,6 +82,13 @@ export function orderConflictText(
     if (!s || !cut || !type) return t.orderGeneric;
     const own = candidateTypeId ? types.get(candidateTypeId) : undefined;
     const stage = `${cut} · ${type.code} (${ddmm(s.start_date)}–${ddmm(s.end_date)})`;
+    // v2.8: the stage is in an ancestor / descendant phase of the candidate's
+    const peerPhase = rule.phaseOf.get(s.work_type_id);
+    const rel = candidateTypeId ? phaseRelation(rule, rule.phaseOf.get(candidateTypeId), peerPhase) : null;
+    if (rel) {
+        const text = rel === 'before' ? t.orderPhaseBefore : t.orderPhaseAfter;
+        return text.replace('{phase}', rule.phaseName.get(peerPhase!) ?? '').replace('{stage}', stage);
+    }
     const later = own !== undefined && type.sort_order > own.sort_order;
     const overlap = !!candidateTypeId && (later
         ? isOverlapPair(rule, candidateTypeId, s.work_type_id)

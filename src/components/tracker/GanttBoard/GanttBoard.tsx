@@ -15,6 +15,8 @@ import {addDays, assignLanes, daysBetween, isWeekend, monthRange, weekdayLabel} 
 import {viewStaff} from '../staffView';
 import {boardStaff, memberSet, type Department, type MemberRow} from '../members';
 import {typeRule} from '../pipeline';
+import {budgetValues} from '../pay';
+import type {Phase} from '../phases';
 import ProjectViewTabs from '../ProjectViewTabs/ProjectViewTabs';
 import AddTaskButton from './AddTaskButton';
 import CreateTaskPopover, {type CreateInput} from './CreateTaskPopover';
@@ -32,7 +34,7 @@ import {useDragCreate} from './useDragCreate';
 import {useRefreshScheduler} from './useRefreshScheduler';
 import {useTaskRealtime} from './useTaskRealtime';
 import {useWheelHandoff} from './wheelHandoff';
-import {EMPTY_UNDO, inverse, payUnchanged, rebase, record, remap, settled, take, type Dir, type Fields, type UndoEntry, type UndoState} from './undoStack';
+import {EMPTY_UNDO, inverse, payUnchanged, rebase, record, remap, restoreInput, settled, take, type Dir, type Fields, type UndoEntry, type UndoState} from './undoStack';
 import UndoToast, {type UndoToastData} from './UndoToast';
 import {isRealtimeBusy, useRealtimeIdle, useRealtimeTables} from '@/components/tracker/useRealtimeRefresh';
 import styles from './GanttBoard.module.css';
@@ -99,6 +101,8 @@ interface Props {
     members: MemberRow[];
     /** The project's work types by sort_order. */
     workTypes: WorkType[];
+    /** The project's phases (v2.8: the order rule). */
+    phases: Phase[];
     strengths: Tables<'tracker_strengths'>[];
     staffStrengths: Tables<'tracker_staff_strengths'>[];
     cuts: Cut[];
@@ -116,7 +120,7 @@ const BOARD_TABLES = [
 ];
 
 export default function GanttBoard(props: Props) {
-    const {project, month, locale, staff, workTypes, strengths, staffStrengths, cuts: cutRows, tasks, stages: stageRows, departments, members} = props;
+    const {project, month, locale, staff, workTypes, phases, strengths, staffStrengths, cuts: cutRows, tasks, stages: stageRows, departments, members} = props;
     const {board: t, common} = useDictionary().tracker;
     // Confirmed rows live in an external store updated synchronously on every input (commits read it at
     // send time inside the chain); React renders it through useSyncExternalStore.
@@ -261,7 +265,7 @@ export default function GanttBoard(props: Props) {
     // header + weekend columns follow the target month while a navigation is pending
     const dates = Array.from({length: view.days}, (_, i) => addDays(view.start, i));
     const typeById = new Map(workTypes.map((w) => [w.id, w]));
-    const rule = typeRule(workTypes);
+    const rule = typeRule(workTypes, phases);
     const cutList = [...cuts.values()].sort((a, b) => compareCutCodes(a.code, b.code));
     const cutCodes = new Map(cutList.map((c) => [c.id, c.code]));
 
@@ -334,6 +338,10 @@ export default function GanttBoard(props: Props) {
                 return t.fixNoStageError;
             case 'staff_not_member':
                 return t.staffNotMember;
+            case 'phase_locked':
+                return t.phaseLocked;
+            case 'phase_invalid':
+                return t.phaseInvalid;
             case 'network':
                 return common.error.network;
             default:
@@ -439,7 +447,7 @@ export default function GanttBoard(props: Props) {
 
     const snapshotOf = (task: Task) => ({
         project_id: task.project_id, staff_id: task.staff_id, work_type_id: task.work_type_id,
-        cut_code: cutCodes.get(task.cut_id) ?? '', budget: cuts.get(task.cut_id)?.budget ?? null,
+        cut_code: cutCodes.get(task.cut_id) ?? '', budgets: cuts.has(task.cut_id) ? budgetValues(cuts.get(task.cut_id)!) : null,
         start_date: task.start_date, end_date: task.end_date, progress: task.progress, links: task.links, is_fix: task.is_fix,
     });
 
@@ -486,7 +494,7 @@ export default function GanttBoard(props: Props) {
         store.apply({kind: 'ack', id: task.id, row: task});
         setCuts((m) => new Map(m).set(cut.id, cut));
         confirmWrite(task.id, task.version, {kind: 'presence', id: task.id, version: task.version, exists: true,
-            snapshot: {...snapshotOf(task), cut_code: cut.code, budget: cut.budget},
+            snapshot: {...snapshotOf(task), cut_code: cut.code, budgets: budgetValues(cut)},
             label: fill(t.undo.label.created, {cut: cut.code, type: typeCode(task.work_type_id, task.is_fix)})});
         requestSelect(task.id);
         drag.close();
@@ -636,10 +644,7 @@ export default function GanttBoard(props: Props) {
             case 'create': {
                 // re-create (new id), then restore progress/links when they differ from the DB defaults (0, [])
                 const s = inv.snapshot;
-                const r = await createTask({
-                    project_id: s.project_id, staff_id: s.staff_id, work_type_id: s.work_type_id, cut_code: s.cut_code,
-                    start_date: s.start_date, end_date: s.end_date, ...(s.budget === null ? {} : {budget: s.budget}), is_fix: s.is_fix,
-                }).catch(() => ({ok: false, error: 'network'}) as const);
+                const r = await createTask(restoreInput(s)).catch(() => ({ok: false, error: 'network'}) as const);
                 if (!r.ok) {
                     setNotice(failText(r, {typeId: s.work_type_id, cut: true}));
                     return null;

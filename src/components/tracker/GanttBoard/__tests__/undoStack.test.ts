@@ -1,13 +1,13 @@
 import {describe, expect, it} from 'vitest';
 import {
-    EMPTY_UNDO, UNDO_LIMIT, inverse, payUnchanged, rebase, record, remap, settled, take,
+    EMPTY_UNDO, UNDO_LIMIT, inverse, payUnchanged, rebase, record, remap, restoreInput, settled, take,
     type TaskSnapshot, type UndoEntry, type UndoState,
 } from '../undoStack';
 
 const upd = (id: string, version = 1): UndoEntry =>
     ({kind: 'update', id, version, before: {progress: 0}, after: {progress: 50}, label: id});
 
-const snapshot: TaskSnapshot = {project_id: 'p', staff_id: 's1', work_type_id: 'w', cut_code: 'C01', budget: null,
+const snapshot: TaskSnapshot = {project_id: 'p', staff_id: 's1', work_type_id: 'w', cut_code: 'C01', budgets: {ph1: 100, ph2: 250},
     start_date: '2026-10-01', end_date: '2026-10-03', progress: 0, links: [], is_fix: false};
 
 const move: Extract<UndoEntry, {kind: 'move'}> = {kind: 'move', id: 't', version: 1, moveAdjustments: true, opId: 'op', cut_id: 'c', work_type_id: 'w',
@@ -87,6 +87,12 @@ describe('undoStack', () => {
         expect(inverse(upd('a'), 'redo')).toEqual({op: 'update', fields: {progress: 50}});
         expect(inverse(move, 'undo')).toEqual({op: 'move', placement: move.before, moveAdjustments: true, holder: 'b'});
         expect(inverse(move, 'redo')).toEqual({op: 'move', placement: move.after, moveAdjustments: true, holder: 'a'});
+    });
+
+    it('restoreInput passes the full budgets map (U6), none when unknown', () => {
+        expect(restoreInput(snapshot)).toEqual({project_id: 'p', staff_id: 's1', work_type_id: 'w', cut_code: 'C01',
+            start_date: '2026-10-01', end_date: '2026-10-03', budgets: {ph1: 100, ph2: 250}, is_fix: false});
+        expect(restoreInput({...snapshot, budgets: null})).not.toHaveProperty('budgets');
     });
 
     it('inverse: presence', () => {

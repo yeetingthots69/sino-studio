@@ -14,7 +14,8 @@ import styles from './GanttBoard.module.css';
 export type CreateInput = {
     cut_code: string;
     work_type_id: string;
-    budget?: number;
+    /** New cut only: {phase of the chosen type: amount}. */
+    budgets?: Record<string, number>;
     staff_id?: string;
     start_date?: string;
     end_date?: string;
@@ -100,7 +101,7 @@ export default function CreateTaskPopover(props: Props) {
         const err = await onSubmit({
             cut_code: code,
             work_type_id: type,
-            budget: !cut && !fix && typeof budget === 'number' ? budget : undefined,
+            budgets: !cut && !fix && typeof budget === 'number' ? {[workTypes.find((w) => w.id === type)!.phase_id]: budget} : undefined,
             ...(fix ? {is_fix: true} : {}),
             ...(cutMode && staffId ? {staff_id: staffId, start_date: start, end_date: end} : {}),
         });
@@ -208,7 +209,7 @@ export default function CreateTaskPopover(props: Props) {
                             </div>
                             {code && !cut && !fix && (
                                 <NumberInput
-                                    label={t.create.budget}
+                                    label={type && typeRule.phaseName.size > 1 ? `${t.create.budget} (${typeRule.phaseName.get(typeRule.phaseOf.get(type) ?? '') ?? ''})` : t.create.budget}
                                     value={budget}
                                     onChange={setBudget}
                                     min={0}

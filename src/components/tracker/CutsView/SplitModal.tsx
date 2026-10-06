@@ -7,6 +7,7 @@ import {useDictionary} from '@/i18n/DictionaryProvider';
 import {createPayPreset, deletePayPreset, setCutSplits} from '@/app/[locale]/tracker/actions';
 import type {Tables} from '@/types/database.types';
 import {pctHundredths, pctTotalOk, stagePct} from '../pay';
+import type {Phase} from '../phases';
 import {fill} from '../GanttBoard/GanttBoard';
 import {presetToDraft} from './cutsViewHelpers';
 import type {Cut, WorkType} from './CutsView';
@@ -18,7 +19,9 @@ interface Props {
     projectId: string;
     /** Sorted by code. */
     cuts: Cut[];
-    /** By sort_order (presets map onto this order). */
+    /** The phase being edited (switcher); only its keys of each cut's split change. */
+    phase: Phase;
+    /** That phase's types by sort_order (presets map onto this order). */
     workTypes: WorkType[];
     presets: PayPreset[];
     /** Preselected cuts; with exactly one, the editor starts from its current split. */
@@ -28,12 +31,13 @@ interface Props {
 }
 
 /** Pay split for one or many cuts: edit, load a preset (by work-type position), save a preset, or reset to the project default. */
-export default function SplitModal({projectId, cuts, workTypes, presets, initialCutIds, onClose, onDone}: Props) {
+export default function SplitModal({projectId, cuts, phase, workTypes, presets, initialCutIds, onClose, onDone}: Props) {
     const {cuts: t, common} = useDictionary().tracker;
     const [cutIds, setCutIds] = useState(initialCutIds);
     const [draft, setDraft] = useState<Record<string, number | string>>(() => {
         const one = initialCutIds.length === 1 ? cuts.find((c) => c.id === initialCutIds[0]) : undefined;
-        return Object.fromEntries(workTypes.map((w) => [w.id, one ? stagePct(one, w) : w.pay_pct]));
+        const ids = workTypes.map((w) => w.id);
+        return Object.fromEntries(workTypes.map((w) => [w.id, one ? stagePct(one, w, ids) : w.pay_pct]));
     });
     const [preset, setPreset] = useState<{id: string; missing: string[]; extra: number[]} | null>(null);
     const [name, setName] = useState('');
@@ -68,7 +72,7 @@ export default function SplitModal({projectId, cuts, workTypes, presets, initial
     };
 
     const apply = async (split: Record<string, number> | null) => {
-        const done = await run(setCutSplits({project_id: projectId, cut_ids: cutIds, pay_split: split}));
+        const done = await run(setCutSplits({project_id: projectId, cut_ids: cutIds, phase_id: phase.id, pay_split: split}));
         if (done) onDone(fill(t.splitApplied, {n: done.length}));
     };
 
@@ -89,7 +93,7 @@ export default function SplitModal({projectId, cuts, workTypes, presets, initial
     };
 
     return (
-        <Modal opened onClose={onClose} title={t.splitTitle} size="md">
+        <Modal opened onClose={onClose} title={`${t.splitTitle} · ${phase.name}`} size="md">
             <form
                 className={styles.form}
                 onSubmit={(e) => {

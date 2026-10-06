@@ -20,7 +20,7 @@ export default async function TrackerAppLayout({children, params}: Props) {
 
     const email = user.email.toLowerCase();
     const [{data: trackerUser}, {data: projects}] = await Promise.all([
-        supabase.from('tracker_users').select('email, role, display_name').eq('email', email).maybeSingle(),
+        supabase.from('tracker_users').select('email, display_name').eq('email', email).maybeSingle(),
         supabase.from('tracker_projects').select('id, name, color').is('archived_at', null).order('created_at', {ascending: false}),
     ]);
 

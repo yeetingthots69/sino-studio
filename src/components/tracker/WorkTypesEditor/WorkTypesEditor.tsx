@@ -1,9 +1,8 @@
 'use client';
 
-import {ActionIcon, Button, Checkbox, ColorInput, Group, NumberInput, Table, Text, TextInput, Tooltip} from '@mantine/core';
+import {ActionIcon, Button, Checkbox, ColorInput, NumberInput, Table, Text, TextInput, Tooltip} from '@mantine/core';
 import {IconArrowDown, IconArrowUp, IconLock, IconPlus, IconTrash} from '@tabler/icons-react';
 import {useDictionary} from '@/i18n/DictionaryProvider';
-import {pctHundredths, pctTotalOk} from '@/components/tracker/pay';
 import {insertAt, moveRow} from './sortOrder';
 import styles from './WorkTypesEditor.module.css';
 
@@ -19,11 +18,6 @@ export type EditorType = {
     used: boolean;
 };
 
-const totalOk = (rows: EditorType[]) => pctTotalOk(rows.map((r) => Number(r.pay_pct) || 0));
-const codesUnique = (rows: EditorType[]) => new Set(rows.map((r) => r.code.trim())).size === rows.length;
-/** Save is allowed only when this holds. */
-export const typesValid = (rows: EditorType[]) => totalOk(rows) && codesUnique(rows);
-
 // ColorInput inside a Modal: the scroll lock makes <body> position:relative + overflow:hidden, which clips absolute
 // portal dropdowns at the body height, so the picker is positioned fixed. Esc blurs the input (closing the picker);
 // data-mantine-stop-propagation keeps the Modal's window Esc handler from also closing the modal.
@@ -38,15 +32,17 @@ export const COLOR_INPUT_PROPS = {
 // key '' = new row; commit() gives it a key at click time (no impure calls during render).
 const BLANK: EditorType = {key: '', code: '', label: '', color: '#888888', pay_pct: 0, sort_order: 0, overlaps_prev: false, used: false};
 
-export default function WorkTypesEditor({value, onChange}: {value: EditorType[]; onChange: (v: EditorType[]) => void}) {
+/** The stages of one phase. `locked` (edit mode, D2/O9): code read-only, no add / remove / reorder. */
+export default function WorkTypesEditor({value, onChange, locked = false}: {
+    value: EditorType[];
+    onChange: (v: EditorType[]) => void;
+    locked?: boolean;
+}) {
     const t = useDictionary().tracker.workTypesEditor;
     const commit = (rows: EditorType[]) =>
         onChange(rows.map((r) => (r.key ? r : {...r, key: crypto.randomUUID()})));
     const set = (i: number, patch: Partial<EditorType>) =>
         onChange(value.map((row, j) => (j === i ? {...row, ...patch} : row)));
-    const total = value.reduce((s, r) => s + pctHundredths(Number(r.pay_pct) || 0), 0) / 100;
-    const ok = totalOk(value);
-    const unique = codesUnique(value);
 
     const icon = (label: string, next: EditorType[] | null, node: React.ReactNode, hint = label) => (
         // span wrapper: a disabled button fires no mouse events, so the hint would never show
@@ -67,11 +63,11 @@ export default function WorkTypesEditor({value, onChange}: {value: EditorType[];
 
     return (
         <div>
-            <Table.ScrollContainer minWidth={700}>
-                <Table verticalSpacing={4}>
+            <Table.ScrollContainer minWidth={locked ? 400 : 520}>
+                <Table verticalSpacing={4} horizontalSpacing={4}>
                     <Table.Thead>
                         <Table.Tr>
-                            <Table.Th/>
+                            {!locked && <Table.Th/>}
                             <Table.Th>{t.code}</Table.Th>
                             <Table.Th>{t.label}</Table.Th>
                             <Table.Th>{t.color}</Table.Th>
@@ -81,26 +77,30 @@ export default function WorkTypesEditor({value, onChange}: {value: EditorType[];
                                     <span tabIndex={0}>{t.overlapsPrev}</span>
                                 </Tooltip>
                             </Table.Th>
-                            <Table.Th/>
+                            {!locked && <Table.Th/>}
                         </Table.Tr>
                     </Table.Thead>
                     <Table.Tbody>
                         {value.map((row, i) => (
                             <Table.Tr key={row.key}>
-                                <Table.Td>
-                                    <div className={styles.buttons}>
-                                        {icon(t.moveUp, moveRow(value, i, -1), <IconArrowUp size={16}/>, row.used ? t.locked : t.moveUp)}
-                                        {icon(t.moveDown, moveRow(value, i, 1), <IconArrowDown size={16}/>, row.used ? t.locked : t.moveDown)}
-                                    </div>
-                                </Table.Td>
+                                {!locked && (
+                                    <Table.Td>
+                                        <div className={styles.buttons}>
+                                            {icon(t.moveUp, moveRow(value, i, -1), <IconArrowUp size={16}/>, row.used ? t.locked : t.moveUp)}
+                                            {icon(t.moveDown, moveRow(value, i, 1), <IconArrowDown size={16}/>, row.used ? t.locked : t.moveDown)}
+                                        </div>
+                                    </Table.Td>
+                                )}
                                 <Table.Td className={styles.code}>
-                                    <TextInput
-                                        aria-label={t.code}
-                                        required
-                                        maxLength={20}
-                                        value={row.code}
-                                        onChange={(e) => set(i, {code: e.currentTarget.value})}
-                                    />
+                                    {locked ? <Text size="sm" fw={600}>{row.code}</Text> : (
+                                        <TextInput
+                                            aria-label={t.code}
+                                            required
+                                            maxLength={20}
+                                            value={row.code}
+                                            onChange={(e) => set(i, {code: e.currentTarget.value})}
+                                        />
+                                    )}
                                 </Table.Td>
                                 <Table.Td>
                                     <TextInput
@@ -134,14 +134,16 @@ export default function WorkTypesEditor({value, onChange}: {value: EditorType[];
                                     />
                                 </Table.Td>
                                 <Table.Td className={styles.overlap}>
-                                    <Checkbox
-                                        aria-label={t.overlapsPrev}
-                                        disabled={i === 0}
-                                        checked={i > 0 && row.overlaps_prev}
-                                        onChange={(e) => set(i, {overlaps_prev: e.currentTarget.checked})}
-                                    />
+                                    {/* O4: the first stage of a phase has no predecessor, so the toggle is hidden */}
+                                    {i > 0 && (
+                                        <Checkbox
+                                            aria-label={t.overlapsPrev}
+                                            checked={row.overlaps_prev}
+                                            onChange={(e) => set(i, {overlaps_prev: e.currentTarget.checked})}
+                                        />
+                                    )}
                                 </Table.Td>
-                                <Table.Td>
+                                {!locked && <Table.Td>
                                     <div className={styles.buttons}>
                                         {icon(t.insertBelow, insertAt(value, i + 1, BLANK), <IconPlus size={16}/>, t.noRoom)}
                                         {row.used ? (
@@ -152,27 +154,23 @@ export default function WorkTypesEditor({value, onChange}: {value: EditorType[];
                                             icon(t.delete, value.length > 1 ? value.filter((_, j) => j !== i) : null, <IconTrash size={16}/>, t.lastType)
                                         )}
                                     </div>
-                                </Table.Td>
+                                </Table.Td>}
                             </Table.Tr>
                         ))}
                     </Table.Tbody>
                 </Table>
             </Table.ScrollContainer>
-            <Group justify="space-between" mt="xs">
+            {!locked && (
                 <Button
                     variant="default"
                     size="xs"
+                    mt="xs"
                     leftSection={<IconPlus size={14}/>}
                     onClick={() => commit(insertAt(value, value.length, BLANK)!)}
                 >
                     {t.add}
                 </Button>
-                <Text size="sm" c={ok ? undefined : 'red'}>
-                    {t.total}: {total}%{!ok && ` · ${t.totalHint}`}
-                </Text>
-            </Group>
-            <Text size="xs" c="dimmed" mt={4}>{t.defaultHint}</Text>
-            {!unique && <Text size="sm" c="red" mt={4}>{t.error.duplicate}</Text>}
+            )}
         </div>
     );
 }

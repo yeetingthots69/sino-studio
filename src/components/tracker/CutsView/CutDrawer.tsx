@@ -10,9 +10,10 @@ import {cleanLinks, sanitizeLinks, type Link} from '../links';
 import type {Json} from '@/types/database.types';
 import {formatVnd} from '../earnings';
 import {useRealtimeBusy} from '../useRealtimeRefresh';
-import {stagePct, type PayLine} from '../pay';
+import {cutBudget, phaseSplit, stagePct, typeIdsByPhase, type PayLine} from '../pay';
+import type {Phase} from '../phases';
 import {ddmm} from '../GanttBoard/boardHelpers';
-import {amountOk, auditChanges, formatAmountInput, parseAmount, stagePeople} from './cutsViewHelpers';
+import {amountOk, auditChanges, budgetEntries, formatAmountInput, parseAmount, stagePeople} from './cutsViewHelpers';
 import type {Adjustment, AuditRow, Cut, Staff, Task, WorkType} from './CutsView';
 import styles from './CutsView.module.css';
 
@@ -26,6 +27,8 @@ interface Props {
     workType?: WorkType;
     /** Every type of the project (pay split audit rows). */
     workTypes: WorkType[];
+    /** The project's phases by sort_order (audit budgets / splits per phase). */
+    phases: Phase[];
     task?: Task;
     line?: PayLine;
     /** This stage's adjustments (any order). */
@@ -49,7 +52,7 @@ const MIN_REASON = 3;
 
 /** Stage drawer (plan §3.5): pay formula, people, adjustments + add / undo, audit. */
 export default function CutDrawer(props: Props) {
-    const {opened, onClose, projectId, initialOpId, cut, workType, workTypes, task, line, adjustments, allAdjustments, staff, cutStaffIds, audit, projectLinks} = props;
+    const {opened, onClose, projectId, initialOpId, cut, workType, workTypes, phases, task, line, adjustments, allAdjustments, staff, cutStaffIds, audit, projectLinks} = props;
     const {cuts: t, common, links: tl, mail: tm} = useDictionary().tracker;
     const staffById = new Map(staff.map((s) => [s.id, s]));
     const name = (id: string | null | undefined) => (id && staffById.get(id)?.name) || t.unknownStaff;
@@ -144,19 +147,34 @@ export default function CutDrawer(props: Props) {
         else setLinksError(r.error === 'network' ? common.error.network : common.error.generic);
     };
 
+    const phaseTypeIds = typeIdsByPhase(workTypes);
     const fieldLabel = (f: string) => (t.auditFields as Record<string, string>)[f] ?? f;
     const fmt = (field: string, v: Json | undefined) => {
         if (field === 'pay_split' && v === null) return t.splitDefault;
         if (v === undefined || v === null) return '—';
+        // legacy scalar budget: historic audit rows (before v2.8)
         if (field === 'budget' && typeof v === 'number') return formatVnd(v);
+        if (field === 'budgets') {
+            const entries = budgetEntries(v, phases);
+            return entries.length
+                ? entries.map(([n, a]) => (phases.length > 1 ? `${n} ${formatVnd(a)}` : formatVnd(a))).join(' · ')
+                : '—';
+        }
         if (field === 'pay_pct') return `${v}%`;
         if (field === 'pay_split' && typeof v === 'object' && !Array.isArray(v)) {
-            return workTypes.map((w) => `${w.code} ${stagePct({pay_split: v}, w)}%`).join(' · ');
+            return phases.map((p) => {
+                const ids = phaseTypeIds.get(p.id) ?? [];
+                const body = phaseSplit({pay_split: v}, ids)
+                    ? workTypes.filter((w) => w.phase_id === p.id)
+                        .map((w) => `${w.code} ${stagePct({pay_split: v}, w, ids)}%`).join(' · ')
+                    : t.splitDefault;
+                return phases.length > 1 ? `${p.name}: ${body}` : body;
+            }).join(' | ');
         }
         if (Array.isArray(v)) return String(v.length);
         return typeof v === 'object' ? JSON.stringify(v) : String(v);
     };
-    const pct = `${stagePct(cut, workType)}%`;
+    const pct = `${stagePct(cut, workType, phaseTypeIds.get(workType.phase_id) ?? [])}%`;
 
     return (
         <Drawer
@@ -173,7 +191,7 @@ export default function CutDrawer(props: Props) {
                     </Text>
                 )}
                 <div className={styles.formula}>
-                    {formatVnd(cut.budget)} × {pct} = <b>{formatVnd(line?.amount ?? 0)}</b>
+                    {formatVnd(cutBudget(cut, workType.phase_id))} × {pct} = <b>{formatVnd(line?.amount ?? 0)}</b>
                 </div>
 
                 <section>
@@ -349,7 +367,9 @@ export default function CutDrawer(props: Props) {
                         <ul className={styles.list}>
                             {audit.map((row) => {
                                 const target = row.table_name === 'tracker_cuts' ? cut.code : workType.code;
-                                const changes = row.action === 'update' ? auditChanges(row.old, row.new) : [];
+                                const all = row.action === 'update' ? auditChanges(row.old, row.new) : [];
+                                // the expand-step sync also changes the legacy `budget` with `budgets`: show it once
+                                const changes = all.some((c) => c.field === 'budgets') ? all.filter((c) => c.field !== 'budget') : all;
                                 return (
                                     <li key={row.id}>
                                         <div className={styles.row}>

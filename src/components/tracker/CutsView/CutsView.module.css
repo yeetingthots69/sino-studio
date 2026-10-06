@@ -133,8 +133,52 @@
     font-size: 15px;
 }
 
-.cutHead > :last-child {
+/* phase squares sit at the left edge; code + trash stay right */
+.cutHead > .cutCode {
     margin-left: auto;
+}
+
+/*
+ * At most 4 squares per row (5–8 phases → 2 rows): 4 × 10 + 3 × 3 = 49 px. Row head content box = 133 px:
+ * 49 + 2 gaps × 6 + code (~40 px at 15 px bold, "C123") + trash (sm ActionIcon 22 px) = 123 px, so the column keeps its width.
+ */
+.phaseSquares {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    max-width: calc(4 * 10px + 3 * 3px);
+    flex-shrink: 0;
+    align-self: center;
+}
+
+.square {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    box-sizing: border-box;
+    border: 1px solid var(--color-red);
+}
+
+.sq_done {
+    background: var(--color-red);
+}
+
+.sq_started {
+    background: color-mix(in srgb, var(--color-red) 40%, transparent);
+}
+
+.sq_empty {
+    background: transparent;
+}
+
+.sqActive::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -3px; /* inside the 3 px row gap, so it never covers a second-row square */
+    height: 2px;
+    background: var(--color-white);
 }
 
 /* cells */
