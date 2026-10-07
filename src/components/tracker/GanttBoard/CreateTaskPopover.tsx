@@ -54,6 +54,13 @@ interface Props {
 const INSIDE = {withinPortal: false};
 
 /** Create-task form anchored to the drag ghost (plan §3.4) or, in cut mode, to a Cuts-view cell (§3.5). */
+/** Work types grouped by phase, in first-appearance order (types arrive sorted by sort_order = phase order). */
+function typeGroups(workTypes: WorkType[]): [string, WorkType[]][] {
+    const groups = new Map<string, WorkType[]>();
+    for (const w of workTypes) groups.set(w.phase_id, [...(groups.get(w.phase_id) ?? []), w]);
+    return [...groups];
+}
+
 export default function CreateTaskPopover(props: Props) {
     const {opened, ghostStyle, target, cuts, workTypes, stages, typeRule, cutMode, describeConflict, onClose, onSubmit} = props;
     const t = useDictionary().tracker.board;
@@ -189,21 +196,30 @@ export default function CreateTaskPopover(props: Props) {
                             />
                             <div>
                                 <Text size="sm" fw={500} mb={6}>{t.panel.type}</Text>
-                                <div className={styles.typeGrid} role="radiogroup" aria-label={t.panel.type}>
-                                    {workTypes.map((w) => (
-                                        <UnstyledButton
-                                            key={w.id}
-                                            role="radio"
-                                            aria-checked={w.id === type}
-                                            disabled={!pickable(w.id)}
-                                            className={`${styles.typeChip} ${w.id === type ? styles.typeChipActive : ''}`}
-                                            onClick={() => {
-                                                setTypeId(w.id);
-                                                setError(null);
-                                            }}
-                                        >
-                                            <span className={styles.dot} style={{background: w.color}}/>{w.code}
-                                        </UnstyledButton>
+                                <div className={styles.typeGroups} role="radiogroup" aria-label={t.panel.type}>
+                                    {typeGroups(workTypes).map(([phaseId, group]) => (
+                                        <div key={phaseId} role="group" aria-label={typeRule.phaseName.get(phaseId)}>
+                                            {typeRule.phaseName.size > 1 && (
+                                                <Text size="xs" c="dimmed" mb={4}>{typeRule.phaseName.get(phaseId)}</Text>
+                                            )}
+                                            <div className={styles.typeGrid}>
+                                                {group.map((w) => (
+                                                    <UnstyledButton
+                                                        key={w.id}
+                                                        role="radio"
+                                                        aria-checked={w.id === type}
+                                                        disabled={!pickable(w.id)}
+                                                        className={`${styles.typeChip} ${w.id === type ? styles.typeChipActive : ''}`}
+                                                        onClick={() => {
+                                                            setTypeId(w.id);
+                                                            setError(null);
+                                                        }}
+                                                    >
+                                                        <span className={styles.dot} style={{background: w.color}}/>{w.code}
+                                                    </UnstyledButton>
+                                                ))}
+                                            </div>
+                                        </div>
                                     ))}
                                 </div>
                             </div>

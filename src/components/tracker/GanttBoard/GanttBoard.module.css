@@ -363,6 +363,12 @@
     font-weight: 700;
 }
 
+.typeGroups {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
 .typeGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
